@@ -10,51 +10,85 @@
 <script type="text/javascript">
 
 	$j(document).ready(function(){
+		
+		/* 글쓰기 버튼 클릭시, 페이지 이동 요청에 perPage 전달 */
+		$j('#boardWriteLink').click((e)=>{
+			e.preventDefault();
+			// pageSize 셀렉트요소로부터 pageSize 가져올때, 제이쿼리 api 에 따라 val() 함수로 값 가져옴 
+			var pageSize = $j('#pageSize').val();
+			
+			var pageNo = $j('#pageNo').val();
+/* 			var param = $j({
+					"pageNo" : pageNo
+					,"pageSize" : pageSize
+			}) */
+			
+			var redirectURL = "/board/"+pageNo+"/"+pageSize+"/boardWrite.do";
+			
+			// dom window의 url에 값 할당해서 브라우저가 페이지 이동하게함
+			window.location.href = redirectURL;
+		})
 	});
-
+	
 </script>
 <body>
-<table  align="center">
-	<tr>
-		<td align="right">
-			total : ${totalCnt}
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<table id="boardTable" border = "1">
-				<tr>
-					<td width="80" align="center">
-						Type
-					</td>
-					<td width="40" align="center">
-						No
-					</td>
-					<td width="300" align="center">
-						Title
-					</td>
-				</tr>
-				<c:forEach items="${boardList}" var="list">
-					<tr>
-						<td align="center">
-							${list.boardType}
-						</td>
-						<td>
-							${list.boardNum}
-						</td>
-						<td>
-							<a href = "/board/${list.boardType}/${list.boardNum}/boardView.do?pageNo=${pageNo}">${list.boardTitle}</a>
-						</td>
-					</tr>	
-				</c:forEach>
-			</table>
-		</td>
-	</tr>
-	<tr>
-		<td align="right">
-			<a href ="/board/boardWrite.do">글쓰기</a>
-		</td>
-	</tr>
-</table>	
+<div class="container">
+<!-- pageNo 임시로 담아놓을 히든필드 -->
+<input type="hidden" id="pageNo" name="pageNo" value="${pageNo}">
+	<div class="centered-div">
+	<label for="pageSize" >페이지당 게시물 수</label>
+		<select name="pageSize" id="pageSize" >
+		  <option value="5"  >5개</option>
+		  <option value="10">10개</option>
+		  <option value="20">20개</option>
+		</select>
+		<table  align="center">
+			<tr>
+				<td align="right">
+					total : ${totalCnt}
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<table id="boardTable" border = "1">
+						<tr>
+							<td width="80" align="center">
+								Type
+							</td>
+							<td width="40" align="center">
+								No
+							</td>
+							<td width="300" align="center">
+								Title
+							</td>
+						</tr>
+						<c:forEach items="${boardList}" var="list">
+							<tr>
+								<td align="center">
+									${list.boardType}
+								</td>
+								<td>
+									${list.boardNum}
+								</td>
+								<td>
+									<a href = "/board/${list.boardType}/${list.boardNum}/boardView.do?pageNo=${pageNo}">${list.boardTitle}</a>
+								</td>
+							</tr>	
+					</c:forEach>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td align="right">
+									<button id="boardWriteLink" >글쓰기</button>
+									
+								</td>
+							</tr>
+				</table>
+	</div>
+
+</div>
+
+	
 </body>
 </html>

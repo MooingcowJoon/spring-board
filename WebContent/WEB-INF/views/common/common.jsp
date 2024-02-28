@@ -13,6 +13,8 @@
 <script src="/resources/js/jquery-1.10.2.js"></script>
 <script type="text/javascript">
 	var $j = jQuery.noConflict();
+	
+	
 </script>
 <body>
 

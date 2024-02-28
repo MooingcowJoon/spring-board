@@ -15,6 +15,9 @@
 			var $frm = $j('.boardWrite :input');
 			var param = $frm.serialize();
 			
+			var pageNo = $j('#pageNo').val()
+			var pageSize = $j('#pageSize').val()
+			
 			$j.ajax({
 			    url : "/board/boardWriteAction.do",
 			    dataType: "json",
@@ -26,7 +29,7 @@
 					
 					alert("메세지:"+data.success);
 					
-					location.href = "/board/boardList.do?pageNo=";
+					location.href = "/board/boardList.do?pageNo="+pageNo+"&pageSize="+pageSize;
 			    },
 			    error: function (jqXHR, textStatus, errorThrown)
 			    {
@@ -41,6 +44,8 @@
 <body>
 <form class="boardWrite">
 	<table align="center">
+			<input type="hidden" id="pageNo" name="pageNo" value="${pageNo}">
+			<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}">
 		<tr>
 			<td align="right">
 			<input id="submit" type="button" value="작성">

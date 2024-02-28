@@ -1,6 +1,7 @@
 package com.spring.board.controller;
 
 import java.io.IOException;
+import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +47,16 @@ public class BoardController {
 			pageVo.setPageNo(page);;
 		}
 		
-		boardList = boardService.SelectBoardList(pageVo);
+		// 의문: 현재 boardList쿼리에 TOTALCNT 쿼리문이 있는데
+		//totalCnt 그냥 list.size() 함수 반환값으로 할당하면 안되나? 꼭 db에 엑세스 해야하나?
+		//아니면, totalCnt 구하는 쿼리와 보드리스트 반환시키는 쿼리를 따로 분리할 수 없을까?
+		
+		// 우선, 토탈카운트를 서비스 -> 서비스구현 -> 다오 -> 마이바티스 -> JDBC(OJDBC) -> 오라클 서버에 TCP/IP로 FETCH
 		totalCnt = boardService.selectBoardCnt();
+		
+		boardList = boardService.SelectBoardList(pageVo);
+		
+		
 		
 		model.addAttribute("boardList", boardList);
 		model.addAttribute("totalCnt", totalCnt);
@@ -73,8 +82,11 @@ public class BoardController {
 		return "board/boardView";
 	}
 	
-	@RequestMapping(value = "/board/boardWrite.do", method = RequestMethod.GET)
-	public String boardWrite(Locale locale, Model model) throws Exception{
+	@RequestMapping(value = "/board/{pageNo}/{pageSize}/boardWrite.do", method = RequestMethod.GET)
+	public String boardWrite(Locale locale, Model model
+							,@PathVariable("pageNo") int pageNo
+							,@PathVariable("pageSize") int pageSize
+						) throws Exception{
 		
 		
 		return "board/boardWrite";
