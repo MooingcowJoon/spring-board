@@ -65,8 +65,6 @@ public class BoardController {
 		return "board/boardList";
 	}
 	
-	// 페이징시 페이지사이즈와 페이즈 번호는 자원의 주소라고 보기 어렵기에 요청파라미터로 받아야하지만,
-	// 패스배리어블로 한번 해보고싶어서 해봄.
 	@RequestMapping(value = "/board/{boardType}/{boardNum}/boardView.do", method = RequestMethod.GET)
 	public String boardView(Locale locale, Model model
 			,@PathVariable("boardType")String boardType
@@ -85,13 +83,12 @@ public class BoardController {
 	}
 	
 	// 페이징시 페이지사이즈와 페이즈 번호는 자원의 주소라고 보기 어렵기에 요청파라미터로 받아야하지만,
-	// 패스배리어블로 한번 해보고싶어서 해봄.
-	@RequestMapping(value = "/board/boardWrite.do", method = RequestMethod.GET)
+	// 패스배리어블로 한번 해보고싶어서 해봄
+	@RequestMapping(value = "/board/{pageNo}/{pageSize}/boardWrite.do", method = RequestMethod.GET)
 	public String boardWrite(Locale locale, Model model
 							,@PathVariable("pageNo") int pageNo
 							,@PathVariable("pageSize") int pageSize
 						) throws Exception{
-		
 		
 		return "board/boardWrite";
 	}
