@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
-<title>boardWrite</title>
+<title>boardModify</title>
 </head>
 <script type="text/javascript">
 
@@ -25,9 +25,15 @@
 		$j("#submit").on("click",function(){
 			var $frm = $j('.boardWrite :input');
 			var param = $frm.serialize();
-
+			
+		    var pathVariables = location.pathname.split('/');
+		    var boardType = pathVariables[2];
+		    var boardNum = pathVariables[3];
+		    
+		    param+="&boardType="+boardType+"&boardNum="+boardNum
+		    
 			$j.ajax({
-			    url : "/board/boardWriteAction.do",
+			    url : "/board/boardModifyAction.do",
 			    dataType: "json",
 			    type: "POST",
 			    data : param,
@@ -41,6 +47,8 @@
 					var pageSize = $j('#pageSize').val()
 					
 					var url = "/board/boardList.do?pageNo="+pageNo+"&pageSize="+pageSize;
+					console.log("리다이렉트함수 호출 => "+url)
+					//나중에 url패스 변수 분리해서 인자로 받는걸로 분리해야함
 					location.href = url
 					
 			    },
@@ -99,8 +107,8 @@
 		</tr>
 		<tr>
 			<td align="right">
-			<input id="submit" type="button" value="작성">
-				<input id="toList" type="button" value="목록"></input>
+			<input id="submit" type="button" value="제출">
+			<input id="toList" type="button" value="목록"></input>
 			</td>
 		</tr>
 	</table>

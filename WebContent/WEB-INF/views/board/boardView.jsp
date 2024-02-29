@@ -7,6 +7,39 @@
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>boardView</title>
 </head>
+<script>
+$j(document).ready(() => {
+	$j('#deleteBtn').on('click',(e)=>{
+		var result = confirm("정말로 삭제하시겠습니까?");
+	      if (result) {
+	    	 	var pathVariables = location.pathname.split('/');
+			    var boardType = pathVariables[2];
+			    var boardNum = pathVariables[3];
+			    
+			    param = "&boardType="+boardType+"&boardNum="+boardNum
+	    	  
+	            $j.ajax({
+	                type: "POST",
+	                url: "/board/boardDeleteAction.do",
+	                dataType: "json",
+	                data: param,
+	                success: function(res,textStatus, jqXHR) {
+	                	if(res.resultCode == 'success'){
+	                    	alert("게시물이 삭제되었습니다.");
+	                	}else if (res.resultCode == 'error'){
+	                		alert('게시물 삭제에 실패했습니다. 목록으로 돌아갑니다.')
+	                	}
+	                   	window.location.href="/board/boardList.do"
+	                },
+	                error: function(xhr, status, error) {
+	                	alert('게시물 삭제에 실패했습니다. 목록으로 돌아갑니다.')
+	                	window.location.href="/board/boardList.do"
+	                }
+	            });
+	        }
+	})
+})
+</script>
 <body>
 <table align="center">
 	<tr>
@@ -40,6 +73,8 @@
 	</tr>
 	<tr>
 		<td align="right">
+			<a href="/board/${board.boardType}/${board.boardNum}/boardModify.do?pageNo=1">수정</a>
+			<input type="button" id="deleteBtn" value="삭제"></input>
 			<a href="/board/boardList.do">List</a>
 		</td>
 	</tr>

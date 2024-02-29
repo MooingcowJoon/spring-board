@@ -7,6 +7,8 @@
     	<result property="boardNum" 	column="BOARD_NUM"/>
     	<result property="boardTitle" 	column="BOARD_TITLE"/>
     	<result property="boardComment" column="BOARD_COMMENT"/>
+    	<result property="createTime" column="CREATE_TIME"/>
+    	<result property="modifiedTime" column="MODIFIED_TIME"/>
     </resultMap>
      <!--        SELECT 
 		  BOARD_TYPE
@@ -34,6 +36,8 @@
 		  ,BOARD_TITLE
 		  ,BOARD_COMMENT
 		  ,TOTAL_CNT
+		  ,CREATE_TIME
+		  ,MODIFIED_TIME
 		FROM 
 		(
 		  SELECT
@@ -42,6 +46,8 @@
 				,BOARD_TITLE
 				,BOARD_COMMENT
 		      	,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
+		      	,CREATE_TIME
+		      	,MODIFIED_TIME
 		      	,COUNT(*) OVER() AS TOTAL_CNT
 			FROM
 				BOARD	
@@ -71,15 +77,15 @@
     <select id="boardInsert" parameterType="com.spring.board.vo.BoardVo">
         INSERT INTO 
         BOARD
-        (BOARD_TYPE
-        ,BOARD_NUM
-        ,BOARD_TITLE
-        ,BOARD_COMMENT
-        ,CREATOR
-        ,CREATE_TIME
-        ,MODIFIER
-        ,MODIFIED_TIME
-        )
+	        (BOARD_TYPE
+	        ,BOARD_NUM
+	        ,BOARD_TITLE
+	        ,BOARD_COMMENT
+	        ,CREATOR
+	        ,CREATE_TIME
+	        ,MODIFIER
+	        ,MODIFIED_TIME
+	        )
         VALUES
         ('1'
         ,(SELECT COALESCE(TO_NUMBER(MAX(BOARD_NUM)+1),1)
@@ -94,4 +100,24 @@
         )
     </select>
 	
+	<update id="boardUpdate" parameterType="com.spring.board.vo.BoardVo">
+		UPDATE
+			BOARD
+		SET
+	        BOARD_TITLE 	= #{boardTitle}
+	        ,BOARD_COMMENT 	= #{boardComment}
+	        ,MODIFIER		= 'SYSTEM'
+	        ,MODIFIED_TIME	= TO_CHAR(SYSDATE)
+		WHERE
+			BOARD_NUM		= #{boardNum}		
+	</update>
+	<delete id="boardDelete" parameterType="com.spring.board.vo.BoardVo">
+		DELETE
+		FROM 
+			BOARD 
+		WHERE
+			BOARD_TYPE 		= #{boardType}
+		 AND
+			BOARD_NUM		= #{boardNum}	
+	</delete>
 </mapper>

@@ -10,7 +10,6 @@
 <script type="text/javascript">
 
 	$j(document).ready(function(){
-		
 		/* 글쓰기 버튼 클릭시, 페이지 이동 요청에 perPage 전달 */
 		$j('#boardWriteLink').click((e)=>{
 			e.preventDefault();
@@ -23,7 +22,7 @@
 					,"pageSize" : pageSize
 			}) */
 			
-			var redirectURL = "/board/"+pageNo+"/"+pageSize+"/boardWrite.do";
+			var redirectURL = "/board/boardWrite.do?pageNo="+pageNo+"&pageSize="+pageSize;
 			
 			// dom window의 url에 값 할당해서 브라우저가 페이지 이동하게함
 			window.location.href = redirectURL;
@@ -61,6 +60,12 @@
 							<td width="300" align="center">
 								Title
 							</td>
+							<td width="120" align="center">
+								Create Time
+							</td>
+							<td width="120" align="center">
+								Modified Time
+							</td>
 						</tr>
 						<c:forEach items="${boardList}" var="list">
 							<tr>
@@ -72,6 +77,12 @@
 								</td>
 								<td>
 									<a href = "/board/${list.boardType}/${list.boardNum}/boardView.do?pageNo=${pageNo}">${list.boardTitle}</a>
+								</td>
+								<td>
+									${list.createTime}
+								</td>
+								<td>
+									${list.modifiedTime}
 								</td>
 							</tr>	
 					</c:forEach>

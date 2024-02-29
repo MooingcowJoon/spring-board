@@ -9,7 +9,8 @@ public class BoardVo {
 	private String 	creator;
 	private String	modifier;
 	private int totalCnt;
-	
+	private String createTime;
+	private String modifiedTime;
 	
 	public int getTotalCnt() {
 		return totalCnt;
@@ -53,6 +54,19 @@ public class BoardVo {
 	public void setModifier(String modifier) {
 		this.modifier = modifier;
 	}
+	public String getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
+	public String getModifiedTime() {
+		return modifiedTime;
+	}
+	public void setModifiedTime(String modifiedTime) {
+		this.modifiedTime = modifiedTime;
+	}
+
 	
 	
 }
