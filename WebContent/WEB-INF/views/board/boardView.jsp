@@ -1,16 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%@include file="/WEB-INF/views/common/common.jsp"%>    
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>boardView</title>
 </head>
 <script>
 $j(document).ready(() => {
 	$j('#deleteBtn').on('click',(e)=>{
-		var result = confirm("Á¤¸»·Î »èÁ¦ÇÏ½Ã°Ú½À´Ï±î?");
+		var result = confirm("ì •ë§ë¡œ ì‚­ì œí•˜ì‹œê² ìŠµë‹ˆê¹Œ?");
 	      if (result) {
 	    	 	var pathVariables = location.pathname.split('/');
 			    var boardType = pathVariables[2];
@@ -25,14 +25,14 @@ $j(document).ready(() => {
 	                data: param,
 	                success: function(res,textStatus, jqXHR) {
 	                	if(res.resultCode == 'success'){
-	                    	alert("°Ô½Ã¹°ÀÌ »èÁ¦µÇ¾ú½À´Ï´Ù.");
+	                    	alert("ê²Œì‹œë¬¼ì´ ì‚­ì œë˜ì—ˆìŠµë‹ˆë‹¤.");
 	                	}else if (res.resultCode == 'error'){
-	                		alert('°Ô½Ã¹° »èÁ¦¿¡ ½ÇÆÐÇß½À´Ï´Ù. ¸ñ·ÏÀ¸·Î µ¹¾Æ°©´Ï´Ù.')
+	                		alert('ê²Œì‹œë¬¼ ì‚­ì œì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤. ëª©ë¡ìœ¼ë¡œ ëŒì•„ê°‘ë‹ˆë‹¤.')
 	                	}
 	                   	window.location.href="/board/boardList.do"
 	                },
 	                error: function(xhr, status, error) {
-	                	alert('°Ô½Ã¹° »èÁ¦¿¡ ½ÇÆÐÇß½À´Ï´Ù. ¸ñ·ÏÀ¸·Î µ¹¾Æ°©´Ï´Ù.')
+	                	alert('ê²Œì‹œë¬¼ ì‚­ì œì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤. ëª©ë¡ìœ¼ë¡œ ëŒì•„ê°‘ë‹ˆë‹¤.')
 	                	window.location.href="/board/boardList.do"
 	                }
 	            });
@@ -43,6 +43,7 @@ $j(document).ready(() => {
 <body>
 <table align="center">
 	<tr>
+
 		<td>
 			<table border ="1">
 				<tr>
@@ -73,8 +74,8 @@ $j(document).ready(() => {
 	</tr>
 	<tr>
 		<td align="right">
-			<a href="/board/${board.boardType}/${board.boardNum}/boardModify.do?pageNo=1">¼öÁ¤</a>
-			<input type="button" id="deleteBtn" value="»èÁ¦"></input>
+			<a href="/board/${board.boardType}/${board.boardNum}/boardModify.do?pageNo=1">ìˆ˜ì •</a>
+			<input type="button" id="deleteBtn" value="ì‚­ì œ"></input>
 			<a href="/board/boardList.do">List</a>
 		</td>
 	</tr>

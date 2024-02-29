@@ -1,10 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%@include file="/WEB-INF/views/common/common.jsp"%>    
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>boardModify</title>
 </head>
 <script type="text/javascript">
@@ -16,8 +16,8 @@
 			var pageSize = $j('#pageSize').val()
 			
 			var url = "/board/boardList.do?pageNo="+pageNo+"&pageSize="+pageSize;
-			console.log("¸®´ÙÀÌ·ºÆ®ÇÔ¼ö È£Ãâ => "+url)
-			//³ªÁß¿¡ urlÆĞ½º º¯¼ö ºĞ¸®ÇØ¼­ ÀÎÀÚ·Î ¹Ş´Â°É·Î ºĞ¸®ÇØ¾ßÇÔ
+			console.log("ë¦¬ë‹¤ì´ë ‰íŠ¸í•¨ìˆ˜ í˜¸ì¶œ => "+url)
+			//ë‚˜ì¤‘ì— urlíŒ¨ìŠ¤ ë³€ìˆ˜ ë¶„ë¦¬í•´ì„œ ì¸ìë¡œ ë°›ëŠ”ê±¸ë¡œ ë¶„ë¦¬í•´ì•¼í•¨
 			location.href = url
 		}  */
 		
@@ -39,22 +39,22 @@
 			    data : param,
 			    success: function(data, textStatus, jqXHR)
 			    {
-					alert("ÀÛ¼º¿Ï·á");
+					alert("ì‘ì„±ì™„ë£Œ");
 					
-					alert("¸Ş¼¼Áö:"+data.success);
+					alert("ë©”ì„¸ì§€:"+data.success);
 	
 					var pageNo = $j('#pageNo').val()
 					var pageSize = $j('#pageSize').val()
 					
 					var url = "/board/boardList.do?pageNo="+pageNo+"&pageSize="+pageSize;
-					console.log("¸®´ÙÀÌ·ºÆ®ÇÔ¼ö È£Ãâ => "+url)
-					//³ªÁß¿¡ urlÆĞ½º º¯¼ö ºĞ¸®ÇØ¼­ ÀÎÀÚ·Î ¹Ş´Â°É·Î ºĞ¸®ÇØ¾ßÇÔ
+					console.log("ë¦¬ë‹¤ì´ë ‰íŠ¸í•¨ìˆ˜ í˜¸ì¶œ => "+url)
+					//ë‚˜ì¤‘ì— urlíŒ¨ìŠ¤ ë³€ìˆ˜ ë¶„ë¦¬í•´ì„œ ì¸ìë¡œ ë°›ëŠ”ê±¸ë¡œ ë¶„ë¦¬í•´ì•¼í•¨
 					location.href = url
 					
 			    },
 			    error: function (jqXHR, textStatus, errorThrown)
 			    {
-			    	alert("½ÇÆĞ");
+			    	alert("ì‹¤íŒ¨");
 			    }
 				});
 			});	
@@ -107,8 +107,8 @@
 		</tr>
 		<tr>
 			<td align="right">
-			<input id="submit" type="button" value="Á¦Ãâ">
-			<input id="toList" type="button" value="¸ñ·Ï"></input>
+			<input id="submit" type="button" value="ì œì¶œ">
+			<input id="toList" type="button" value="ëª©ë¡"></input>
 			</td>
 		</tr>
 	</table>

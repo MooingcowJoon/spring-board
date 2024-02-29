@@ -47,9 +47,13 @@ public class boardServiceImpl implements boardService{
 	}
 	
 	@Override
-	public int boardInsert(BoardVo boardVo) throws Exception {
+	public int boardInsert(List<BoardVo> boardVos) throws Exception {
 		// TODO Auto-generated method stub
-		return boardDao.boardInsert(boardVo);
+		int result = 0;
+		for (BoardVo boardVo : boardVos) {
+			result += boardDao.boardInsert(boardVo);
+		}
+		return result;
 	}
 	
 	@Override

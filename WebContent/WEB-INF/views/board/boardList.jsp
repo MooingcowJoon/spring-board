@@ -1,19 +1,19 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%@include file="/WEB-INF/views/common/common.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>list</title>
 </head>
 <script type="text/javascript">
 
 	$j(document).ready(function(){
-		/* ±Û¾²±â ¹öÆ° Å¬¸¯½Ã, ÆäÀÌÁö ÀÌµ¿ ¿äÃ»¿¡ perPage Àü´Ş */
+		/* ê¸€ì“°ê¸° ë²„íŠ¼ í´ë¦­ì‹œ, í˜ì´ì§€ ì´ë™ ìš”ì²­ì— perPage ì „ë‹¬ */
 		$j('#boardWriteLink').click((e)=>{
 			e.preventDefault();
-			// pageSize ¼¿·ºÆ®¿ä¼Ò·ÎºÎÅÍ pageSize °¡Á®¿Ã¶§, Á¦ÀÌÄõ¸® api ¿¡ µû¶ó val() ÇÔ¼ö·Î °ª °¡Á®¿È 
+			// pageSize ì…€ë ‰íŠ¸ìš”ì†Œë¡œë¶€í„° pageSize ê°€ì ¸ì˜¬ë•Œ, ì œì´ì¿¼ë¦¬ api ì— ë”°ë¼ val() í•¨ìˆ˜ë¡œ ê°’ ê°€ì ¸ì˜´ 
 			var pageSize = $j('#pageSize').val();
 			
 			var pageNo = $j('#pageNo').val();
@@ -24,7 +24,7 @@
 			
 			var redirectURL = "/board/boardWrite.do?pageNo="+pageNo+"&pageSize="+pageSize;
 			
-			// dom windowÀÇ url¿¡ °ª ÇÒ´çÇØ¼­ ºê¶ó¿ìÀú°¡ ÆäÀÌÁö ÀÌµ¿ÇÏ°ÔÇÔ
+			// dom windowì˜ urlì— ê°’ í• ë‹¹í•´ì„œ ë¸Œë¼ìš°ì €ê°€ í˜ì´ì§€ ì´ë™í•˜ê²Œí•¨
 			window.location.href = redirectURL;
 		})
 	});
@@ -32,14 +32,14 @@
 </script>
 <body>
 <div class="container">
-<!-- pageNo ÀÓ½Ã·Î ´ã¾Æ³õÀ» È÷µçÇÊµå -->
+<!-- pageNo ì„ì‹œë¡œ ë‹´ì•„ë†“ì„ íˆë“ í•„ë“œ -->
 <input type="hidden" id="pageNo" name="pageNo" value="${pageNo}">
 	<div class="centered-div">
-	<label for="pageSize" >ÆäÀÌÁö´ç °Ô½Ã¹° ¼ö</label>
+	<label for="pageSize" >í˜ì´ì§€ë‹¹ ê²Œì‹œë¬¼ ìˆ˜</label>
 		<select name="pageSize" id="pageSize" >
-		  <option value="5"  >5°³</option>
-		  <option value="10">10°³</option>
-		  <option value="20">20°³</option>
+		  <option value="5"  >5ê°œ</option>
+		  <option value="10">10ê°œ</option>
+		  <option value="20">20ê°œ</option>
 		</select>
 		<table  align="center">
 			<tr>
@@ -91,7 +91,7 @@
 							</tr>
 							<tr>
 								<td align="right">
-									<button id="boardWriteLink" >±Û¾²±â</button>
+									<button id="boardWriteLink" >ê¸€ì“°ê¸°</button>
 									
 								</td>
 							</tr>

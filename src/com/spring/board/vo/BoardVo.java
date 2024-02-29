@@ -1,5 +1,6 @@
 package com.spring.board.vo;
 
+
 public class BoardVo {
 	
 	private String 	boardType;
@@ -12,6 +13,28 @@ public class BoardVo {
 	private String createTime;
 	private String modifiedTime;
 	
+	public BoardVo() {
+	}
+	public BoardVo(String boardType, String boardTitle, String boardComment) {
+		super();
+		this.boardType=boardType;
+		this.boardTitle= boardTitle;
+		this.boardComment = boardComment;
+	}
+	
+	public BoardVo(String boardType, int boardNum, String boardTitle, String boardComment, String creator,
+			String modifier, int totalCnt, String createTime, String modifiedTime) {
+		super();
+		this.boardType = boardType;
+		this.boardNum = boardNum;
+		this.boardTitle = boardTitle;
+		this.boardComment = boardComment;
+		this.creator = creator;
+		this.modifier = modifier;
+		this.totalCnt = totalCnt;
+		this.createTime = createTime;
+		this.modifiedTime = modifiedTime;
+	}
 	public int getTotalCnt() {
 		return totalCnt;
 	}
