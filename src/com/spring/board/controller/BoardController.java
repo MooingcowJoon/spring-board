@@ -74,7 +74,10 @@ public class BoardController {
 		BoardVo boardVo = new BoardVo();
 
 		boardVo = boardService.selectBoard(boardType, boardNum);
-
+		
+		if(boardVo == null) {
+			model.addAttribute("response","error");
+		}
 		model.addAttribute("boardType", boardType);
 		model.addAttribute("boardNum", boardNum);
 		model.addAttribute("board", boardVo);
@@ -109,24 +112,13 @@ public class BoardController {
 
 	@RequestMapping(value = "/board/boardWriteAction.do", method = RequestMethod.POST)
 	@ResponseBody
-	public String boardWriteAction(Locale locale, @RequestBody List<String> params) throws Exception {
+	public String boardWriteAction(Locale locale,@RequestBody BoardVo boardVo) throws Exception {
 
 		HashMap<String, String> result = new HashMap<String, String>();
-		System.out.println(params);
-		CommonUtil commonUtil = new CommonUtil();
-		
-		String boardType = params.get(0);
-		
-		List<BoardVo> list= new ArrayList<BoardVo>();
-		for (int i=1; i<params.size();) {
-			BoardVo boardVo = new BoardVo();
-			boardVo.setBoardType(boardType);
-			boardVo.setBoardTitle(params.get(i));
-			boardVo.setBoardComment(params.get(i+1));
-			i+=2;
-			list.add(boardVo);
-		}
-		int resultCnt = boardService.boardInsert(list);
+		CommonUtil commonUtil = new CommonUtil();		
+		System.out.println(boardVo);
+		List<BoardVo> boardList = boardVo.getBoardList();
+		int resultCnt = boardService.boardInsert(boardList);
 		result.put("result", resultCnt > 0 ? "success" : "error"); 
 		String callbackMsg = commonUtil.getJsonCallBackString(" ", result);
 		System.out.println("callbackMsg::" + callbackMsg);
@@ -158,7 +150,7 @@ public class BoardController {
 	@RequestMapping(value = "/board/boardDeleteAction.do", method = RequestMethod.POST)
 	@ResponseBody
 	public String boardDeleteAction(Locale locale, BoardVo boardVo) throws Exception {
-
+			
 		HashMap<String, String> result = new HashMap<String, String>();
 		CommonUtil commonUtil = new CommonUtil();
 

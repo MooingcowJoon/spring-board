@@ -12,50 +12,27 @@
 
 
 $j(document).ready(function(){
-	class Form {
-	    constructor(title, comment) {
-	        this.title = title;
-	        this.comment = comment;
+	class BoardVo {
+	    constructor(boardType, boardNum, boardTitle, boardComment, creator, modifier, totalCnt, createTime, modifiedTime) {
+	        this.boardType = boardType;
+	        this.boardNum = boardNum;
+	        this.boardTitle = boardTitle;
+	        this.boardComment = boardComment;
+	        this.creator = creator;
+	        this.modifier = modifier;
+	        this.totalCnt = totalCnt;
+	        this.createTime = createTime;
+	        this.modifiedTime = modifiedTime;
 	    }
-
-	    // 제목 설정
-	    setTitle(title) {
-	        this.title = title;
-	    }
-
-	    // 코멘트 설정
-	    setComment(comment) {
-	        this.comment = comment;
-	    }
-
-	    // 제목 가져오기
-	    getTitle() {
-	        return this.title;
-	    }
-
-	    // 코멘트 가져오기
-	    getComment() {
-	        return this.comment;
-	    }
-
-	    // 폼 데이터 초기화
-	    clear() {
-	        this.title = '';
-	        this.comment = '';
-	    }
-
-	    // 폼 데이터 출력 (테스트용)
-print() {
-    console.log('Title: ' + this.title + ', Comment: ' + this.comment);
-}
 	}
 	function getForms(){
 		var forms = [];
 		$j('.formGroup').each(function(index,el){
 			el=$j(el)
+			var boardType = el.find('select').val()
 			var title = el.find('input').val()
 			var comment = el.find('textarea').val()
-			forms.push(new Form(title,comment))
+			forms.push(new BoardVo(boardType,0,title,comment,$j('#creatorId').text(),'',0,'',''))
 			
 		})
 		return forms
@@ -86,23 +63,45 @@ $j('#rowAppend').on('click', () => {
             
         var checkedForms = $j('.formGroup.blueBackground');
 		
-        if (checkedForms.length > 0) {
-        	checkedForms.remove();
-        } else {
-        	forms.last().remove();
+        var deleteTargetForms = $j([])
+        
+        if (checkedForms.length > 0 && forms.length >checkedForms.length) {
+        	deleteTargetForms.push(checkedForms)
+//         	delecheckedForms.remove();
+        } else if(forms.length <= checkedForms.length){
+        	alert("더 이상 삭제하실 수 없습니다.")
+        	return;
+
+        }else{
+        	deleteTargetForms.push(forms.last())
+//         	forms.last().remove();
         }
+        
+        var isWriting = true;
+        deleteTargetForms.each(function(index,form){
+    		form = $j(form)
+    		var titleInputField = form.find("input")
+    		var commentInputField = form.find("textarea")
+
+    		if (titleInputField.val().trim() !== '' ||  commentInputField.val().trim() !== '' ){
+    			isWriting = false;
+    		}
+        })
+        deleteConfirm = true
+        if(!isWriting){
+        	deleteConfirm = confirm("작성중인 글이 있습니다. 선택하신 폼을 정말 삭제하시겠습니까?")? true : false
+        }
+       deleteConfirm && deleteTargetForms.each((i,el)=>el.remove())
+        
     });
 
-    // 작성 버튼 클릭 이벤트
-    $j('#submit').on('click', function() {
-        submitCheck();
-    });
 
     // 클릭한 필드셋에 하늘색 배경 토글
     $j('#formContainer').on('click',
     		'.formGroup', function(e) {
     	
-    	if (!$j(e.target).is('input') && !$j(e.target).is('textarea')){
+    	var clickEl = $j(e.target)
+    	if (!clickEl.is('input') && !clickEl.is('textarea') && !clickEl.is('select')){
     		
         $j(this).toggleClass('blueBackground');
     	}
@@ -110,94 +109,84 @@ $j('#rowAppend').on('click', () => {
  // 새로운 행을 생성하는 함수
     function generateRow() {
         return `<fieldset class="formGroup">
-                    <legend>New Section</legend>
+                    <legend>게시글 작성</legend>
                     <div class="formField">
-                        <label for="newField1">Field 1:</label>
+                        <label for="newField1">제목:</label>
                         <input name="newField1" type="text" size="50" value="">
                     </div>
                     <div class="formField">
-                        <label for="newField2">Field 2:</label>
+                        <label for="newField2">내용:</label>
                         <textarea name="newField2" rows="20" cols="55"></textarea>
                     </div>
                 </fieldset>`;
     }
 
-    // 작성 확인 함수
-    function submitCheck() {
+    // 작성버튼 누를시 
+    $j('#submit').on('click', function() {
+    	
+    	// 널인풋첵 함수 호출해서 널인풋 있는 필드 요소 반환받음
         var nullInputField = nullInputCheck();
+        
+    	// 널인풋 필드 요소 널아니면 안내문과 포커스 함수 실행
         if (nullInputField !== null) {
             alertAndFocus(nullInputField);
             return;
         }
-        var param = [];
-        var rows = $j('#form').children().children(':not(:last-child)');
-        rows.each(function(index, row) {
-            var isTitle = index % 2 === 0;
-            row = $j(row);
-            if (isTitle) {
-                var title = row.children().find('input').val();
-                param.push(title);
-            } else {
-                var content = row.children().find('textarea').val();
-                param.push(content);
-            }
-        });
+
+		// 다중 폼 BoardVo 객체 배열로 반환하는 함수
+        var forms = getForms()
+        
+        // BoardVo 클래스의 boardList 멤버변수(List<BoardVo>) 를 담을 키:값 형태로 담을 오브젝트 params(맵도됨)
+        var params = {
+        		boardList : forms
+        }
+        
+        // ajax로 json으로 객체배열 바디에 담아 포스트요청보냄
         $j.ajax({
             url: "/board/boardWriteAction.do",
-            data: JSON.stringify(param),
-            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(params),
+            contentType: "application/json",
             dataType: "json",
             type: "POST",
             success: function(data, textStatus, jqXHRt) {
-                alert("작성완료");
                 alert("메세지:" + data.result);
                 if (data.result === "success") {
+         		    alert("작성완료");
+                }else{
+                	alert("에러 발생")
+                }
                     var pageNo = $j('#pageNo').val();
                     var pageSize = $j('#pageSize').val();
                     var url = "/board/boardList.do?pageNo=" + pageNo + "&pageSize=" + pageSize;
                     location.href = url;
-                }
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 alert("실패");
             }
         });
-    }
+    })
 
     // 입력 필드가 비어 있는지 확인하는 함수
     function nullInputCheck() {
-    	var forms = $j(getForms())
-    	forms.each(function(index,form){
-    		form.print()
+    	var nullInputField = null
+    	$j('.formGroup').each(function(index, form){
+    		form = $j(form)
+    		var titleInputField = form.find("input")
+    		var commentInputField = form.find("textarea")
+
+    		if (titleInputField.val().trim() === ''){
+    			nullInputField = titleInputField
+    		}
+    		if( commentInputField.val().trim() === '' ){
+    			nullInputField =  commentInputField
+    		}
+    		
     	})
-    	return
-        var rows = $j('#form').children().children(':not(:last-child)');
-        var nullInputField = null;
-        rows.each(function(index, row) {
-            var isTitle = index % 2 === 0;
-            row = $j(row);
-            if (isTitle) {
-                var inputField = row.children().find('input');
-                var title = inputField.val();
-                var userInput = title.trim();
-                if (userInput === '') {
-                    nullInputField = inputField;
-                }
-            } else {
-                var inputField = row.children().find('textarea');
-                var content = inputField.val();
-                var userInput = content.trim();
-                if (userInput === '') {
-                    nullInputField = inputField;
-                }
-            }
-        });
-        return nullInputField;
+    	return nullInputField
     }
 
     // 경고를 표시하고 포커스를 이동시키는 함수
     function alertAndFocus(nullInputField) {
-        var index = nullInputField.index();
         var msg = '';
         if (nullInputField.is('input')) {
             msg = '제목을 입력하셔야 합니다.';
@@ -208,6 +197,12 @@ $j('#rowAppend').on('click', () => {
         nullInputField.focus();
     }
 
+    $j('#toList').on('click',()=>{
+        var pageNo = $j('#pageNo').val();
+        var pageSize = $j('#pageSize').val();
+        var url = "/board/boardList.do?pageNo=" + pageNo + "&pageSize=" + pageSize;
+        location.href = url;
+    })
 });
 
 
@@ -234,13 +229,23 @@ $j('#rowAppend').on('click', () => {
 				<table border ="1" >
                 <div id="formContainer">
                     <fieldset class="formGroup">
-                        <legend>Board Details</legend>
+                        <legend>게시글 작성</legend>
                         <div class="formField">
-                            <label for="boardTitle">Title:</label>
+                            <label for="boardType">분류: </label>
+                                <select id="boardType" name="boardType">
+							        <option value="1">1</option>
+							        <option value="2">2</option>
+							        <option value="3">3</option>
+							        <option value="4">4</option>
+							        <option value="5">5</option>
+							    </select>
+                        </div>
+                        <div class="formField">
+                            <label for="boardTitle">제목: </label>
                             <input name="boardTitle" type="text" size="50" value="${board.boardTitle}">
                         </div>
                         <div class="formField">
-                            <label for="boardComment">Comment:</label>
+                            <label for="boardComment">내용: </label>
                             <textarea name="boardComment" rows="20" cols="55">${board.boardComment}</textarea>
                         </div>
                     </fieldset>
@@ -250,8 +255,8 @@ $j('#rowAppend').on('click', () => {
 			</tr>
 <tr>
     <td colspan="2" align="right">
-        <div id="writerSection">
-            작성자: <span id="writerId">SYSTEM</span>
+        <div id="creatorSection">
+            작성자: <span id="creatorId">SYSTEM</span>
         </div>
     </td>
 </tr>

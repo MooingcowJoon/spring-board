@@ -41,44 +41,42 @@ $j(document).ready(() => {
 })
 </script>
 <body>
-<table align="center">
-	<tr>
-
-		<td>
-			<table border ="1">
-				<tr>
-					<td width="120" align="center">
-					Title
-					</td>
-					<td width="400">
-					${board.boardTitle}
-					</td>
-				</tr>
-				<tr>
-					<td height="300" align="center">
-					Comment
-					</td>
-					<td>
-					${board.boardComment}
-					</td>
-				</tr>
-				<tr>
-					<td align="center">
-					Writer
-					</td>
-					<td>
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr>
-		<td align="right">
-			<a href="/board/${board.boardType}/${board.boardNum}/boardModify.do?pageNo=1">수정</a>
-			<input type="button" id="deleteBtn" value="삭제"></input>
-			<a href="/board/boardList.do">List</a>
-		</td>
-	</tr>
-</table>	
+<c:choose>
+    <c:when test="${response eq 'error'}">
+        <script>
+            alert("삭제된 게시물입니다.");
+            window.location.href = "/board/boardList.do";
+        </script>
+    </c:when>
+    <c:otherwise>
+        <table align="center">
+            <tr>
+                <td>
+                    <table border="1">
+                        <tr>
+                            <td width="120" align="center">Title</td>
+                            <td width="400">${board.boardTitle}</td>
+                        </tr>
+                        <tr>
+                            <td height="300" align="center">Comment</td>
+                            <td>${board.boardComment}</td>
+                        </tr>
+                        <tr>
+                            <td align="center">Writer</td>
+                            <td>${board.creator}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <a href="/board/${board.boardType}/${board.boardNum}/boardModify.do?pageNo=1">수정</a>
+                    <input type="button" id="deleteBtn" value="삭제">
+                    <a href="/board/boardList.do">List</a>
+                </td>
+            </tr>
+        </table>
+    </c:otherwise>
+</c:choose>	
 </body>
 </html>

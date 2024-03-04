@@ -1,5 +1,7 @@
 package com.spring.board.vo;
 
+import java.util.List;
+
 
 public class BoardVo {
 	
@@ -13,27 +15,27 @@ public class BoardVo {
 	private String createTime;
 	private String modifiedTime;
 	
-	public BoardVo() {
-	}
-	public BoardVo(String boardType, String boardTitle, String boardComment) {
-		super();
-		this.boardType=boardType;
-		this.boardTitle= boardTitle;
-		this.boardComment = boardComment;
-	}
+    private List<BoardVo> boardList;
+
+    // 생성자, 게터, 세터 등 필요한 메서드를 추가할 수 있음
+
+    public List<BoardVo> getBoardList() {
+        return boardList;
+    }
+
+    public void setBoardList(List<BoardVo> boardList) {
+        this.boardList = boardList;
+    }
 	
-	public BoardVo(String boardType, int boardNum, String boardTitle, String boardComment, String creator,
-			String modifier, int totalCnt, String createTime, String modifiedTime) {
-		super();
-		this.boardType = boardType;
-		this.boardNum = boardNum;
-		this.boardTitle = boardTitle;
-		this.boardComment = boardComment;
-		this.creator = creator;
-		this.modifier = modifier;
-		this.totalCnt = totalCnt;
-		this.createTime = createTime;
-		this.modifiedTime = modifiedTime;
+	/*
+	 * // 리스트로받기 private List<BoardVo> boardVoList;
+	 */
+	
+	/*
+	 * public List<BoardVo> getBoardVoList() { return boardVoList; } public void
+	 * setBoardVoList(List<BoardVo> boardVoList) { this.boardVoList = boardVoList; }
+	 */
+	public BoardVo() {
 	}
 	public int getTotalCnt() {
 		return totalCnt;
