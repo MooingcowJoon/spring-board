@@ -28,6 +28,51 @@
 			// dom window의 url에 값 할당해서 브라우저가 페이지 이동하게함
 			window.location.href = redirectURL;
 		})
+		
+		
+		$j('#boardType').on('change',function(){
+			
+			// 값 바뀌었으니 데이터행 다 지움 
+			$j('#boardTable').find('tr:gt(0)').remove();
+			$j.get('/board/boardListAction.do', {boardType: $j(this).val()}, function(data) {
+			    // 성공적으로 응답을 받았을 때 실행할 코드
+			  	data.forEach(function(board){
+			  		var html = generateRow(board.boardType
+			  								,board.boardNum
+		  									,board.boardTitle
+		  									,board.createTime
+		  									,board.modifiedTime)
+			  		$j('#boardTable').append(html)
+			  		console.log(html)
+			  	})
+			  	
+			}).fail(function(xhr, status, error) {
+				
+			    // 요청이 실패했을 때 실행할 코드
+			    console.error('오류:', error);
+			});
+			
+		})
+		
+ 		function generateRow(boardType, boardNum, boardTitle, createTime, modifiedTime){
+			return '<tr class="dataRow">' +
+	        '<td align="center">' +
+	        boardType +
+	        '</td>' +
+	        '<td>' +
+	        boardNum +
+	        '</td>' +
+	        '<td>' +
+	        '<a href="/board/' + boardType + '/' + boardNum + '/boardView.do?pageNo=1">' + boardTitle + '</a>' +
+	        '</td>' +
+	        '<td>' +
+	        createTime +
+	        '</td>' +
+	        '<td>' +
+	        modifiedTime +
+	        '</td>' +
+	        '</tr>';}
+		
 	});
 	
 </script>
@@ -53,7 +98,14 @@
 					<table id="boardTable" border = "1">
 						<tr>
 							<td width="80" align="center">
-								Type
+	                            		<label for="boardType">분류: </label>
+                                        <select id="boardType" name="boardType">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
 							</td>
 							<td width="40" align="center">
 								No
@@ -69,7 +121,7 @@
 							</td>
 						</tr>
 						<c:forEach items="${boardList}" var="list">
-							<tr>
+							<tr class="dataRow">
 								<td align="center">
 									${list.boardType}
 								</td>
@@ -87,7 +139,7 @@
 								</td>
 							</tr>	
 					</c:forEach>
-									</table>
+					</table>
 								</td>
 							</tr>
 							<tr>

@@ -6,7 +6,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>boardWrite</title>
-<link rel="stylesheet" type="text/css" href="/resources/css/board/board.css">
+<style>
+.checked{
+background-color:skyblue;
+}
+</style>
 </head>
 <script type="text/javascript">
 
@@ -25,15 +29,17 @@ $j(document).ready(function(){
 	        this.modifiedTime = modifiedTime;
 	    }
 	}
+	
+	
+	// boardVo js 객체 배열 가져오는 함수
 	function getForms(){
 		var forms = [];
-		$j('.formGroup').each(function(index,el){
+		$j('.inputRow').each(function(index,el){
 			el=$j(el)
 			var boardType = el.find('select').val()
-			var title = el.find('input').val()
+			var title = el.find('input[type="text"]').val()
 			var comment = el.find('textarea').val()
 			forms.push(new BoardVo(boardType,0,title,comment,$j('#creatorId').text(),'',0,'',''))
-			
 		})
 		return forms
 		
@@ -41,84 +47,89 @@ $j(document).ready(function(){
 	
     // 행 추가 버튼 클릭 이벤트
 $j('#rowAppend').on('click', () => {
-    var container = $j('#formContainer');
-    var lastIndex = container.find('.formGroup').length;
-    var maxRows = 5;
-
-    if (lastIndex >= maxRows) {
+	var inputRows = $j('.inputRow')
+    if (inputRows.length == 5 ) {
         alert("더 이상 행을 추가할 수 없습니다.");
         return;
     }
 
-    container.append(generateRow());
+    $j('#creatorRow').before(generateRow());
 });
 
     // 행 삭제 버튼 클릭 이벤트
    $j('#rowRemove').on('click', () => {
-            var forms = $j('.formGroup');
-            if(forms.length === 1){
-            	alert("더 이상 삭제하실 수 없습니다.");
-            	return;
-            }
-            
-        var checkedForms = $j('.formGroup.blueBackground');
-		
-        var deleteTargetForms = $j([])
-        
-        if (checkedForms.length > 0 && forms.length >checkedForms.length) {
-        	deleteTargetForms.push(checkedForms)
-//         	delecheckedForms.remove();
-        } else if(forms.length <= checkedForms.length){
-        	alert("더 이상 삭제하실 수 없습니다.")
-        	return;
-
-        }else{
-        	deleteTargetForms.push(forms.last())
-//         	forms.last().remove();
-        }
-        
-        var isWriting = true;
-        deleteTargetForms.each(function(index,form){
-    		form = $j(form)
-    		var titleInputField = form.find("input")
-    		var commentInputField = form.find("textarea")
-
+	   
+       var rows = $j('.inputRow');
+    	var chkRows = $j('.inputRow').has('input[type="checkbox"]:checked')
+	   if(rows.length === 1){
+       	alert("더 이상 삭제하실 수 없습니다.");
+       	return;
+       }
+	   
+    	var targetRows=$j([])	   
+   			   
+	   if(chkRows.length>0){
+		   targetRows=chkRows
+	   }else{
+		   targetRows.push(rows.last())
+	   }
+       
+       
+	   if(targetRows.length >= rows.length){
+		   alert("더 이상 삭제하실 수 없습니다.");
+		   return
+	   }
+        var isWriting = false;
+        targetRows.each(function(){
+    		var titleInputField = $j(this).find('input[type="text"]')
+    		var commentInputField = $j(this).find("textarea")
     		if (titleInputField.val().trim() !== '' ||  commentInputField.val().trim() !== '' ){
-    			isWriting = false;
+    			isWriting = true;
     		}
         })
-        deleteConfirm = true
-        if(!isWriting){
+        
+        var deleteConfirm= true
+        
+        if(isWriting){
         	deleteConfirm = confirm("작성중인 글이 있습니다. 선택하신 폼을 정말 삭제하시겠습니까?")? true : false
         }
-       deleteConfirm && deleteTargetForms.each((i,el)=>el.remove())
+        
+        deleteConfirm && targetRows.each((i,el)=>el.remove())
         
     });
 
 
-    // 클릭한 필드셋에 하늘색 배경 토글
-    $j('#formContainer').on('click',
-    		'.formGroup', function(e) {
-    	
-    	var clickEl = $j(e.target)
-    	if (!clickEl.is('input') && !clickEl.is('textarea') && !clickEl.is('select')){
-    		
-        $j(this).toggleClass('blueBackground');
-    	}
-    });
  // 새로운 행을 생성하는 함수
     function generateRow() {
-        return `<fieldset class="formGroup">
-                    <legend>게시글 작성</legend>
-                    <div class="formField">
-                        <label for="newField1">제목:</label>
-                        <input name="newField1" type="text" size="50" value="">
-                    </div>
-                    <div class="formField">
-                        <label for="newField2">내용:</label>
-                        <textarea name="newField2" rows="20" cols="55"></textarea>
-                    </div>
-                </fieldset>`;
+        return `                        <tr class="inputRow">
+    	<td ><input type="checkbox" value="check"></input></td>
+        <td >
+        	<table>
+        		<tr>
+        		<td><label for="boardType">분류: </label>
+                    <select id="boardType" name="boardType">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select></td>
+        		</tr>
+        		<tr>
+        		<td>
+        		                                        <label for="boardTitle">제목: </label>
+                    <input name="boardTitle" type="text">
+        		</td>
+        		</tr>
+        		<tr>
+        		<td>
+        		 <label for="boardComment" style="vertical-align: top;">내용: </label>
+                    <textarea name="boardComment" rows="20" cols="50"></textarea>
+        		</td>
+        		</tr>	
+        	</table>
+        </td>
+    </tr>`;
     }
 
     // 작성버튼 누를시 
@@ -203,70 +214,109 @@ $j('#rowAppend').on('click', () => {
         var url = "/board/boardList.do?pageNo=" + pageNo + "&pageSize=" + pageSize;
         location.href = url;
     })
+    
+    
+        // 인풋로우 클릭시 발생이벤트
+	$j('#formContainer').on('click', '.inputRow', function(e) {
+			var target= $j(e.target)
+			if(target.is('input[type="text"]')|| target.is('textarea') || target.is('select')){
+				return
+			}
+			
+			checkRow(this,!$j(this).hasClass('checked'))
+		});
+    
+    
+    function checkRow(row, isChecked){
+    	row = $j(row)
+    	 var checkbox = row.find('input[type="checkbox"]');
+ 		 checkbox.prop('checked', isChecked);
+ 		 row.toggleClass('checked',isChecked)
+    }
+    
+    function isAllChecked(){
+    	var isAllChk = true
+    	$j('.inputRow').each(function(){
+    		if(!$j(this).hasClass('checked')){
+    			isAllChk =  false
+    		}
+    	})
+    	return isAllChk
+    }
+    
+    $j('#checkAll').on('click',()=>{
+   		var check = !isAllChecked()
+ 	    $j('.inputRow').each(function(index,row){
+	    	checkRow(row,check)
+    	})
+    })    
 });
 
 
 
 </script>
 <body>
-<form class="boardWrite">
-			<input type="hidden" id="pageNo" name="pageNo" value="${pageNo}">
-			<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}">
-	<table align="center">
-		<tr align="right">
-			<th >
-				행 추가 및 삭제
-			</th>
-		</tr>
-		<tr align="right">
-			<td >
-				<input id="rowAppend" type="button" value="+"></input>
-				<input id="rowRemove" type="button" value="-"></input>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<table border ="1" >
-                <div id="formContainer">
-                    <fieldset class="formGroup">
-                        <legend>게시글 작성</legend>
-                        <div class="formField">
-                            <label for="boardType">분류: </label>
-                                <select id="boardType" name="boardType">
-							        <option value="1">1</option>
-							        <option value="2">2</option>
-							        <option value="3">3</option>
-							        <option value="4">4</option>
-							        <option value="5">5</option>
-							    </select>
-                        </div>
-                        <div class="formField">
-                            <label for="boardTitle">제목: </label>
-                            <input name="boardTitle" type="text" size="50" value="${board.boardTitle}">
-                        </div>
-                        <div class="formField">
-                            <label for="boardComment">내용: </label>
-                            <textarea name="boardComment" rows="20" cols="55">${board.boardComment}</textarea>
-                        </div>
-                    </fieldset>
-                </div>
-				</table>
-			</td>
-			</tr>
-<tr>
-    <td colspan="2" align="right">
-        <div id="creatorSection">
-            작성자: <span id="creatorId">SYSTEM</span>
-        </div>
-    </td>
-</tr>
-		<tr>
-			<td align="right">
-			<input id="submit" type="button" value="작성">
-				<input id="toList" type="button" value="목록"></input>
-			</td>
-		</tr>
-	</table>
-</form>	
+    <form class="boardWrite" id="formContainer">
+        <input type="hidden" id="pageNo" name="pageNo" value="${pageNo}">
+        <input type="hidden" id="pageSize" name="pageSize" value="${pageSize}">
+        <table align="center">
+            <tr align="right">
+                <th>행 추가 및 삭제</th>
+            </tr>
+            <tr align="right">
+                <td>
+                	<input id="checkAll" type="button" value="전체선택/해제">
+                    <input id="rowAppend" type="button" value="+">
+                    <input id="rowRemove" type="button" value="-">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table border="1">
+                        <tr class="inputRow">
+                        	<td ><input type="checkbox" value="checked"></input></td>
+                            <td >
+                            	<table>
+                            		<tr>
+                            		<td><label for="boardType">분류: </label>
+                                        <select id="boardType" name="boardType">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select></td>
+                            		</tr>
+                            		<tr>
+                            		<td>
+                            		                                        <label for="boardTitle">제목: </label>
+                                        <input name="boardTitle" type="text" size="50" value="${board.boardTitle}" >
+                            		</td>
+                            		</tr>
+                            		<tr>
+                            		<td>
+                            		 <label for="boardComment" style="vertical-align: top;">내용: </label>
+                                        <textarea name="boardComment" rows="20" cols="50">${board.boardComment}</textarea>
+                            		</td>
+                            		</tr>	
+                            	</table>
+                            </td>
+                        </tr>
+                        <tr id="creatorRow">
+                            <td colspan="1">작성자 </td>
+                            <td id="creatorId">SYSTEM</td>
+                        </tr>
+                        <tr>
+                            <td align="right" colspan="2">
+                                <input id="submit" type="button" value="작성">
+                                <input id="toList" type="button" value="목록">
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </form>
 </body>
+
 </html>

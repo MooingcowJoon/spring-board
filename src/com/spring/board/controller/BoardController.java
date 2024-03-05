@@ -13,6 +13,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,6 +68,7 @@ public class BoardController {
 		return "board/boardList";
 	}
 
+	
 	@RequestMapping(value = "/board/{boardType}/{boardNum}/boardView.do", method = RequestMethod.GET)
 	public String boardView(Locale locale, Model model, @PathVariable("boardType") String boardType,
 			@PathVariable("boardNum") int boardNum) throws Exception {
@@ -116,7 +118,6 @@ public class BoardController {
 
 		HashMap<String, String> result = new HashMap<String, String>();
 		CommonUtil commonUtil = new CommonUtil();		
-		System.out.println(boardVo);
 		List<BoardVo> boardList = boardVo.getBoardList();
 		int resultCnt = boardService.boardInsert(boardList);
 		result.put("result", resultCnt > 0 ? "success" : "error"); 
@@ -127,7 +128,12 @@ public class BoardController {
 	}
 
 	
-	
+	@RequestMapping(value = "/board/boardListAction.do", method = RequestMethod.GET)
+	@ResponseBody
+	public List<BoardVo> boardListAction(Locale locale,@RequestParam String boardType) throws Exception {
+		
+		return boardService.SelectBoardListByType(boardType);
+	}
 	
 	
 	

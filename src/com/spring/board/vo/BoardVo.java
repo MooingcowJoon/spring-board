@@ -17,8 +17,6 @@ public class BoardVo {
 	
     private List<BoardVo> boardList;
 
-    // 생성자, 게터, 세터 등 필요한 메서드를 추가할 수 있음
-
     public List<BoardVo> getBoardList() {
         return boardList;
     }
@@ -27,14 +25,6 @@ public class BoardVo {
         this.boardList = boardList;
     }
 	
-	/*
-	 * // 리스트로받기 private List<BoardVo> boardVoList;
-	 */
-	
-	/*
-	 * public List<BoardVo> getBoardVoList() { return boardVoList; } public void
-	 * setBoardVoList(List<BoardVo> boardVoList) { this.boardVoList = boardVoList; }
-	 */
 	public BoardVo() {
 	}
 	public int getTotalCnt() {

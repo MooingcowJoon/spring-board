@@ -54,6 +54,34 @@
 		)
 		WHERE NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
     </select>
+
+	    <select id="boardListByType" parameterType="String" resultMap="boardVo">
+        SELECT 
+		  BOARD_TYPE
+		  ,BOARD_NUM
+		  ,BOARD_TITLE
+		  ,BOARD_COMMENT
+		  ,TOTAL_CNT
+		  ,CREATE_TIME
+		  ,MODIFIED_TIME
+		FROM 
+		(
+		  SELECT
+		      	BOARD_TYPE
+				,BOARD_NUM
+				,BOARD_TITLE
+				,BOARD_COMMENT
+		      	,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
+		      	,CREATE_TIME
+		      	,MODIFIED_TIME
+		      	,COUNT(*) OVER() AS TOTAL_CNT
+			FROM
+				BOARD
+			WHERE
+				BOARD_TYPE = #{param}	
+		)
+		WHERE NUMROW BETWEEN 1 AND 10
+    </select>
     
     <select id="boardTotal" parameterType="Integer" resultType="Integer">
 		  SELECT
