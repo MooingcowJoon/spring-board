@@ -16,6 +16,8 @@
             COM_CODE
         WHERE
             CODE_TYPE = #{param}
+        ORDER BY
+        	CODE_ID asc
     </select>
 
 </mapper>

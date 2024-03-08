@@ -183,15 +183,52 @@ public class BoardController {
 	
     @RequestMapping(value = "/api/mbti.do", method = RequestMethod.GET)
     @ResponseBody
-    public  Map<String,List<BoardVo>> api(@RequestParam String commonCodeType) throws Exception{
-    	Map<String,List<BoardVo>> map = new HashMap<>(); 
-    	List<CommonCodeVo> codeList = commonCodeService.selectCommonCodeList(commonCodeType);
-    	for (CommonCodeVo code : codeList) {
-    		String codeName = code.getCodeName();
-    		List<BoardVo> questionList = boardService.SelectBoardListByType(codeName);
-    		map.put(codeName,questionList);
+    public  Map<String,List<String>> mbtiPage(@RequestParam String commonCodeType) throws Exception{
+    	Map<String,List<String>> map = new HashMap<>();
+
+    	
+    	List<BoardVo> questions = boardService.SelectBoardListByType(commonCodeType);
+    	
+    	List<CommonCodeVo> mbtiTypeList = commonCodeService.selectCommonCodeList(commonCodeType);
+    	for(CommonCodeVo mbtiType : mbtiTypeList) {
+    		map.put(mbtiType.getCodeName(), new ArrayList<String>());
+    	}
+    	
+    	
+    	for(BoardVo question : questions) {
+    		String mbtiType = question.getBoardTitle();
+    		map.get(mbtiType).add(question.getBoardComment());
     	}
     	return map;
     }
 	
+    @RequestMapping(value = "/api/mbti/submit.do", method = RequestMethod.POST)
+    @ResponseBody
+    public  String mbtiSubmit(@RequestBody Map<String,Integer> param) throws Exception{
+    	List<CommonCodeVo> mbtiCodeList = commonCodeService.selectCommonCodeList("mbti");
+    	
+    	char[] charArr = new char[4];
+    	for(int i=0; i<mbtiCodeList.size(); i+=2) {
+			String typeA = mbtiCodeList.get(i).getCodeName();
+			String typeB = mbtiCodeList.get(i+1).getCodeName();
+			
+			int scoreA = param.get(typeA);
+			int scoreB = param.get(typeB);
+			
+			char charA = typeA.charAt(0);
+			char charB = typeB.charAt(0);
+			
+			if(scoreA>scoreB) {
+				charArr[i/2]=charA;
+			}else if(scoreA<scoreB) {
+				charArr[i/2]=charB;
+			}else {
+				charArr[i/2]= charA<charB ? charA : charB; 
+			}
+    	}
+    	String mbti = new String(charArr);
+    	
+    	return mbti;
+    }
+    
 }
