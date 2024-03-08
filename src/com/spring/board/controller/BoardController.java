@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -25,9 +26,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.board.HomeController;
+import com.spring.board.service.CommonCodeService;
 import com.spring.board.service.boardService;
 import com.spring.board.vo.BoardVo;
 import com.spring.board.vo.PageVo;
+import com.spring.board.vo.common.CommonCodeVo;
 import com.spring.common.CommonUtil;
 
 @Controller
@@ -35,7 +38,8 @@ public class BoardController {
 
 	@Autowired
 	boardService boardService;
-
+	@Autowired
+	CommonCodeService commonCodeService;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
 	@RequestMapping(value = "/board/boardList.do", method = RequestMethod.GET)
@@ -169,4 +173,25 @@ public class BoardController {
 
 		return callbackMsg;
 	}
+	
+
+    @RequestMapping("/mbti.do")
+    public String index(){
+        return "mbti";
+    }
+
+	
+    @RequestMapping(value = "/api/mbti.do", method = RequestMethod.GET)
+    @ResponseBody
+    public  Map<String,List<BoardVo>> api(@RequestParam String commonCodeType) throws Exception{
+    	Map<String,List<BoardVo>> map = new HashMap<>(); 
+    	List<CommonCodeVo> codeList = commonCodeService.selectCommonCodeList(commonCodeType);
+    	for (CommonCodeVo code : codeList) {
+    		String codeName = code.getCodeName();
+    		List<BoardVo> questionList = boardService.SelectBoardListByType(codeName);
+    		map.put(codeName,questionList);
+    	}
+    	return map;
+    }
+	
 }
