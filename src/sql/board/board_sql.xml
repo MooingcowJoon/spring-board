@@ -82,7 +82,36 @@
 		)
 		WHERE NUMROW BETWEEN 1 AND 20
     </select>
-    
+    <select id="boardListByTypeList" parameterType="java.util.List" resultMap="boardVo">
+    SELECT 
+        BOARD_TYPE
+        ,BOARD_NUM
+        ,BOARD_TITLE
+        ,BOARD_COMMENT
+        ,TOTAL_CNT
+        ,CREATE_TIME
+        ,MODIFIED_TIME
+    FROM 
+    (
+        SELECT
+            BOARD_TYPE
+            ,BOARD_NUM
+            ,BOARD_TITLE
+            ,BOARD_COMMENT
+            ,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
+            ,CREATE_TIME
+            ,MODIFIED_TIME
+            ,COUNT(*) OVER() AS TOTAL_CNT
+        FROM
+            BOARD
+        WHERE
+            BOARD_TYPE IN
+            <foreach collection="list" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+    )
+    WHERE NUMROW BETWEEN 1 AND 20
+</select>
     <select id="boardTotal" parameterType="Integer" resultType="Integer">
 		  SELECT
 		      	COUNT(*) AS TOTAL_CNT

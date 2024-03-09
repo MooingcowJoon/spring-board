@@ -75,4 +75,8 @@ public class boardServiceImpl implements boardService{
 		return boardDao.boardDelete(boardVo);
 	}
 	
+	@Override
+	public List<BoardVo> selectBoardListByTypeList(List<String> boardTypeList) throws Exception {
+		return boardDao.selectBoardListByTypeList(boardTypeList);
+	}
 }

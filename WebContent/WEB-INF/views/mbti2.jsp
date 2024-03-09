@@ -18,85 +18,46 @@
     // 전역 변수 정의	
     	// ** 주의 사항 ** pageNo 는 0 인덱싱 (1번째 페이지의 pageNo 는 0)
     	
-
-		// 유저 입력시 점수 반영할 정수 배열 객체 (양수, 음수로 타입 나누고 0일시 알파벳순서대로)
-   			// ex ) SOCRE[0] > 0? 'E' (SOCRE[0] < 0 ? 'I' : 'E')
- 				// --> 알파벳순서는 따로 아스키코드안쓰고 하드코딩함 
- 				// --> 아스키코드로 계산 함
-        var USER_INPUT = {
- 				E : 0,
-				I : 0,
-				S : 0,
-				N : 0,
-				T : 0,
-				F : 0,
-				J : 0,
-				P : 0
- 				}
-
     	// "/mbti.do" 페이지 요청시 최초 한번 실행되는 함수
         var initPage = function(){
    			// 동적 생성 요소에 필요한 인자값(문항내용 등) 서버에 요청
             $j.get('/api/mbti.do?commonCodeType=mbti','json')
             .done(json => {  //json =  Map<String,List<String>> // 문항vo 
             	
-				console.log(json)            	
-    	    	var questionMap=new Map();
-    	        for (var key in json) {
-    	            if (json.hasOwnProperty(key)) {
-    	            	questionMap.set(key, json[key]);
-    	            }
+		    	var pageSize = 4
+		    	
+    	        for (var i = 0; i < pageSize; i++) {
+    	        	var pageNo = i
+ 	        		var page = $j('#questionPage-'+pageNo)
+ 	        		
+ 	        		
+ 	        			
+    	        	console.log(json[i])
+    	        	var questionsPerPage = (json.legnth/pageSize)
+    	        	for(var j= 0; j<questionsPerPage; j++){
+    	        		var qNo = i*questionsPerPage+j
+	 	        		var html = '<div class="eachQuestion">';
+	 	        		html += '<p class="question-title">문항 '+qNo+' ) '+json[qNo]+'</p>';
+    	               
+	 	             	var answerArr =[
+	 	          		   '매우 동의',
+	 	          		   '동의',
+	 	          		    '약간 동의',
+	 	          		    '모르겠음',
+	 	          		    '약간 비동의',
+	 	          		    '비동의',
+	 	          		    '매우 비동의'
+	 	          		]
+	 	        		for (var k = 0; i < 7; k++) {
+    	                	var radioId = i+'-'+j+'-'+k
+    	                    html += '<input type="radio id='+radioId+' name='+radioId+' value='+(k+1)+'>';
+    	                    html += '<label for='+ radioId +'>' +answerArr[k]+ '</label>';
+    	                }
+    	                    html += '</div>';
+    	                    page.append(html)
+    	        	}
     	        }
-    	        
-    	        
-//     	     pageTypesEnum = [['E','I','외향 VS 내향']
-//     						,['S','N','감각 VS 직관']
-//     						,['T','F','사고 VS 감정']
-//     						,['J','P','판단 VS 인식']]
-
-	    			// 각 페이지별 정적 요소 이넘
-		    	var MBTI_TYPES =[
-		    				//긍정타입, 부정타입, 페이지 타이틀
-							['E','I','외향 VS 내향']
-							,['I','E','외향 VS 내향']
-							,['S','N','감각 VS 직관']
-							,['N','S','감각 VS 직관']
-							,['T','F','사고 VS 감정']
-							,['F','T','사고 VS 감정']
-							,['J','P','판단 VS 인식']
-							,['P','J','판단 VS 인식']]
-													
-			    
-    	        for (var i = 0; i < MBTI_TYPES.length; i+=2) {
-    	        	
-    	        	// i가 페이지번호를 뜻함
-    	        	var pageNo = (i/2)
-    	        	var positiveType = MBTI_TYPES[i][0]
-    	        	var negativeType = MBTI_TYPES[i][1]	 
- 	        		 // 'E' 에 해당하는 문항들
- 	        		 
- 	        		 // 'E' 문항이 들어갈 페이지
- 	        		 var page = $j('#questionPage-'+pageNo)
- 	        		 page.attr('pageTitle',MBTI_TYPES[i][2])
- 	        		 page.attr('positiveType',positiveType)
- 	        		 page.attr('negativeType',negativeType)
- 	        		 
- 	        	     var typeArr =  [positiveType, negativeType]		 
- 	        			var indexCnt = 0
-    	        	 for (var j=0; j<typeArr.length; j++){
-    	        		 	questions= questionMap.get(typeArr[j])
-    	        		 	
-  	        		   		 questions.forEach(function(questionString,questionIndex){
-	   	        		   		page.append(generateQuestions(positiveType
-					 						,negativeType
-					 						,questionString
-					 						,++indexCnt
-					 						,pageNo))
-		   	        		 })
-	    	        	 }
-    	        	 }
-    	        // 첫째페이지 디스플레이
-    	       	pageShow(0)
+            	$j('#questionPage-0').show()
     	    	
     	    })// 에러시 alert띄움
              .fail(json=>alert(json))

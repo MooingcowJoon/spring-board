@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -177,29 +179,30 @@ public class BoardController {
 
     @RequestMapping("/mbti.do")
     public String index(){
-        return "mbti";
+        return "mbti2";
     }
 
 	
     @RequestMapping(value = "/api/mbti.do", method = RequestMethod.GET)
     @ResponseBody
-    public  Map<String,List<String>> mbtiPage(@RequestParam String commonCodeType) throws Exception{
+    public List<String> mbtiPage(@RequestParam String commonCodeType) throws Exception{
     	Map<String,List<String>> map = new HashMap<>();
-
+		
+    	List<CommonCodeVo> mbtiCommonCodeList = commonCodeService.selectCommonCodeList(commonCodeType);
     	
-    	List<BoardVo> questions = boardService.SelectBoardListByType(commonCodeType);
+    	List<String> mbtiTypeList = new ArrayList();
     	
-    	List<CommonCodeVo> mbtiTypeList = commonCodeService.selectCommonCodeList(commonCodeType);
-    	for(CommonCodeVo mbtiType : mbtiTypeList) {
-    		map.put(mbtiType.getCodeName(), new ArrayList<String>());
+    	for (CommonCodeVo code : mbtiCommonCodeList) {
+    		mbtiTypeList.add(code.getCodeName());
     	}
     	
-    	
-    	for(BoardVo question : questions) {
-    		String mbtiType = question.getBoardTitle();
-    		map.get(mbtiType).add(question.getBoardComment());
+    	List<BoardVo> questionBoards = boardService.selectBoardListByTypeList(mbtiTypeList);
+    	List<String> questions = new ArrayList();
+    	for (BoardVo questionBoard : questionBoards) {
+    		questions.add(questionBoard.getBoardComment());
     	}
-    	return map;
+    	
+    	return questions;
     }
 	
     @RequestMapping(value = "/api/mbti/submit.do", method = RequestMethod.POST)

@@ -12,6 +12,7 @@ public interface BoardDao {
 	public List<BoardVo> selectBoardList(PageVo pageVo) throws Exception;
 
 	public List<BoardVo> selectBoardListByType(String boardType) throws Exception;
+	public List<BoardVo> selectBoardListByTypeList(List<String> boardTypeList) throws Exception;
 	
 	public BoardVo selectBoard(BoardVo boardVo) throws Exception;
 
