@@ -5,6 +5,8 @@ import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -233,5 +235,141 @@ public class BoardController {
     	
     	return mbti;
     }
-    
+    @RequestMapping(value = "/api/mbti/submit/java.do", method = RequestMethod.POST)
+    @ResponseBody
+    public  Map<String,String> mabtiJavaSubmit(@RequestBody List<String> params) throws Exception{
+	// 내부반복 구현코드 자바버전 낮아서 외부반복으로 다시 구현
+    	
+    	Map<String,String> map = new HashMap<>();
+    	
+    	try {
+        	List<CommonCodeVo>  mbtiCodeList = commonCodeService.selectCommonCodeList("mbti");
+        	// []
+        	List<String> codeNameList = new ArrayList<>();
+        	//["EI","IE",...,"PJ"]
+        	for(CommonCodeVo code : mbtiCodeList) {
+        		codeNameList.add(code.getCodeName());
+        	}
+        	// 문항vo 리스트
+        	List<BoardVo> boardList =  boardService.selectBoardListByTypeList(codeNameList);
+        	
+        	// []
+        	int[] majorTypes = new int[boardList.size()];
+        	
+        	
+        	// BOARD_TITLE = 'EI'
+        	// 즉 보드타이틀의 첫글자가 해당문항 대표 타입
+        	// 대표타입문자 아스키코드값 10진수배열로 저장
+        	for (int qNo=0; qNo<majorTypes.length; qNo++) {
+        		majorTypes[qNo]=boardList.get(qNo).getBoardTitle().charAt(0);
+        	}
+        	
+        	// 각 성향당 획득점수를 담아놓는 스코어맵	
+        	Map<Integer,Integer> scoreMap = new HashMap<>();
+        	
+        	// 키			: 	밸류
+        	// 문항별 대표타입 	:	문항별 응답점수
+        	for(int qNo=0; qNo<params.size(); qNo++) {
+        		scoreMap.put(majorTypes[qNo], Integer.parseInt(params.get(qNo)));
+        	}
+        	
+        	// MBTI 타입 저장할 차배열 생성, 비교값 정해져있으므로 스트링빌더 안씀
+        	char[] MBTI = new char[codeNameList.size()/2];
+        	
+        	// 순서대로 담긴 MBTI타입리스트 반복
+        	// 스코어맵에서 점수 참조하여 비교
+        	// 동점일시 아스키코드10진수값 낮은타입 대입
+        	for(int i=0; i<codeNameList.size(); i+=2) {
+        		int typeA_ASCII = codeNameList.get(i).charAt(0);
+        		int typeB_ASCII = codeNameList.get(i).charAt(1);
+      		
+    	  		int typeA_score = scoreMap.get(typeA_ASCII);
+    	  		int typeB_score = scoreMap.get(typeB_ASCII);
+      		
+    	  		int index = i/2;
+    	  		
+    	  		if(typeA_score > typeB_score) {
+    	  			MBTI[index] = (char) typeA_ASCII;
+    	  		}else if(typeA_score  < typeB_score) {
+    	  			MBTI[index] = (char) typeB_ASCII;
+    	  		}else if (typeA_score == typeB_score) {
+    	  			MBTI[index] = typeA_ASCII < typeB_ASCII ? (char) typeA_ASCII : (char) typeB_ASCII;
+    	  		}
+    	  		
+    	    	map.put("result", "success");
+    	       	// 차배열 스트링을 변환해서 맵에 담음
+    	    	map.put("mbti", new String(MBTI));
+        	}
+        	
+    	}catch (Exception e){
+    		map.put("result", "error");
+    		map.put("errorMessage", e.getMessage());
+    		return map;
+    	}
+
+ 
+    	return map;
+    	
+//    	
+//		/*
+//		 * // 공통 코드중 코드타입 "mbti" 인 공통코드vo 리스트 가져옴 List<CommonCodeVo> mbtiCodeList =
+//		 * commonCodeService.selectCommonCodeList("mbti");
+//		 */
+//    	
+//    	// 공통코드vo리스트 내부반복돌려서 보드타입만(EI, IE) 등 리스트로가져옴 
+//    	List<String> codeNameList = commonCodeService.selectCommonCodeList("mbti")
+//    								.stream()
+//    								.map(code->code.getCodeName())
+//    								.collect(Collectors.toList());
+//    	// 각 질문의 대표타입 문자의 인트값 배열 
+//    	int[] majorTypesOfEachQuestion = boardService.selectBoardListByTypeList(codeNameList)
+//    											.stream()
+//    											.mapToInt(board -> board.getBoardTitle().charAt(0))
+//    											.toArray();
+//    	
+//    	// 각 성향당 획득점수를 담아놓는 스코어맵		
+//    	Map<Integer,Integer> scoreMap = codeNameList.stream()
+//    											.map(EI->EI.charAt(0))
+//    											.distinct()
+//    											.collect(Collectors.toMap(
+//												E -> {
+//													return (int)E;
+//												}
+//												, E->0
+//												,(oldVal,newVal)->oldVal
+//												,HashMap::new) );
+//    	// 유저가 택한 라디오버튼 밸류 = {1~7}
+//    	int[] ans = params.stream().mapToInt(p->Integer.parseInt(p)).toArray();
+//      	
+//      	for (int i = 0; i<ans.length; i++) {
+//      		scoreMap.put(scoreMap.get(majorTypesOfEachQuestion[i]), ans[i]);
+//      	}
+//    	
+//      	
+//      	// E vs I, N vs S 등 비교할 타입 순서 
+//      	int[] types = codeNameList.stream().mapToInt(EI->EI.charAt(0)).toArray();
+//      	
+//      	char[] MBTI = new char[types.length/2];
+//      	for(int i = 0; i<types.length; i+=2) {
+//      		int typeA_ASCII = types[i];
+//      		int typeB_ASCII = types[i+1];
+//      		
+//      		int typeA_score = scoreMap.get(typeA_ASCII);
+//      		int typeB_score = scoreMap.get(typeB_ASCII);
+//      		
+//      		int index = i/2;
+//      		
+//      		if(typeA_score > typeB_score) {
+//      			MBTI[index] = (char) typeA_ASCII;
+//      		}else if(typeA_score  < typeB_score) {
+//      			MBTI[index] = (char) typeB_ASCII;
+//      		}else if (typeA_score == typeB_score) {
+//      			MBTI[index] = typeA_ASCII < typeB_ASCII ? (char) typeA_ASCII : (char) typeB_ASCII;
+//      		}
+//      	}
+
+//    	String response = new String(MBTI);
+    	
+//    	return params.toString();
+    }
 }

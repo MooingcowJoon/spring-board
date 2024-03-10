@@ -111,6 +111,8 @@
             </foreach>
     )
     WHERE NUMROW BETWEEN 1 AND 20
+    ORDER BY
+    	BOARD_NUM
 </select>
     <select id="boardTotal" parameterType="Integer" resultType="Integer">
 		  SELECT
