@@ -258,37 +258,47 @@ public class BoardController {
     	
     	
     	try {
+    		//반복문 외부 변수
     		int pageSize = 4;
     		int questionsPerPage = params.size()/pageSize;
-    		// 타입 : 점수 쌍으로 각 타입별 점수 카운팅할 맵 객체 초기화
-    		List<HashMap<Character,Integer>> scoreMapList = new ArrayList<>();
-			
+    		
     		char[] MBTI = new char[pageSize];
+
+    		// 4개 페이지사이즈만큼 반복
     		for (int i=0; i<pageSize; i++) {
 
-    			
+    			// 타입 : 점수 쌍으로 각 타입별 점수 카운팅할 맵 객체 초기화, 포문 블락안에 선언
     	        Map<Character, Integer> scoreMap = new HashMap<Character,Integer>();
     	        
-    	        
-    			for(int j=0; j<params.size()/pageSize; j++) {
-    				
+    	        // 20/4 = 5번 반복
+    			for(int j=0; j<questionsPerPage; j++) {
+    				// 문항 번호로 유저 인풋 맵 가져옴
     				Map<String, String> userInput = params.get(i*questionsPerPage+j); 
     				
+    				// {"EI","PJ" 등}
         			String types = userInput.get("types");
+        			
+        			// 'E'
         			char type1 = types.charAt(0);
+        			// 'I'
         			char type2 = types.charAt(1);
         			
+        			// 스코어맵에 엔트리 초기화안됐을시 초기화
         			if(!scoreMap.containsKey(type1)) {
         				scoreMap.put(type1, 0);
         			}
         			if(!scoreMap.containsKey(type2)) {
         				scoreMap.put(type2, 0);
         			}
-					
+					// 유저가 입력한 라디오 밸류 {1~7}
         			int checkedRadioValue = Integer.parseInt(userInput.get("checkedRadioValue"));
         			
+        			// 라디오밸류값 점수로 환산하여 누산할 스코어 변수 선언 
         			int addScore=0;
+        			// 긍정응답 또는 부정응답에 따라 누산할 타입용 변수 선언
         			char addType=type1;
+        			
+        			//라디오밸류 각 분기별로 변수에 값 할당 
         			if(checkedRadioValue == 1) {
         				addType = type1;
         				addScore = 3;
@@ -311,10 +321,18 @@ public class BoardController {
         				addType = type2;
         				addScore = 3;
         			}
+        			
+        			// 스코어맵에 누산 반영
         			scoreMap.put(addType, scoreMap.get(addType)+addScore);
     			}
+    			
+    			//맵엔트리값 반복돌리는동안 값 담아놓을 어레이
+    			// [아스키코드][환산점수]
+    			// [69][6] 
+    			// [73][3] 이런식
     			int[][] mapArr = new int[scoreMap.size()][2];
     			
+    			// 맵엔트리
     			int index=0;
     			
     			for(Map.Entry<Character, Integer> typeAndScore : scoreMap.entrySet()) {
