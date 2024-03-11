@@ -22,21 +22,30 @@
         var initPage = function(){
    			// 동적 생성 요소에 필요한 인자값(문항내용 등) 서버에 요청
             $j.get('/api/mbti.do?commonCodeType=mbti','json')
-            .done(json => {  //json =  Map<String,List<String>> // 문항vo 
+            .done(res => {  //json =  Map<String,List<String>> // 문항vo
             	
-		    	var pageSize = 4
-		    	
-		    	
-		    	var questionList = Object.values(json)
-		    	var questionsPerPage = (questionList.length/pageSize)
-		    	for (var i = 0; i < pageSize; i++) {
+            	if(res.result === "error"){
+            		alert("에러가 발생했습니다.")
+            	}else if(res.result === "success"){
+            		var json = JSON.parse(res.data)
+            		var pageSize = 4
+    		    	var questionsPerPage = (json.length/pageSize)
+    		    	console.log(json)
+		    		for (var i = 0; i < pageSize; i++) {
  	        		var page = $j('#questionPage-'+i)
-    	        	
+    	        	var firstLetter = json[i*questionsPerPage].boardTitle
     	        	for(var j= 0; j<questionsPerPage; j++){
+    	        		
     	        		var qNo = i*questionsPerPage+j
-    	        		var qTitle = questionList[qNo]
+    	        		var Q = json[qNo]
+    	        		var questionText = Q.boardComment
+    	        		
+    	        		var bothTypesToCompare = Q.boardType
+    	        		
+    	        		
+    	        		var isFirst = Q.boardTitle === firstLetter ? 0 : 1 
 	 	        		var html = '<div class="eachQuestion">';
-	 	        		html += '<p class="question-title">문항 '+(qNo+1)+' ) '+questionList[qNo]+'</p>';
+	 	        		html += '<p class="question-title">문항 '+(qNo+1)+' ) '+questionText+'</p>';
     	               
 	 	             	var answerArr =[
 	 	          		   '매우 동의',
@@ -49,13 +58,14 @@
 	 	          		]
 	 	        		for (var k = 0; k < 7; k++) {
     	                	var radioId = i+'-'+j+'-'+k
-    	                    html += '<input type="radio" id='+radioId+' name='+qNo+' value='+(k+1)+'>';
+    	                    html += '<input type="radio" types='+bothTypesToCompare+' id='+radioId+' name='+qNo+' value='+(k+1)+'>';
     	                    html += '<label for='+ radioId +'>' +answerArr[k]+ '</label>';
     	                }
     	                    html += '</div>';
     	                    page.append(html)
-    	        	}
-    	        }
+	    	       	}
+		    	   }
+           		}	
             	pageShow(0)
     	    	
     	    })// 에러시 alert띄움
@@ -121,24 +131,50 @@
         
         // 최종 응답 제출해서 결과창 생성하여 표시하는 함수 
         function finalSubmit(){
-				var inputs = $j('input[type="radio"]:checked').map((index,input)=>input.value).get();
-							
-				console.log('JSONparam(in RequestBody) = ' + JSON.stringify(inputs))
+        		
+        	// 리퀘스트 바디에 담을 자바스크립트 배열(객체) 선언
+        		var params = []
+        		
+        		// 각 질문 div객체에서 major타입, minor타입, 그리고 컨트롤러에서 활용할 typeIndex 데이터
+        		// 자바스크립트 객체에 딕셔너리 형태로 담아서 params에 삽입 
+        		$j('input[type="radio"]:checked').each(function(){
+        			
+        			params.push({
+        					checkedRadioValue : $j(this).val(),
+        					types : $j(this).attr('types')
+        				})
+        			})
+        			
+        	/* 		var checkedRadioValue = $j(this).find('input[type="radio"]:checked').val()
+					var major = $j(this).attr('major')
+					var minor = $j(this).attr('minor')
+					var typeIndex = $j(this).attr('typeIndex')
+					params.push({
+						checkedRadioValue : checkedRadioValue,
+						major : major,
+						minor : minor,
+						typeIndex : typeIndex
+					}) */
+					
+					
+				console.log('JSONparam(in RequestBody) = ' + JSON.stringify(params))
         	   $j.ajax({
 		        type: "POST",
 		        url: '/api/mbti/submit/java.do',
-		        data: JSON.stringify(inputs),
+		        data: JSON.stringify(params),
 		        contentType: "application/json",
 		        success: function(response) {
 					var result = response.result
 					
 					if(result === 'success'){
-						var mbti= response.mbti
-			        	$j('#pageTitle').text('결과 : '+mbti)
+												
+						var mbti= response.data
+						$j('#pageTitle').text('결과 : '+mbti)
 			        	$j('h4').remove()
 			        	$j('input[type="button"]').remove() 
 					}else if(result === 'error'){
 			        	$j('#pageTitle').text('에러가 발생했습니다.')
+			        	console.log(result.errorMessage)
 			        	$j('h4').remove()
 			        	$j('input[type="button"]').remove()
 					}

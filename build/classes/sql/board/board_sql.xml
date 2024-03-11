@@ -153,9 +153,9 @@
         ,#{boardTitle}
         ,#{boardComment}
         ,'SYSTEM'
-        ,TO_CHAR(SYSDATE)
+        ,TO_CHAR(SYSTIMESTAMP, 'YY/MM/DD HH24:MI:SS')
         ,'SYSTEM'
-        ,TO_CHAR(SYSDATE)
+        ,TO_CHAR(SYSTIMESTAMP, 'YY/MM/DD HH24:MI:SS')
         )
     </select>
 	

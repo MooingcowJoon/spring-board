@@ -98,7 +98,7 @@
 					<table id="boardTable" border = "1">
 						<tr>
 							<td width="80" align="center">
-	                            		<label for="boardType">분류: </label>
+	                            		<label for="boardType">Type </label>
                                         <select id="boardType" name="boardType">
                                             <option value="1">1</option>
                                             <option value="2">2</option>

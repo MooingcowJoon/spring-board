@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -187,24 +189,26 @@ public class BoardController {
 	
     @RequestMapping(value = "/api/mbti.do", method = RequestMethod.GET)
     @ResponseBody
-    public List<String> mbtiPage(@RequestParam String commonCodeType) throws Exception{
-    	Map<String,List<String>> map = new HashMap<>();
-		
-    	List<CommonCodeVo> mbtiCommonCodeList = commonCodeService.selectCommonCodeList(commonCodeType);
-    	
-    	List<String> mbtiTypeList = new ArrayList();
-    	
-    	for (CommonCodeVo code : mbtiCommonCodeList) {
-    		mbtiTypeList.add(code.getCodeName());
+    public Map<String,String> mbtiPage(@RequestParam String commonCodeType) throws Exception{
+    	Map<String,String> map = new HashMap<>();
+    	try {	
+    		List<CommonCodeVo> mbtiCommonCodeList = commonCodeService.selectCommonCodeList(commonCodeType);
+        	List<String> mbtiTypeList = new ArrayList();
+        	for (CommonCodeVo code : mbtiCommonCodeList) {
+        		mbtiTypeList.add(code.getCodeName());
+        	}
+        	
+        	List<BoardVo> questionBoards = boardService.selectBoardListByTypeList(mbtiTypeList);
+        	map.put("result","success");
+        	map.put("data", CommonUtil.toJson(questionBoards));
+        	
+    	}catch(Exception e) {
+    		map.put("result", "error");
+    		map.put("errorMessage", e.getMessage());
     	}
-    	
-    	List<BoardVo> questionBoards = boardService.selectBoardListByTypeList(mbtiTypeList);
-    	List<String> questions = new ArrayList();
-    	for (BoardVo questionBoard : questionBoards) {
-    		questions.add(questionBoard.getBoardComment());
-    	}
-    	
-    	return questions;
+    
+
+    	return map;
     }
 	
     @RequestMapping(value = "/api/mbti/submit.do", method = RequestMethod.POST)
@@ -237,79 +241,182 @@ public class BoardController {
     }
     @RequestMapping(value = "/api/mbti/submit/java.do", method = RequestMethod.POST)
     @ResponseBody
-    public  Map<String,String> mabtiJavaSubmit(@RequestBody List<String> params) throws Exception{
+    public  Map<String,String> mabtiJavaSubmit(@RequestBody List<Map<String,String>> params) throws Exception{
 	// 내부반복으로 구현내용 자바버전 8 미만이라 지원안돼서 외부반복으로 다시 구현
+    		/**
+    		 * params = [
+    		 * 		{
+    		 * 			"checkedRadioValue" 	: "3",
+    		 * 			"types"					: "EI",
+    		 * 		}
+    		 * ]
+    		 * 
+    		 */
     	
     	// 응답코드와 결과 문자열을 딕셔너리로 담을 맵
     	Map<String,String> map = new HashMap<>();
     	
+    	
     	try {
-        	List<CommonCodeVo>  mbtiCodeList = commonCodeService.selectCommonCodeList("mbti");
-        	// []
-        	List<String> codeNameList = new ArrayList<>();
-        	//["EI","IE",...,"PJ"]
-        	for(CommonCodeVo code : mbtiCodeList) {
-        		codeNameList.add(code.getCodeName());
-        	}
-        	// 문항vo 리스트
-        	List<BoardVo> boardList =  boardService.selectBoardListByTypeList(codeNameList);
-        	
-        	// [각 문항의 대표타입(ex:'E') 문자의 차코드 10진수값 담을 배열]
-        	int[] majorTypes = new int[boardList.size()];
-        	
-        	
-        	// BOARD_TITLE = 'EI'
-        	// 즉 보드타이틀의 첫글자가 해당문항 대표 타입
-        	// 대표타입문자 아스키코드값 10진수배열로 저장
-        	for (int qNo=0; qNo<majorTypes.length; qNo++) {
-        		majorTypes[qNo]=boardList.get(qNo).getBoardTitle().charAt(0);
-        	}
-        	
-        	// 각 성향당 획득점수를 담아놓는 스코어맵	
-        	Map<Integer,Integer> scoreMap = new HashMap<>();
-        	
-        	// 키			: 	밸류
-        	// 문항별 대표타입 	:	문항별 응답점수
-        	for(int qNo=0; qNo<params.size(); qNo++) {
-        		scoreMap.put(majorTypes[qNo], Integer.parseInt(params.get(qNo)));
-        	}
-        	
-        	// MBTI 타입 저장할 차배열 생성, 비교값 정해져있으므로 스트링빌더 안씀
-        	char[] MBTI = new char[codeNameList.size()/2];
-        	
-        	// 순서대로 담긴 MBTI타입리스트 반복
-        	// 스코어맵에서 점수 참조하여 비교
-        	// 동점일시 아스키코드10진수값 낮은타입 대입
-        	for(int i=0; i<codeNameList.size(); i+=2) {
-        		int typeA_ASCII = codeNameList.get(i).charAt(0);
-        		int typeB_ASCII = codeNameList.get(i).charAt(1);
-      		
-    	  		int typeA_score = scoreMap.get(typeA_ASCII);
-    	  		int typeB_score = scoreMap.get(typeB_ASCII);
-      		
-    	  		int index = i/2;
-    	  		
-    	  		if(typeA_score > typeB_score) {
-    	  			MBTI[index] = (char) typeA_ASCII;
-    	  		}else if(typeA_score  < typeB_score) {
-    	  			MBTI[index] = (char) typeB_ASCII;
-    	  		}else if (typeA_score == typeB_score) {
-    	  			MBTI[index] = typeA_ASCII < typeB_ASCII ? (char) typeA_ASCII : (char) typeB_ASCII;
-    	  		}
-    	  		
-    	    	map.put("result", "success");
-    	       	// 차배열 스트링을 변환해서 맵에 담음
-    	    	map.put("mbti", new String(MBTI));
-        	}
-        	
-    	}catch (Exception e){
-    		map.put("result", "error");
-    		map.put("errorMessage", e.getMessage());
-    		return map;
-    	}
+    		int pageSize = 4;
+    		int questionsPerPage = params.size()/pageSize;
+    		// 타입 : 점수 쌍으로 각 타입별 점수 카운팅할 맵 객체 초기화
+    		List<HashMap<Character,Integer>> scoreMapList = new ArrayList<>();
+			
+    		char[] MBTI = new char[pageSize];
+    		for (int i=0; i<pageSize; i++) {
 
+    			
+    	        Map<Character, Integer> scoreMap = new HashMap<Character,Integer>();
+    	        
+    	        
+    			for(int j=0; j<params.size()/pageSize; j++) {
+    				
+    				Map<String, String> userInput = params.get(i*questionsPerPage+j); 
+    				
+        			String types = userInput.get("types");
+        			char type1 = types.charAt(0);
+        			char type2 = types.charAt(1);
+        			
+        			if(!scoreMap.containsKey(type1)) {
+        				scoreMap.put(type1, 0);
+        			}
+        			if(!scoreMap.containsKey(type2)) {
+        				scoreMap.put(type2, 0);
+        			}
+					
+        			int checkedRadioValue = Integer.parseInt(userInput.get("checkedRadioValue"));
+        			
+        			int addScore=0;
+        			char addType=type1;
+        			if(checkedRadioValue == 1) {
+        				addType = type1;
+        				addScore = 3;
+        			}else if (checkedRadioValue == 2 ) {
+        				addType = type1;
+        				addScore = 2;
+        			}else if (checkedRadioValue == 3 ) {
+        				addType = type1;
+        				addScore = 1;
+        			}else if (checkedRadioValue == 4 ) {
+        				addType = type1;
+        				addScore = 0;
+        			}else if (checkedRadioValue == 5 ) {
+        				addType = type2;
+        				addScore = 1;
+        			}else if (checkedRadioValue == 6 ) {
+        				addType = type2;
+        				addScore = 2;
+        			}else if (checkedRadioValue == 7 ) {
+        				addType = type2;
+        				addScore = 3;
+        			}
+        			scoreMap.put(addType, scoreMap.get(addType)+addScore);
+    			}
+    			int[][] mapArr = new int[scoreMap.size()][2];
+    			
+    			int index=0;
+    			
+    			for(Map.Entry<Character, Integer> typeAndScore : scoreMap.entrySet()) {
+    				mapArr[index][0]=typeAndScore.getKey();
+    				mapArr[index++][1]=typeAndScore.getValue();
+    			}
+    			
+    			char type1= (char)mapArr[0][0];
+    			char type2 = (char)mapArr[1][0];
+    			
+    			int score1 = mapArr[0][1];
+    			int score2 = mapArr[1][1];
+    			
+    			// 점수 비교후 동점일시 아스키코드 비교
+    			if(score1 > score2) {
+    				MBTI[i]=type1;
+    			}else if(score1 < score2) {
+    				MBTI[i]=type2;
+    			}else if (score1 ==  score2) {
+    				MBTI[i]=type1<type2 ? type1 : type2;
+    			}
+    			
+    		}
+//    		
+//    		// 스코어 집계
+//    		// 20개 문항 응답에 대한 반복처리
+//    		for(Map<String, String> question : params) {
+//    			// 문항의 메이저 타입의 인덱스(types배열 키값으로 사용) 
+//    			
+//    			// 긍정응답시 반영할 타입
+//    			String t = question.get("types");
+//    			// 부정응답시 반영할 타입
+// 
+//    			// types배열에 각 타입 넣음(같은 값으로 여러번 할당됨)
+//    			types[typeIndex]= majorChar;
+//    			
+//    			// 라디오값 in {1 ~ 7}
+//    			int checkedRadioValue = Integer.parseInt(question.get("checkedRadioValue"));
+//    			
+//           		// 타입 스코어 엔트리 null일시 초기화
+//        		if(!scoreMap.containsKey(majorChar)) {
+//        			scoreMap.put(majorChar, 0);
+//        		}
+//        		if(!scoreMap.containsKey(minorChar)) {
+//        			scoreMap.put(minorChar, 0);
+//        		}
+//        		
+//        		
+//        		
+//        		int[] scoreForRadio = {3,2,1,0,1,2,3};
+//        		
+//    			// = 긍정 대답에 속하면 메이저타입 스코어 올림
+//    			if(checkedRadioValue < 4) {
+//    				// 증가시킬 점수는 4 - 라디오값
+//    				int addScore = 4 - checkedRadioValue;
+//    				// 메이저 타입 스코어엔트리 업데이트
+//    				scoreMap.put(majorChar,scoreMap.get(majorChar)+addScore);
+//    			
+//    			}
+//    			else if(checkedRadioValue > 4) { 
+//    				// = 부정 대답에 속하면 마이너타입 스코어 올림
+//    				int addScore = checkedRadioValue -4;
+//    				
+//    				scoreMap.put(minorChar,scoreMap.get(minorChar)+addScore);
+//    				
+//    				// 라디오값 0 이면 액션 없음
+//    			}
+//    		}
+//		// 스코어 집계 완료	
+//    		
+//		// 집계된 스코어를 통해 MBTI 타입 지정
+//    		// 4개의 타입 char 배열 
+//    		char[] MBTI = new char[pageSize];
+//    		
+//    		//전체 타입 8개에 대한 반복처리, 2개씩 
+//    		for (int i=0; i<types.length; i+=types.length/pageSize) {
+//    			char type1 = types[i];
+//    			char type2 = types[i+1];
+//    			
+//    			int score1 = scoreMap.get(type1);
+//    			int score2 = scoreMap.get(type2);
+//			//  MBTI 배열에 값 할당할 요소 인덱스 
+//    			int index = i/2;
+//    			
+//			// 점수 비교후 동점일시 아스키코드 비교
+//    			if(score1 > score2) {
+//    				MBTI[index]=type1;
+//    			}else if(score1 < score2) {
+//    				MBTI[index]=type2;
+//    			}else if (score1 ==  score2) {
+//    				MBTI[index]=type1<type2 ? type1 : type2;
+//    			}
+//    		}
+    		map.put("result", "success");
+    		map.put("data", new String(MBTI));
+    	}catch(Exception e) {
+    		map.put("result","error");
+    		map.put("errorMessage",e.getMessage());
+    	}
  
     	return map;
+    	}
     	
 //    	
 //		/*
@@ -372,5 +479,4 @@ public class BoardController {
 //    	String response = new String(MBTI);
     	
 //    	return params.toString();
-    }
 }
