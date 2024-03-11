@@ -123,7 +123,7 @@
         function finalSubmit(){
 				var inputs = $j('input[type="radio"]:checked').map((index,input)=>input.value).get();
 							
-				console.log('paramData = ' + JSON.stringify(inputs))
+				console.log('JSONparam(in RequestBody) = ' + JSON.stringify(inputs))
         	   $j.ajax({
 		        type: "POST",
 		        url: '/api/mbti/submit/java.do',

@@ -238,8 +238,9 @@ public class BoardController {
     @RequestMapping(value = "/api/mbti/submit/java.do", method = RequestMethod.POST)
     @ResponseBody
     public  Map<String,String> mabtiJavaSubmit(@RequestBody List<String> params) throws Exception{
-	// 내부반복 구현코드 자바버전 낮아서 외부반복으로 다시 구현
+	// 내부반복으로 구현내용 자바버전 8 미만이라 지원안돼서 외부반복으로 다시 구현
     	
+    	// 응답코드와 결과 문자열을 딕셔너리로 담을 맵
     	Map<String,String> map = new HashMap<>();
     	
     	try {
@@ -253,7 +254,7 @@ public class BoardController {
         	// 문항vo 리스트
         	List<BoardVo> boardList =  boardService.selectBoardListByTypeList(codeNameList);
         	
-        	// []
+        	// [각 문항의 대표타입(ex:'E') 문자의 차코드 10진수값 담을 배열]
         	int[] majorTypes = new int[boardList.size()];
         	
         	
