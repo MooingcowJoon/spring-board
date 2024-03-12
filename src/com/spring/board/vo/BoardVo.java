@@ -10,10 +10,10 @@ public class BoardVo {
 	private String 	boardTitle;
 	private String 	boardComment;
 	private String 	creator;
-	private String	modifier;
-	private int totalCnt;
 	private String createTime;
+	private String	modifier;
 	private String modifiedTime;
+	private int totalCnt;
 	private String boardTypeName;
 	
 	

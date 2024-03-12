@@ -27,12 +27,12 @@ public class BoardDaoImpl implements BoardDao{
 	/**
 	 * 
 	 * */
-	@Override
-	public List<BoardVo> selectBoardList(PageVo pageVo) throws Exception {
-		// TODO Auto-generated method stub
-		return sqlSession.selectList("board.boardList",pageVo);
-	}
-	
+//	@Override
+//	public List<BoardVo> selectBoardList(PageVo pageVo) throws Exception {
+//		// TODO Auto-generated method stub
+//		return sqlSession.selectList("board.boardList",pageVo);
+//	}
+//	
 	@Override
 	public List<BoardVo> selectBoardListByType(List<String> boardTypeList) throws Exception {
 		// TODO Auto-generated method stub
@@ -41,9 +41,9 @@ public class BoardDaoImpl implements BoardDao{
 	
 	
 	@Override
-	public int selectBoardCnt() throws Exception {
+	public int selectBoardCnt(List<String> boardTypeList) throws Exception {
 		// TODO Auto-generated method stub
-		return sqlSession.selectOne("board.boardTotal");
+		return sqlSession.selectOne("board.boardTotal",boardTypeList);
 	}
 	
 	@Override
@@ -73,9 +73,9 @@ public class BoardDaoImpl implements BoardDao{
 		return sqlSession.delete("board.boardDelete", boardVo);
 	}
 	
-	@Override
-	public List<BoardVo> selectBoardListByTypeList(List<String> boardTypeList) throws Exception {
-		
-		return sqlSession.selectList("board.boardListByTypeList", boardTypeList);
-	}
+//	@Override
+//	public List<BoardVo> selectBoardListByTypeList(List<String> boardTypeList) throws Exception {
+//		
+//		return sqlSession.selectList("board.boardListByTypeList", boardTypeList);
+//	}
 }

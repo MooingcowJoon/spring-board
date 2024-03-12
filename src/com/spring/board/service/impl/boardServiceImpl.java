@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.board.dao.BoardDao;
+import com.spring.board.dao.CommonCodeDao;
 import com.spring.board.service.boardService;
 import com.spring.board.vo.BoardVo;
 import com.spring.board.vo.PageVo;
@@ -22,12 +23,12 @@ public class boardServiceImpl implements boardService{
 		return boardDao.selectTest();
 	}
 	
-	@Override
-	public List<BoardVo> SelectBoardList(PageVo pageVo) throws Exception {
-		// TODO Auto-generated method stub
-		
-		return boardDao.selectBoardList(pageVo);
-	}
+//	@Override
+//	public List<BoardVo> SelectBoardList(PageVo pageVo) throws Exception {
+//		// TODO Auto-generated method stub
+//		
+//		return boardDao.selectBoardList(pageVo);
+//	}
 	
 	@Override
 	public List<BoardVo> selectBoardListByType(List<String> boardTypeList) throws Exception {
@@ -36,9 +37,9 @@ public class boardServiceImpl implements boardService{
 	}
 	
 	@Override
-	public int selectBoardCnt() throws Exception {
+	public int selectBoardCnt(List<String> boardTypeList) throws Exception {
 		// TODO Auto-generated method stub
-		return boardDao.selectBoardCnt();
+		return boardDao.selectBoardCnt(boardTypeList);
 	}
 	
 	@Override
@@ -73,10 +74,5 @@ public class boardServiceImpl implements boardService{
 	public int boardDelete(BoardVo boardVo) throws Exception {
 		// TODO Auto-generated method stub
 		return boardDao.boardDelete(boardVo);
-	}
-	
-	@Override
-	public List<BoardVo> selectBoardListByTypeList(List<String> boardTypeList) throws Exception {
-		return boardDao.selectBoardListByTypeList(boardTypeList);
 	}
 }

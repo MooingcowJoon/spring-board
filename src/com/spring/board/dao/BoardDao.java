@@ -9,14 +9,14 @@ public interface BoardDao {
 
 	public String selectTest() throws Exception;
 
-	public List<BoardVo> selectBoardList(PageVo pageVo) throws Exception;
+//	public List<BoardVo> selectBoardList(PageVo pageVo) throws Exception;
 
 	public List<BoardVo> selectBoardListByType(List<String> boardTypeList) throws Exception;
-	public List<BoardVo> selectBoardListByTypeList(List<String> boardTypeList) throws Exception;
+//	public List<BoardVo> selectBoardListByTypeList(List<String> boardTypeList) throws Exception;
 	
 	public BoardVo selectBoard(BoardVo boardVo) throws Exception;
 
-	public int selectBoardCnt() throws Exception;
+	public int selectBoardCnt(List<String> boardTypeList) throws Exception;
 
 	public int boardInsert(BoardVo boardVo) throws Exception;
 	

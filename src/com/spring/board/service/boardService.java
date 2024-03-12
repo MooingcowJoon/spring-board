@@ -8,16 +8,13 @@ import com.spring.board.vo.PageVo;
 public interface boardService {
 
 	public String selectTest() throws Exception;
-
-	public List<BoardVo> SelectBoardList(PageVo pageVo) throws Exception;
+//	public List<BoardVo> SelectBoardList(PageVo pageVo) throws Exception;
 	
 	public List<BoardVo> selectBoardListByType(List<String> boardTypeList) throws Exception;
-	
-	public List<BoardVo> selectBoardListByTypeList(List<String> boardTypeList) throws Exception;
 
 	public BoardVo selectBoard(String boardType, int boardNum) throws Exception;
 
-	public int selectBoardCnt() throws Exception;
+	public int selectBoardCnt(List<String> boardTypeList) throws Exception;
 
 	public int boardInsert(List<BoardVo> boardVos) throws Exception;
 

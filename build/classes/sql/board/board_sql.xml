@@ -7,7 +7,9 @@
     	<result property="boardNum" 	column="BOARD_NUM"/>
     	<result property="boardTitle" 	column="BOARD_TITLE"/>
     	<result property="boardComment" column="BOARD_COMMENT"/>
+    	<result property="creator" column="CREATOR"/>
     	<result property="createTime" column="CREATE_TIME"/>
+    	<result property="modifier" column="MODIFIER"/>
     	<result property="modifiedTime" column="MODIFIED_TIME"/>
     	<result property="boardTypeName" column="CODE_NAME"/>
     </resultMap>
@@ -30,7 +32,7 @@
 				BOARD	
 		)
 		WHERE NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10 -->
-    <select id="boardList" parameterType="com.spring.board.vo.PageVo" resultMap="boardVo">
+<!--     <select id="boardList" parameterType="com.spring.board.vo.PageVo" resultMap="boardVo">
         SELECT 
 		  BOARD_TYPE
 		  ,BOARD_NUM
@@ -54,18 +56,20 @@
 				BOARD	
 		)
 		WHERE NUMROW BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
-    </select>
+    </select> -->
 
-	    <select id="boardListByType" parameterType="java.util.List" resultMap="boardVo">
+	<select id="boardListByType" parameterType="java.util.List" resultMap="boardVo">
         SELECT 
-		  A.BOARD_TYPE
-		  ,A.BOARD_NUM
-		  ,A.BOARD_TITLE
-		  ,A.BOARD_COMMENT
-		  ,A.TOTAL_CNT
-		  ,A.CREATE_TIME
-		  ,A.MODIFIED_TIME
-		  ,B.CODE_NAME
+			  A.BOARD_TYPE
+			  ,A.BOARD_NUM
+			  ,A.BOARD_TITLE
+			  ,A.BOARD_COMMENT
+			  ,A.TOTAL_CNT
+			  ,A.CREATOR
+			  ,A.CREATE_TIME
+			  ,A.MODIFIER
+			  ,A.MODIFIED_TIME
+			  ,B.CODE_NAME
 		FROM 
 		(
 		  SELECT
@@ -74,72 +78,59 @@
 				,BOARD_TITLE
 				,BOARD_COMMENT
 		      	,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
+		      	,CREATOR
 		      	,CREATE_TIME
+		      	,MODIFIER
 		      	,MODIFIED_TIME
 		      	,COUNT(*) OVER() AS TOTAL_CNT
 			FROM
 				BOARD
 			WHERE
 				BOARD_TYPE IN
-            <foreach collection="list" item="boardType" open="(" separator="," close=")">
-                #{boardType}
-            </foreach>
+		            <foreach collection="list" item="boardType" open="(" separator="," close=")">
+		                #{boardType}
+		            </foreach>
 		) A, COM_CODE B
 		WHERE 
 			NUMROW BETWEEN 1 AND 10
-		AND A.BOARD_TYPE = B.CODE_ID
+		AND 
+			A.BOARD_TYPE = B.CODE_ID
 		ORDER BY
 			BOARD_NUM DESC
     </select>
-    <select id="boardListByTypeList" parameterType="java.util.List" resultMap="boardVo">
-    SELECT 
-        BOARD_TYPE
-        ,BOARD_NUM
-        ,BOARD_TITLE
-        ,BOARD_COMMENT
-        ,TOTAL_CNT
-        ,CREATE_TIME
-        ,MODIFIED_TIME
-    FROM 
-    (
-        SELECT
-            BOARD_TYPE
-            ,BOARD_NUM
-            ,BOARD_TITLE
-            ,BOARD_COMMENT
-            ,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
-            ,CREATE_TIME
-            ,MODIFIED_TIME
-            ,COUNT(*) OVER() AS TOTAL_CNT
-        FROM
-            BOARD
-        WHERE
-            BOARD_TYPE IN
-            <foreach collection="list" item="item" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-    )
-    WHERE NUMROW BETWEEN 1 AND 20
-    ORDER BY
-    	BOARD_NUM
-</select>
-    <select id="boardTotal" parameterType="Integer" resultType="Integer">
+    
+    
+    <select id="boardTotal" parameterType="java.util.List" resultType="Integer">
 		  SELECT
 		      	COUNT(*) AS TOTAL_CNT
 			FROM
-				BOARD	
+				BOARD
+			WHERE
+				BOARD_TYPE IN
+		            <foreach collection="list" item="boardType" open="(" separator="," close=")">
+		                #{boardType}
+		            </foreach>
     </select>
     	
     <select id="boardView" parameterType="com.spring.board.vo.BoardVo" resultMap="boardVo">
     	SELECT
-        	BOARD_TYPE
-			,BOARD_NUM
-			,BOARD_TITLE
-			,BOARD_COMMENT
+			  A.BOARD_TYPE
+			  ,A.BOARD_NUM
+			  ,A.BOARD_TITLE
+			  ,A.BOARD_COMMENT
+			  ,A.CREATOR
+			  ,A.CREATE_TIME
+			  ,A.MODIFIER
+			  ,A.MODIFIED_TIME
+			  ,B.CODE_NAME  
 		FROM
-			BOARD
-    	WHERE 	BOARD_TYPE = #{boardType}
-    	AND 	BOARD_NUM  = #{boardNum}
+			BOARD A, COM_CODE B
+    	WHERE 	
+    		BOARD_TYPE = #{boardType}
+    	AND 	
+    		BOARD_NUM  = #{boardNum}
+    	AND 	
+    		A.BOARD_TYPE = B.CODE_ID	
     </select>	
     <!-- BOARD_NUM 채번 시 COALESCE 함수로 null을 1로 변환 (게시글 1개도 없는 경우)-->
     <select id="boardInsert" parameterType="com.spring.board.vo.BoardVo">

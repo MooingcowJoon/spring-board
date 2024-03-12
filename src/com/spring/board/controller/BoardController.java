@@ -70,7 +70,7 @@ public class BoardController {
 			;
 		}
 
-		totalCnt = boardService.selectBoardCnt();
+		totalCnt = boardService.selectBoardCnt(boardTypeList);
 
 		boardList = boardService.selectBoardListByType(boardTypeList);
 		model.addAttribute("commonCodeList",commonCodeList);
@@ -87,17 +87,16 @@ public class BoardController {
     	Map<String,String> map = new HashMap<>();
     	try {
     		List<CommonCodeVo> commonCodeList = commonCodeService.selectCommonCodeList("menu");
-    		Map<String,String> typeMap = new HashMap<>();
     		boolean selectNone = param.size()==0;
 			for(CommonCodeVo code : commonCodeList) {
 				if(selectNone) {
 					param.add(code.getCodeId());
 				}
-				typeMap.put(code.getCodeId(), code.getCodeName());
 			}
     		List<BoardVo> boardList = boardService.selectBoardListByType(param);
     		map.put("result", "success");
     		map.put("data", CommonUtil.toJson(boardList));
+    		map.put("boardCnt", ""+boardService.selectBoardCnt(param));
     	}catch (Exception e) {
     		map.put("result", "error");
     	}
@@ -110,17 +109,14 @@ public class BoardController {
 	public String boardView(Locale locale, Model model, @PathVariable("boardType") String boardType,
 			@PathVariable("boardNum") int boardNum) throws Exception {
 
-		BoardVo boardVo = new BoardVo();
 
-		boardVo = boardService.selectBoard(boardType, boardNum);
+		BoardVo board = boardService.selectBoard(boardType, boardNum);
 		
-		if(boardVo == null) {
+		if(board == null) {
 			model.addAttribute("response","error");
 		}
-		model.addAttribute("boardType", boardType);
-		model.addAttribute("boardNum", boardNum);
-		model.addAttribute("board", boardVo);
-
+		model.addAttribute("board", board);
+		
 		return "board/boardView";
 	}
 
@@ -223,7 +219,7 @@ public class BoardController {
         		mbtiTypeList.add(code.getCodeName());
         	}
         	
-        	List<BoardVo> questionBoards = boardService.selectBoardListByTypeList(mbtiTypeList);
+        	List<BoardVo> questionBoards = boardService.selectBoardListByType(mbtiTypeList);
         	map.put("result","success");
         	map.put("data", CommonUtil.toJson(questionBoards));
         	

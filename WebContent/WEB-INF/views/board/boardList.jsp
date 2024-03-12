@@ -12,41 +12,71 @@
 
 	$j(document).ready(function(){
 		/* 글쓰기 버튼 클릭시, 페이지 이동 요청에 perPage 전달 */
-		$j('#boardWriteLink').click((e)=>{
+/* 		$j('#boardWriteLink').click((e)=>{
 			e.preventDefault();
 			window.location.href = '/board/boardWrite.do'
+		}) */
+		
+		// 체크박스 클릭 이벤트를 결과를 '전체' 체크박스에 적용
+		function checkAllResult(){
+			var checkOrNot = countUncheckedTypeCheckBox() === 0
+			$j('#checkAll').prop('checked',checkOrNot)
+		}
+		
+		// '보드타입' 체크박스중 체크안된 박스 갯수 반환
+		function countUncheckedTypeCheckBox(){
+			var totalCount = $j('.checkbox-boardType').length
+			var checkedCount =  $j('.checkbox-boardType:checked').length
+			
+			return totalCount - checkedCount
+		}
+		// 체크박스 인풋요소 부모인 td요소에 클릭시 발생이벤트 핸들러 함수 등록
+		$j('#checkBoxArea').on('click','input[type="checkbox"]',function(){
+			
+			// 클릭 이벤트 타겟이 '전체' 체크박스일경우 분기처리 
+			if($j(this).attr('id') ==='checkAll'){
+				// 체크안된 타입 체크박스 수가 0이상이면 전체체크, 아니면 전체체크해제
+				var checkOrNot = countUncheckedTypeCheckBox() > 0
+				$j('.checkbox-boardType').each(function(){
+					$j(this).prop('checked',checkOrNot)	
+				})
+			}
+			checkAllResult()
 		})
 		
-
-		$j('#checkAll').on('click',function(){
-			var boxes = $j(this).siblings('input[type="checkbox"]')
-			
-			var checkCount= boxes.filter(':checked').length
-			
-			var checkOrNot = checkCount < boxes.length
-			
-			boxes.push(this)
-			
-			boxes.each(function(){
-				$j(this).prop('checked',checkOrNot)	
-			})
-		})
-		
+		// '조회' 버튼 클릭 이벤트 발생 시 콜백될 이벤트 핸들러 함수 등록 
 		$j('#btn-load').on('click',function(){
 			var boardTypeList = $j('.checkbox-boardType:checked').map(function(){return this.id}).get()
+			console.log("==================================")
+			console.log("ajax 요청 : '조회'버튼 클릭시 ajax 요청바디 (JSON): ")
+			console.log(JSON.stringify(boardTypeList))	 
+			console.log("==================================")
+			
 	       	   $j.ajax({
 			        type: "POST",
 			        url: '/api/board/list.do',
 			        data: JSON.stringify(boardTypeList),
 			        contentType: "application/json",
 			        success: function(response) {
+			        	// json 응답 결과
 						var result = response.result
 						
 						if(result === 'success'){
-							var table= $j('#boardTable')						
+							/// 체크된 타입 게시물 수 적용						
+							var boardCnt = response.boardCnt
+							$j('#boardCnt').text(boardCnt)	
+
+							var table= $j('#boardTable')
+							// 기존 행 제거
 							$j('.dataRow').remove()
+							
 							var boardList = JSON.parse(response.data)
+							
+							console.log("==================================")
+							console.log("ajax 응답 : '조회'버튼 클릭 ajax 응답 바디 (JSON): ")
 							console.log(boardList)
+							console.log("==================================")
+							// 행 추가
 							boardList.forEach(function(board){
 								html='<tr class="dataRow"><td align="center">'+board.boardTypeName+
 									'</td><td>'+board.boardNum+'</td><td>'
@@ -55,7 +85,6 @@
 							})
 						}else if(result === 'error'){
 							alert("에러가 발생했습니다.")
-							
 						}
 			        },
 			        error: function(xhr, status, error) {
@@ -73,16 +102,16 @@
 	<div class="centered-div">
 		<table  align="center">
 			<tr>
-				<td>
-					<a href="">login</a>
+	           <td>
+	           		<a href="">login</a>
 					<a href="">join</a>
-				</td>
-				<td>
-					<span align="right">total : ${totalCnt}</span>
-				</td>
+	           </td>
+            	<td style="text-align: right;">
+            		total : <span id="boardCnt">${totalCnt}</span>
+            	</td>
 			</tr>
 			<tr>
-				<td>
+				<td colspan="2">
 					<table id="boardTable" border = "1">
 						<tr>
 							<td width="80" align="center">
@@ -124,13 +153,13 @@
 						</td>
 						</tr>
 							<tr>
-								<td align="right">
-									<button id="boardWriteLink" >글쓰기</button>
-									
+								<td align="right" colspan="2">
+									<!-- <button id="boardWriteLink" >글쓰기</button> -->
+									<a href="/board/boardWrite.do">글쓰기</a>
 								</td>
 							</tr>
 							<tr>
-								<td>
+								<td colspan="2" id='checkBoxArea'>
 									<input type="checkbox" id="checkAll"/>
 									<label for="checkAll">전체</label>
 								<c:forEach items="${commonCodeList}" var="code">

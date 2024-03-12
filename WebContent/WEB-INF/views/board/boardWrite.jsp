@@ -45,16 +45,16 @@ $j(document).ready(function(){
 		
 	}	
 	
-    // 행 추가 버튼 클릭 이벤트
-$j('#rowAppend').on('click', () => {
-	var inputRows = $j('.inputRow')
-    if (inputRows.length == 5 ) {
-        alert("더 이상 행을 추가할 수 없습니다.");
-        return;
-    }
-
-    $j('#creatorRow').before(generateRow());
-});
+	    // 행 추가 버튼 클릭 이벤트
+	$j('#rowAppend').on('click', () => {
+		var inputRows = $j('.inputRow')
+	    if (inputRows.length == 5 ) {
+	        alert("더 이상 행을 추가할 수 없습니다.");
+	        return;
+	    }
+	
+	    $j('#creatorRow').before(generateRow());
+	});
 
     // 행 삭제 버튼 클릭 이벤트
    $j('#rowRemove').on('click', () => {
@@ -111,11 +111,12 @@ $j('#rowAppend').on('click', () => {
 	        		
 	        		
 	    html+=optionsHTML
+	    
 	    html += `</select></td></tr>
     		<tr>
     		<td>
     		                                        <label for="boardTitle">제목: </label>
-                <input name="boardTitle" type="text">
+                <input name="boardTitle" type="text" size="50" >
     		</td>
     		</tr>
     		<tr>
@@ -149,7 +150,10 @@ $j('#rowAppend').on('click', () => {
         var params = {
         		boardList : forms
         }
-        
+        console.log("===================================")
+        console.log("'작성' 버튼 클릭시 ajax요청바디 (JSON) : ")
+        console.log(JSON.stringify(params))
+        console.log("===================================")
         // ajax로 json으로 객체배열 바디에 담아 포스트요청보냄
         $j.ajax({
             url: "/board/boardWriteAction.do",
@@ -178,10 +182,10 @@ $j('#rowAppend').on('click', () => {
     // 입력 필드가 비어 있는지 확인하는 함수
     function nullInputCheck() {
     	var nullInputField = null
-    	$j('.formGroup').each(function(index, form){
-    		form = $j(form)
-    		var titleInputField = form.find("input")
-    		var commentInputField = form.find("textarea")
+    	$j('.inputRow').each(function(index, row){
+    		row = $j(row)
+    		var titleInputField = row.find('input[type="text"]')
+    		var commentInputField = row.find('textarea')
 
     		if (titleInputField.val().trim() === ''){
     			nullInputField = titleInputField
