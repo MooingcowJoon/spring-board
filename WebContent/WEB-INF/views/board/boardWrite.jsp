@@ -101,35 +101,33 @@ $j('#rowAppend').on('click', () => {
 
  // 새로운 행을 생성하는 함수
     function generateRow() {
-        return `                        <tr class="inputRow">
-    	<td ><input type="checkbox" value="check"></input></td>
-        <td >
-        	<table>
-        		<tr>
-        		<td><label for="boardType">분류: </label>
-                    <select id="boardType" name="boardType">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                    </select></td>
-        		</tr>
-        		<tr>
-        		<td>
-        		                                        <label for="boardTitle">제목: </label>
-                    <input name="boardTitle" type="text">
-        		</td>
-        		</tr>
-        		<tr>
-        		<td>
-        		 <label for="boardComment" style="vertical-align: top;">내용: </label>
-                    <textarea name="boardComment" rows="20" cols="50"></textarea>
-        		</td>
-        		</tr>	
-        	</table>
-        </td>
-    </tr>`;
+	 	optionsHTML=$j('.inputRow').eq(0).find('.typeSelect').html()
+		html =`<tr class="inputRow">
+	    	<td ><input type="checkbox" value="check"></input></td>
+	        <td >
+	        	<table>
+	        		<tr>
+	        		<td><label for="boardType">분류: </label>  <select name="boardType" class="typeSelect">`
+	        		
+	        		
+	    html+=optionsHTML
+	    html += `</select></td></tr>
+    		<tr>
+    		<td>
+    		                                        <label for="boardTitle">제목: </label>
+                <input name="boardTitle" type="text">
+    		</td>
+    		</tr>
+    		<tr>
+    		<td>
+    		 <label for="boardComment" style="vertical-align: top;">내용: </label>
+                <textarea name="boardComment" rows="20" cols="50"></textarea>
+    		</td>
+    		</tr>	
+    	</table>
+    </td>
+</tr>`
+        return html
     }
 
     // 작성버튼 누를시 
@@ -168,7 +166,7 @@ $j('#rowAppend').on('click', () => {
                 }
                     var pageNo = $j('#pageNo').val();
                     var pageSize = $j('#pageSize').val();
-                    var url = "/board/boardList.do?pageNo=" + pageNo + "&pageSize=" + pageSize;
+                    var url = "/board/boardList.do"
                     location.href = url;
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -209,9 +207,7 @@ $j('#rowAppend').on('click', () => {
     }
 
     $j('#toList').on('click',()=>{
-        var pageNo = $j('#pageNo').val();
-        var pageSize = $j('#pageSize').val();
-        var url = "/board/boardList.do?pageNo=" + pageNo + "&pageSize=" + pageSize;
+        var url = "/board/boardList.do"
         location.href = url;
     })
     
@@ -279,17 +275,15 @@ $j('#rowAppend').on('click', () => {
                             	<table>
                             		<tr>
                             		<td><label for="boardType">분류: </label>
-                                        <select id="boardType" name="boardType">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                            <option value="5">5</option>
+                                        <select name="boardType" class="typeSelect">
+										<c:forEach items="${commonCodeList}" var="code" >
+											<option value="${code.codeId}">${code.codeName}</option>
+										</c:forEach>
                                         </select></td>
                             		</tr>
                             		<tr>
                             		<td>
-                            		                                        <label for="boardTitle">제목: </label>
+                 		              	<label for="boardTitle">제목: </label>
                                         <input name="boardTitle" type="text" size="50" value="${board.boardTitle}" >
                             		</td>
                             		</tr>

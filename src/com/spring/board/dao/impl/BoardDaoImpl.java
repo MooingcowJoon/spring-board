@@ -34,9 +34,9 @@ public class BoardDaoImpl implements BoardDao{
 	}
 	
 	@Override
-	public List<BoardVo> selectBoardListByType(String boardType) throws Exception {
+	public List<BoardVo> selectBoardListByType(List<String> boardTypeList) throws Exception {
 		// TODO Auto-generated method stub
-		return sqlSession.selectList("board.boardListByType",boardType);
+		return sqlSession.selectList("board.boardListByType",boardTypeList);
 	}
 	
 	

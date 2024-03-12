@@ -30,9 +30,9 @@ public class boardServiceImpl implements boardService{
 	}
 	
 	@Override
-	public List<BoardVo> SelectBoardListByType(String boardType) throws Exception {
+	public List<BoardVo> selectBoardListByType(List<String> boardTypeList) throws Exception {
 		// TODO Auto-generated method stub
-		return boardDao.selectBoardListByType(boardType);
+		return boardDao.selectBoardListByType(boardTypeList);
 	}
 	
 	@Override

@@ -14,8 +14,17 @@ public class BoardVo {
 	private int totalCnt;
 	private String createTime;
 	private String modifiedTime;
+	private String boardTypeName;
 	
-    private List<BoardVo> boardList;
+	
+    public String getBoardTypeName() {
+		return boardTypeName;
+	}
+
+	public void setBoardTypeName(String boardTypeName) {
+		this.boardTypeName = boardTypeName;
+	}
+	private List<BoardVo> boardList;
 
     public List<BoardVo> getBoardList() {
         return boardList;

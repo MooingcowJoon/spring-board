@@ -11,7 +11,7 @@ public interface boardService {
 
 	public List<BoardVo> SelectBoardList(PageVo pageVo) throws Exception;
 	
-	public List<BoardVo> SelectBoardListByType(String boardType) throws Exception;
+	public List<BoardVo> selectBoardListByType(List<String> boardTypeList) throws Exception;
 	
 	public List<BoardVo> selectBoardListByTypeList(List<String> boardTypeList) throws Exception;
 

@@ -48,11 +48,20 @@ public class BoardController {
 	CommonCodeService commonCodeService;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
+	
 	@RequestMapping(value = "/board/boardList.do", method = RequestMethod.GET)
 	public String boardList(Locale locale, Model model, PageVo pageVo) throws Exception {
 
 		List<BoardVo> boardList = new ArrayList<BoardVo>();
-
+		List<CommonCodeVo> commonCodeList = commonCodeService.selectCommonCodeList("menu");
+		List<String> boardTypeList = new ArrayList();
+		
+		Map<String,String> typeMap = new HashMap<>();
+		for(CommonCodeVo code : commonCodeList) {
+			boardTypeList.add(code.getCodeId());
+			typeMap.put(code.getCodeId(), code.getCodeName());
+		}
+		
 		int page = 1;
 		int totalCnt = 0;
 
@@ -61,16 +70,10 @@ public class BoardController {
 			;
 		}
 
-		// 의문: 현재 boardList쿼리에 TOTALCNT 쿼리문이 있는데
-		// totalCnt 그냥 list.size() 함수 반환값으로 할당하면 안되나? 꼭 db에 엑세스 해야하나?
-		// 아니면, totalCnt 구하는 쿼리와 보드리스트 반환시키는 쿼리를 따로 분리할 수 없을까?
-
-		// 우선, 토탈카운트를 서비스 -> 서비스구현 -> 다오 -> 마이바티스 -> JDBC(OJDBC) -> 오라클 서버에 TCP/IP로
-		// FETCH
 		totalCnt = boardService.selectBoardCnt();
 
-		boardList = boardService.SelectBoardList(pageVo);
-
+		boardList = boardService.selectBoardListByType(boardTypeList);
+		model.addAttribute("commonCodeList",commonCodeList);
 		model.addAttribute("boardList", boardList);
 		model.addAttribute("totalCnt", totalCnt);
 		model.addAttribute("pageNo", page);
@@ -78,6 +81,30 @@ public class BoardController {
 		return "board/boardList";
 	}
 
+	@ResponseBody
+	@RequestMapping(value="/api/board/list", method = RequestMethod.POST)
+	public Map<String,String> loadBoardList(Locale locale,@RequestBody List<String> param) throws Exception{
+    	Map<String,String> map = new HashMap<>();
+    	try {
+    		List<CommonCodeVo> commonCodeList = commonCodeService.selectCommonCodeList("menu");
+    		Map<String,String> typeMap = new HashMap<>();
+    		boolean selectNone = param.size()==0;
+			for(CommonCodeVo code : commonCodeList) {
+				if(selectNone) {
+					param.add(code.getCodeId());
+				}
+				typeMap.put(code.getCodeId(), code.getCodeName());
+			}
+    		List<BoardVo> boardList = boardService.selectBoardListByType(param);
+    		map.put("result", "success");
+    		map.put("data", CommonUtil.toJson(boardList));
+    	}catch (Exception e) {
+    		map.put("result", "error");
+    	}
+    	return map;
+	}
+	
+	
 	
 	@RequestMapping(value = "/board/{boardType}/{boardNum}/boardView.do", method = RequestMethod.GET)
 	public String boardView(Locale locale, Model model, @PathVariable("boardType") String boardType,
@@ -99,10 +126,9 @@ public class BoardController {
 
 	@RequestMapping(value = "/board/boardWrite.do", method = RequestMethod.GET)
 	public String boardWrite(Locale locale, Model model, PageVo pageVo) throws Exception {
+		List<CommonCodeVo> commonCodeList = commonCodeService.selectCommonCodeList("menu");
 
-		model.addAttribute("pageNo", pageVo.getPageNo());
-		model.addAttribute("pageSize", pageVo.getPageSize());
-
+		model.addAttribute("commonCodeList",commonCodeList);
 		return "board/boardWrite";
 	}
 
@@ -141,8 +167,7 @@ public class BoardController {
 	@RequestMapping(value = "/board/boardListAction.do", method = RequestMethod.GET)
 	@ResponseBody
 	public List<BoardVo> boardListAction(Locale locale,@RequestParam String boardType) throws Exception {
-		
-		return boardService.SelectBoardListByType(boardType);
+		return null;
 	}
 	
 	
@@ -356,76 +381,6 @@ public class BoardController {
     			}
     			
     		}
-//    		
-//    		// 스코어 집계
-//    		// 20개 문항 응답에 대한 반복처리
-//    		for(Map<String, String> question : params) {
-//    			// 문항의 메이저 타입의 인덱스(types배열 키값으로 사용) 
-//    			
-//    			// 긍정응답시 반영할 타입
-//    			String t = question.get("types");
-//    			// 부정응답시 반영할 타입
-// 
-//    			// types배열에 각 타입 넣음(같은 값으로 여러번 할당됨)
-//    			types[typeIndex]= majorChar;
-//    			
-//    			// 라디오값 in {1 ~ 7}
-//    			int checkedRadioValue = Integer.parseInt(question.get("checkedRadioValue"));
-//    			
-//           		// 타입 스코어 엔트리 null일시 초기화
-//        		if(!scoreMap.containsKey(majorChar)) {
-//        			scoreMap.put(majorChar, 0);
-//        		}
-//        		if(!scoreMap.containsKey(minorChar)) {
-//        			scoreMap.put(minorChar, 0);
-//        		}
-//        		
-//        		
-//        		
-//        		int[] scoreForRadio = {3,2,1,0,1,2,3};
-//        		
-//    			// = 긍정 대답에 속하면 메이저타입 스코어 올림
-//    			if(checkedRadioValue < 4) {
-//    				// 증가시킬 점수는 4 - 라디오값
-//    				int addScore = 4 - checkedRadioValue;
-//    				// 메이저 타입 스코어엔트리 업데이트
-//    				scoreMap.put(majorChar,scoreMap.get(majorChar)+addScore);
-//    			
-//    			}
-//    			else if(checkedRadioValue > 4) { 
-//    				// = 부정 대답에 속하면 마이너타입 스코어 올림
-//    				int addScore = checkedRadioValue -4;
-//    				
-//    				scoreMap.put(minorChar,scoreMap.get(minorChar)+addScore);
-//    				
-//    				// 라디오값 0 이면 액션 없음
-//    			}
-//    		}
-//		// 스코어 집계 완료	
-//    		
-//		// 집계된 스코어를 통해 MBTI 타입 지정
-//    		// 4개의 타입 char 배열 
-//    		char[] MBTI = new char[pageSize];
-//    		
-//    		//전체 타입 8개에 대한 반복처리, 2개씩 
-//    		for (int i=0; i<types.length; i+=types.length/pageSize) {
-//    			char type1 = types[i];
-//    			char type2 = types[i+1];
-//    			
-//    			int score1 = scoreMap.get(type1);
-//    			int score2 = scoreMap.get(type2);
-//			//  MBTI 배열에 값 할당할 요소 인덱스 
-//    			int index = i/2;
-//    			
-//			// 점수 비교후 동점일시 아스키코드 비교
-//    			if(score1 > score2) {
-//    				MBTI[index]=type1;
-//    			}else if(score1 < score2) {
-//    				MBTI[index]=type2;
-//    			}else if (score1 ==  score2) {
-//    				MBTI[index]=type1<type2 ? type1 : type2;
-//    			}
-//    		}
     		map.put("result", "success");
     		map.put("data", new String(MBTI));
     	}catch(Exception e) {
