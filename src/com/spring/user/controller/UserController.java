@@ -59,12 +59,21 @@ public class UserController {
 	public Map<String,String> join(HttpServletRequest request, Locale locale,@RequestBody UserVo userVo ) throws Exception{
 		Map<String,String> map = new HashMap<>();
 		try {
+			UserVo oldUserVo = userService.selectUser(userVo.getId());
+			
+			if(oldUserVo != null) {
+				map.put("result","error");
+				map.put("errorCode", "duplicateId");
+				return map;
+			}
+			
 			int result = userService.insertUser(userVo);
 			if(result > 0) {
 				map.put("result","success");
-				HttpSession session = request.getSession();
-				session.setAttribute("userId", userVo.getId());
-				session.setAttribute("userName", userVo.getName());
+				/*
+				 * HttpSession session = request.getSession(); session.setAttribute("userId",
+				 * userVo.getId()); session.setAttribute("userName", userVo.getName());
+				 */
 			}else {
 				map.put("result","error");
 			}
