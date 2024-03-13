@@ -1,26 +1,14 @@
 package com.spring.board.controller;
 
-import java.io.IOException;
-import java.net.http.HttpRequest;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.board.HomeController;
 import com.spring.board.service.CommonCodeService;
@@ -48,6 +35,12 @@ public class BoardController {
 	CommonCodeService commonCodeService;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
+	
+	@RequestMapping(value = "/board/join.do", method = RequestMethod.GET)
+	public String join(Locale locale, Model model) throws Exception{
+		
+		return "board/join";
+	}
 	
 	@RequestMapping(value = "/board/boardList.do", method = RequestMethod.GET)
 	public String boardList(Locale locale, Model model, PageVo pageVo) throws Exception {

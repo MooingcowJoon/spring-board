@@ -32,7 +32,6 @@
 		}
 		// 체크박스 인풋요소 부모인 td요소에 클릭시 발생이벤트 핸들러 함수 등록
 		$j('#checkBoxArea').on('click','input[type="checkbox"]',function(){
-			
 			// 클릭 이벤트 타겟이 '전체' 체크박스일경우 분기처리 
 			if($j(this).attr('id') ==='checkAll'){
 				// 체크안된 타입 체크박스 수가 0이상이면 전체체크, 아니면 전체체크해제
@@ -41,6 +40,7 @@
 					$j(this).prop('checked',checkOrNot)	
 				})
 			}
+			// 체크박스 클릭 이벤트를 결과를 '전체' 체크박스에 적용
 			checkAllResult()
 		})
 		
@@ -104,7 +104,7 @@
 			<tr>
 	           <td>
 	           		<a href="">login</a>
-					<a href="">join</a>
+					<a href="/board/join.do">join</a>
 	           </td>
             	<td style="text-align: right;">
             		total : <span id="boardCnt">${totalCnt}</span>

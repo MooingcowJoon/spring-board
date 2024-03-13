@@ -90,7 +90,8 @@
 		            <foreach collection="list" item="boardType" open="(" separator="," close=")">
 		                #{boardType}
 		            </foreach>
-		) A, COM_CODE B
+		) A
+		,COM_CODE B
 		WHERE 
 			NUMROW BETWEEN 1 AND 10
 		AND 
@@ -125,12 +126,12 @@
 			  ,B.CODE_NAME  
 		FROM
 			BOARD A, COM_CODE B
-    	WHERE 	
+    	WHERE
+    		A.BOARD_TYPE = B.CODE_ID	
+    	AND 	
     		BOARD_TYPE = #{boardType}
     	AND 	
     		BOARD_NUM  = #{boardNum}
-    	AND 	
-    		A.BOARD_TYPE = B.CODE_ID	
     </select>	
     <!-- BOARD_NUM 채번 시 COALESCE 함수로 null을 1로 변환 (게시글 1개도 없는 경우)-->
     <select id="boardInsert" parameterType="com.spring.board.vo.BoardVo">
@@ -148,8 +149,18 @@
         VALUES
         (#{boardType}
         ,(SELECT COALESCE(TO_NUMBER(MAX(BOARD_NUM)+1),1)
-	    FROM BOARD
-	    WHERE BOARD_TYPE in(select CODE_ID FROM COM_CODE WHERE CODE_TYPE = 'menu'))
+	    FROM 
+	    	BOARD
+	    WHERE 
+	    	BOARD_TYPE 
+	    	IN
+	    	(SELECT 
+	    		CODE_ID 
+    		FROM 
+    			COM_CODE 
+    		WHERE 
+    			CODE_TYPE = 'menu')
+   			)
         ,#{boardTitle}
         ,#{boardComment}
         ,'SYSTEM'

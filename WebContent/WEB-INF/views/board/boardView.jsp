@@ -52,7 +52,7 @@ $j(document).ready(() => {
         <table align="center">
             <tr>
                 <td>
-                    <table border="1">
+                    <table  border="1">
                         <tr>
                             <td width="120" align="center">Title</td>
                             <td width="400">${board.boardTitle}</td>

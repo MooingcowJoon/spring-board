@@ -58,7 +58,6 @@ $j(document).ready(function(){
 
     // 행 삭제 버튼 클릭 이벤트
    $j('#rowRemove').on('click', () => {
-	   
        var rows = $j('.inputRow');
     	var chkRows = $j('.inputRow').has('input[type="checkbox"]:checked')
 	   if(rows.length === 1){
@@ -73,8 +72,6 @@ $j(document).ready(function(){
 	   }else{
 		   targetRows.push(rows.last())
 	   }
-       
-       
 	   if(targetRows.length >= rows.length){
 		   alert("더 이상 삭제하실 수 없습니다.");
 		   return
