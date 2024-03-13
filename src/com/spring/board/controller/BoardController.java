@@ -35,12 +35,9 @@ public class BoardController {
 	CommonCodeService commonCodeService;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
+
 	
-	@RequestMapping(value = "/board/join.do", method = RequestMethod.GET)
-	public String join(Locale locale, Model model) throws Exception{
-		
-		return "board/join";
-	}
+
 	
 	@RequestMapping(value = "/board/boardList.do", method = RequestMethod.GET)
 	public String boardList(Locale locale, Model model, PageVo pageVo) throws Exception {

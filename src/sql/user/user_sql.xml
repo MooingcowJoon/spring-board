@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user">
+    <resultMap type="com.spring.user.vo.UserVo" id="UserVo">
+        <result property="id" 	column="USER_ID"/>
+        <result property="pw" 	column="USER_PW"/>
+        <result property="name" 	column="USER_NAME"/>
+        <result property="phone1" 	column="USER_PHONE1"/>
+        <result property="phone2" 	column="USER_PHONE2"/>
+        <result property="phone3" 	column="USER_PHONE3"/>
+        <result property="addr1" 	column="USER_ADDR1"/>
+        <result property="addr2" 	column="USER_ADDR2"/>
+        <result property="company" 	column="USER_COMPANY"/>
+        <result property="creator" 	column="CREATOR"/>
+        <result property="createTime" 	column="CREATE_TIME"/>
+        <result property="modifier" 	column="MODIFIER"/>
+        <result property="modifiedTime" column="MODIFIED_TIME"/>
+    </resultMap>
+
+    <select id="userById" parameterType="String" resultMap="UserVo">
+        SELECT
+            USER_ID
+            ,USER_NAME
+            ,USER_PHONE1
+            ,USER_PHONE2
+            ,USER_PHONE3
+           	,USER_ADDR1
+	        ,USER_ADDR2
+	        ,USER_COMPANY
+	        ,CREATE_TIME
+        FROM
+            USER_INFO
+        WHERE
+            USER_ID = #{userId}
+    </select>
+	<insert id="insertUser" parameterType="com.spring.user.vo.UserVo">
+        INSERT	INTO
+        	USER_INFO
+	        (
+	        USER_ID
+	        ,USER_PW
+	        ,USER_NAME
+	        ,USER_PHONE1
+	        ,USER_PHONE2
+	        ,USER_PHONE3
+	        ,USER_ADDR1
+	        ,USER_ADDR2
+	        ,USER_COMPANY
+	        ,CREATOR
+	        ,CREATE_TIME
+	        ,MODIFIER
+	        ,MODIFIED_TIME
+	        )
+        VALUES
+        (
+        #{id}
+        ,#{pw}
+        ,#{name}
+        ,#{phone1}
+        ,#{phone2}
+        ,#{phone3}
+        ,#{addr1}
+        ,#{addr2}
+        ,#{company}
+        ,#{id}
+        ,TO_CHAR(SYSTIMESTAMP, 'YY/MM/DD HH24:MI:SS')
+        ,''
+        ,TO_CHAR(SYSTIMESTAMP, 'YY/MM/DD HH24:MI:SS')
+        ) 
+	</insert>
+</mapper>

@@ -90,7 +90,7 @@
 			        error: function(xhr, status, error) {
 			         	alert(error)
 			        }
-	  				});
+ 				});
 		})
 		
 	}) 
@@ -103,8 +103,8 @@
 		<table  align="center">
 			<tr>
 	           <td>
-	           		<a href="">login</a>
-					<a href="/board/join.do">join</a>
+	           		<a href="/user/login.do">login</a>
+					<a href="/user/join.do">join</a>
 	           </td>
             	<td style="text-align: right;">
             		total : <span id="boardCnt">${totalCnt}</span>
