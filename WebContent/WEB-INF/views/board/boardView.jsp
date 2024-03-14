@@ -69,11 +69,11 @@ $j(document).ready(() => {
             </tr>
             <tr>
                 <td align="right">
+                    <a href="/board/boardList.do">List</a>
                 	<c:if test="${not empty user && user.id == board.creator}">
 	                    <a href="/board/${board.boardType}/${board.boardNum}/boardModify.do">Update</a>
 	                    <a href="" id="deleteLink" >Delete</a>
                 	</c:if>
-                    <a href="/board/boardList.do">List</a>
                 </td>
             </tr>
         </table>

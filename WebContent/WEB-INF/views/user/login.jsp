@@ -12,16 +12,20 @@ font-size: 0.7em; /* 조금 작게 만들기 */
 span.fail {
     color: red; /* 빨간색 텍스트 */
 }
-span.pass {
-    color: green; /* 초록색 텍스트 */
-}
 </style>
 <title>로그인 페이지</title>
 </head>
 <script>
 $j().ready(() => {
 	
-	$j('#submitBtn').on('click',()=>{
+	//'List' 링크 클릭시 이벤트
+	$j('#toListLink').on('click',(e)=>{
+		e.preventDefault()
+		location.href='/board/boardList.do'
+	})
+	// 'Login' 링크 및 비밀번호 입력 필드에서 엔터키 누르면 submit() 함수 호출
+	$j('#submitLink').on('click',(e)=>{
+		e.preventDefault()
 		submit()
 		})
 	$j('#inputPw').on('keypress',function(e){
@@ -30,48 +34,102 @@ $j().ready(() => {
 			}
 		})
 	
+	// 입력 필드에 입력때마다 브라우저단 유효성 검사 실행
+	// --> (쓸데없는 db접근 차단)
+	$j('#formTable').on('input','input[type="text"],input[type="password"]',function(){
+		isInputValid(this.id)
+	})	
+	
+	// 인풋 요소의 id 문자열을 받아서 요소의 유효성을 검사하는 함수
+	function isInputValid(fieldId){
+		var isValid
+		
+		var input = $j('#'+fieldId)
+		var inputVal = input.val()
+		
+		// 각 인풋 요소들의 아이디에 맞는 정규표현식 이넘 초기화
+		var regExpEnum = {
+			inputId			:	/^[a-z0-9]{2,15}$/, 	
+			inputPw 		:	/^[a-zA-Z0-9]{6,12}$/,
+		}
+		
+		// 인풋요소의 아이디를 키로 이넘값 참조하여 regExp 변수에 할당
+		var regExp = regExpEnum[fieldId]
+		
+		// 정규식 테스트 결과에 따른 반영
+		if(regExp.test(inputVal)){
+			isValid = true
+		}else if(!regExp.test(inputVal)){
+			isValid = false
+		}
+		
+		
+		// 유효여부에 따라 색변경할 스팬요소
+		var CheckAlertSpan = $j('#'+fieldId+'Span')
+		// id === inputPhone2Span ? inputPhoneSpan : id+Span
+		
+		if(isValid){
+			CheckAlertSpan.removeClass('fail').addClass('pass')
+		}else{
+			CheckAlertSpan.removeClass('pass').addClass('fail')
+		}
+		
+		if(inputVal===''){
+			CheckAlertSpan.removeClass('fail')
+		}
+		return isValid
+	};	
+	
+	
+	// '로그인' 버튼 클릭 및 비밀번호에서 엔터키 입력시 호출될 함수
 	function submit(){
+		// id pw 인풋요소
 		var inputId = $j('#inputId')
 		var inputPw = $j('#inputPw')
 		
+		// formData객체에 저장
 		var formData = {				
 				id : inputId.val(),
 				pw : inputPw.val()
 			}
 		
-		if(formData.inputId === ''){
+		// id, pw 각각 1차 유효성검사 미통과시 알림 표시 후 포커스
+		if(!isInputValid(inputId.attr('id'))){
 			alert('아이디 입력을 확인하여 주십시오.')
 			inputId.focus()
 			return
 		}
-		if(formData.inputPw === ''){
+		if(!isInputValid(inputPw.attr('id'))){
 			alert('비밀번호 입력을 확인하여 주십시오.')
 			inputPw.focus()
 			return
 		}
 		
+		
+		// 브라우저단 유효성 검사 통과하면 컨트롤러에서 검사
 		$j.ajax({
 			type		: "POST",
-			url			: "/api/user/authenticateUser.do",
+			url			: "/api/user/loginUser.do",
 			data		: JSON.stringify(formData),
 			contentType	: "application/json",
 			success 	: function(res){
-				if(res.result === 'success'){
-					
-					if(res.login === 'idNotFound'){
+				if(res.result === 'fail'){
+					if(res.msg === 'idNotFound'){
 						alert('존재하지 않는 아이디입니다. 아이디 입력를 확인해주세요.')
 						inputId.focus()
 						return
-					}else if(res.login === 'incorrectPw'){
+					}
+					if(res.msg === 'incorrectPw'){
 						alert('비밀번호가 일치하지 않습니다. 비밀번호 입력을 확인해주세요.')
 						inputPw.focus()
-						return
-					}else if(res.login === 'success'){
-						alert("로그인 성공. 게시판 목록으로 돌아갑니다.")
-						location.href="/board/boardList.do"
+						return						
 					}
 				}else if(res.result === 'error'){
-					alert('에러가 발생하였습니다.')
+					alert('에러가 발생하였습니다. 게시판 목록으로 돌아갑니다.')
+					location.href='/board/boardList.do'
+				}else if(res.result === 'success'){
+					alert("로그인 성공. 게시판 목록으로 돌아갑니다.")
+					location.href="/board/boardList.do"				
 				}
 			},
 			error		: function(xhr, status, error) {
@@ -79,34 +137,56 @@ $j().ready(() => {
 	        }
 		})
 	}
-
+	
 })
-	function toList(){
-		location.href='/board/boardList.do'
-	}
+
 </script>
 <body>
-<!-- 	<form> -->
+	<form > 
 		<table align="center">
 			<tbody>
 				<tr>
 					<td>
 						<table id ="formTable" border="1">
 							<tr >
-								<td align="center" width="120" >
+								<td align="center" width="120" rowspan="2" >
 									id
 								</td >
 								<td>
 									<input class="inputId" name="id" value="" id="inputId" type="text" maxlength="15"  style="height: 22px;"/>
 								</td>
 							</tr>
-							<tr >
-								<td align="center" >
+							<tr>
+								<td>
+									<span id="inputIdSpan">
+										<b>
+										2 ~ 15</b> 자의 
+										<b>
+										영문 소문자/숫자 
+										</b>
+										및 
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td align="center" rowspan="2" >
 									pw
 								</td >
 	
 								<td >
-									<input  id="inputPw" name="pw" type="password"  autocomplete="off" style="height: 22px;"/>
+									<input  id="inputPw" name="pw" type="password"  maxlength="12" autocomplete="off" style="height: 22px;"/>
+								</td>
+							</tr>
+							<tr>
+								<td style="border:none;" align="center">
+									<span id="inputPwSpan">
+										<b>
+										6 ~ 12
+										</b>자의 
+										<b>
+										영문 대소문자/숫자
+										</b>
+									</span>
 								</td>
 							</tr>
 						</table>
@@ -114,12 +194,12 @@ $j().ready(() => {
 				</tr>
 				<tr>
 					<td align="right">
-						<input type="button" id="submitBtn" value="로그인"/>
-						<input type="button" onclick="toList()" value="목록"/>
+						<a href="" id="submitLink" >Login</a>
+						<a href="" id="toListLink">List</a>
 					</td>
 				</tr>
 			</tbody>
 		</table>
-<!-- 	</form> -->
+	</form>
 </body>
 </html>

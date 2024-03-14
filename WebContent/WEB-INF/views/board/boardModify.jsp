@@ -10,7 +10,8 @@
 <script type="text/javascript">
 
 	$j(document).ready(function(){
-		$j("#submit").on("click",function(){
+		$j("#submit").on("click",function(e){
+			e.preventDefault()
 			var inputTitle = $j('#inputTitle')
 			var inputComment = $j('#inputComment')
 			
@@ -39,6 +40,10 @@
 				boardComment	:	boardComment,
 				creator			:	creator
 			}
+			console.log("==================================")
+			console.log("ajax 요청 : 'update' 버튼 클릭시 ajax 요청바디 (JSON): ")
+			console.log(JSON.stringify(formData))	 
+			console.log("==================================")
 			$j.ajax({
 			    url : '/api/board/'+boardType+'/'+boardNum+'/modify.do',
 			    type: "POST",
@@ -56,7 +61,8 @@
 			    }
 				})
 			})	
-		$j('#toList').on('click',()=>{
+		$j('#toList').on('click',(e)=>{
+			e.preventDefault()
 			toList()
 		})
 		$j('#toListBtn').on('click',()=>{
@@ -136,8 +142,8 @@
 					</tr>
 					<tr>
 						<td align="right">
-						<input id="submit" type="button" value="제출">
-						<input id="toList" type="button" value="목록"></input>
+						<a id="toList" href="">List</a>
+						<a id="submit" href="" >Update</a>
 						</td>
 					</tr>
 			</c:when>

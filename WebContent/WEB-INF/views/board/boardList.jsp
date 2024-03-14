@@ -11,13 +11,6 @@
 <script type="text/javascript">
 
 	$j(document).ready(function(){
-		/* 글쓰기 버튼 클릭시, 페이지 이동 요청에 perPage 전달 */
-/* 		$j('#boardWriteLink').click((e)=>{
-			e.preventDefault();
-			window.location.href = '/board/boardWrite.do'
-		}) */
-		
-		// 체크박스 클릭 이벤트를 결과를 '전체' 체크박스에 적용
 		function checkAllResult(){
 			var checkOrNot = countUncheckedTypeCheckBox() === 0
 			$j('#checkAll').prop('checked',checkOrNot)
@@ -149,6 +142,9 @@
 							<td width="300" align="center">
 								Title
 							</td>
+							<td>
+								Writer
+							</td>
 <!-- 							<td width="120" align="center">
 								Create Time
 							</td>
@@ -166,6 +162,9 @@
 								</td>
 								<td>
 									<a href = "/board/${list.boardType}/${list.boardNum}/boardView.do">${list.boardTitle}</a>
+								</td>
+								<td>
+									${list.creator}
 								</td>
 <%-- 								<td>
 									${list.createTime}

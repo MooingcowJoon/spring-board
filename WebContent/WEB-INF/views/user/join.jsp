@@ -41,7 +41,7 @@ $j().ready(() => {
 	
 	function isInputValid(inputSelector){
 		var isValid
-		input = $j('#'+inputSelector)
+		var input = $j('#'+inputSelector)
 		var inputVal = input.val()
 		// 각 인풋 요소들의 아이디에 맞는 정규표현식 이넘 초기화
 		var regExpEnum = {
@@ -154,6 +154,7 @@ $j().ready(() => {
 	    if( checkedId ==='' || checkedId !== inputId){
 			alert('아이디 중복확인이 필요합니다.')
 			$j('#duplicateCheck').focus()
+			return
 		}
 	    
 	    //유효하지않은 인풋필드 요소 id --> 유효성 검사돌려서 유효하지않은 인풋요소 id 대입됨
@@ -257,7 +258,6 @@ $j().ready(() => {
 								<td align="center"  rowspan="2">
 									pw
 								</td >
-	
 								<td >
 									<input  id="inputPw" name="pw" type="password"  autocomplete="off" style="height: 22px;"/>
 								</td>

@@ -43,24 +43,28 @@ public class UserRestController {
 		return map;
 	}
 	
-	@RequestMapping(value = "/api/user/authenticateUser.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/user/loginUser.do", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String,String> authenticateUser(HttpSession session, Locale locale, @RequestBody UserVo inputUserVo) throws Exception{
+	public Map<String,String> loginUser(HttpSession session, Locale locale, @RequestBody UserVo inputUserVo) throws Exception{
 		Map<String,String> map = new HashMap<>();
 		try {
 			UserVo dbUserVo = userService.selectUser(inputUserVo.getId());
-			map.put("result","success");
+			map.put("result", "fail");
+			
 			if(dbUserVo == null) {
-				map.put("login","idNotFound");
-			}else {
-				if(dbUserVo.getPw().equals(inputUserVo.getPw())) {
-					map.put("login", "success");
-					dbUserVo.setPw("");
-					session.setAttribute("user", dbUserVo);
-				}else {
-					map.put("login","incorrectPw");
-				}
+				map.put("msg","idNotFound");
+				return map;
 			}
+			if(!dbUserVo.getPw().equals(inputUserVo.getPw())) {
+				map.put("msg", "incorrectPw");
+				return map;
+			}
+			
+			
+			dbUserVo.setPw("");
+			session.setAttribute("user", dbUserVo);
+			map.put("result","success");
+			
 		}catch (Exception e) {
 			map.put("result", "error");
 		}
