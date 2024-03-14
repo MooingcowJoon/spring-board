@@ -15,7 +15,6 @@ public class UserVo {
 	private String modifier;
 	private String modifiedTime;
 	
-	
 	public String getId() {
 		return id;
 	}

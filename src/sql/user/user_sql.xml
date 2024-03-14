@@ -16,10 +16,11 @@
         <result property="modifier" 	column="MODIFIER"/>
         <result property="modifiedTime" column="MODIFIED_TIME"/>
     </resultMap>
-
+   
     <select id="userById" parameterType="String" resultMap="UserVo">
         SELECT
             USER_ID
+            ,USER_PW
             ,USER_NAME
             ,USER_PHONE1
             ,USER_PHONE2

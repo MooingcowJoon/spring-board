@@ -35,57 +35,12 @@ public class UserController {
 	@Autowired
 	CommonCodeService commonCodeService;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-
 	
-	@RequestMapping(value = "/api/user/join/duplicateCheck.do", method = RequestMethod.GET)
-	@ResponseBody
-	public Map<String,String> joinDuplicateCheck(Locale locale, @RequestParam String userId) throws Exception{
-		Map<String,String> map = new HashMap<>();
-		try {
-			UserVo userVo = userService.selectUser(userId);
-			if(userVo == null) {
-				map.put("isDuplicate", "false");
-			}else {
-				map.put("isDuplicate", "true");
-			}
-			
-			map.put("result","success");
-		}catch (Exception e) {
-			map.put("result", "error");
-		}
-		return map;
+	@RequestMapping(value = "/user/login.do", method = RequestMethod.GET)
+	public String loginPage(Locale locale, Model model) throws Exception{
+		
+		return "user/login";
 	}
-	
-	
-	@RequestMapping(value = "/api/user/join/submit.do", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String,String> join(HttpServletRequest request, Locale locale,@RequestBody UserVo userVo ) throws Exception{
-		Map<String,String> map = new HashMap<>();
-		try {
-			UserVo oldUserVo = userService.selectUser(userVo.getId());
-			
-			if(oldUserVo != null) {
-				map.put("result","error");
-				map.put("errorCode", "duplicateId");
-				return map;
-			}
-			
-			int result = userService.insertUser(userVo);
-			if(result > 0) {
-				map.put("result","success");
-				/*
-				 * HttpSession session = request.getSession(); session.setAttribute("userId",
-				 * userVo.getId()); session.setAttribute("userName", userVo.getName());
-				 */
-			}else {
-				map.put("result","error");
-			}
-			
-			 }catch (Exception e) { map.put("result","error"); }
-			 
-		return map;
-	}
-	
 	
 	@RequestMapping(value = "/user/join.do", method = RequestMethod.GET)
 	public String joinPage(Locale locale, Model model) throws Exception{
@@ -99,11 +54,6 @@ public class UserController {
 		
 		model.addAttribute("phoneNos",phoneNos);
 		return "user/join";
-	}
-	@RequestMapping(value = "/user/login.do", method = RequestMethod.GET)
-	public String loginPage(Locale locale, Model model) throws Exception{
-		
-		return "user/login";
 	}
 	
 }

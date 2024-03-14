@@ -10,6 +10,8 @@ import com.spring.user.vo.UserVo;
 public class UserDaoImpl implements UserDao{
 	@Autowired
 	private SqlSession sqlSession;
+	
+	
 	@Override
 	public UserVo selectUser(String userId) throws Exception {
 		return sqlSession.selectOne("user.userById",userId);
@@ -17,6 +19,6 @@ public class UserDaoImpl implements UserDao{
 	
 	@Override
 	public int insertUser(UserVo userVo) throws Exception {
-		return sqlSession.insert("insertUser", userVo);
+		return sqlSession.insert("user.insertUser", userVo);
 	}
 }

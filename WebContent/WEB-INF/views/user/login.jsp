@@ -20,16 +20,46 @@ span.pass {
 </head>
 <script>
 $j().ready(() => {
-	$j('#btn-submit').on('click',()=>{
+	$j('#submitBtn').on('click',()=>{
+		var inputId = $j('#inputId')
+		var inputPw = $j('#inputPw')
+		
+		var formData = {				
+				id : inputId.val(),
+				pw : inputPw.val()
+			}
+		
+		if(formData.inputId === ''){
+			alert('아이디 입력을 확인하여 주십시오.')
+			inputId.focus()
+			return
+		}
+		if(formData.inputPw === ''){
+			alert('비밀번호 입력을 확인하여 주십시오.')
+			inputPw.focus()
+			return
+		}
+		
 		$j.ajax({
 			type		: "POST",
-			url			: "/api/user/join/submit.do",
+			url			: "/api/user/login/authenticateUser.do",
 			data		: JSON.stringify(formData),
 			contentType	: "application/json",
 			success 	: function(res){
 				if(res.result === 'success'){
-					alert("회원가입 성공. 게시판 목록으로 돌아갑니다.")
-					location.href="/board/boardList.do"
+					
+					if(res.login === 'idNotFound'){
+						alert('존재하지 않는 아이디입니다. 아이디 입력를 확인해주세요.')
+						inputId.focus()
+						return
+					}else if(res.login === 'incorrectPw'){
+						alert('비밀번호가 일치하지 않습니다. 비밀번호 입력을 확인해주세요.')
+						inputPw.focus()
+						return
+					}else if(res.login === 'success'){
+						alert("로그인 성공. 게시판 목록으로 돌아갑니다.")
+						location.href="/board/boardList.do"
+					}
 				}else if(res.result === 'error'){
 					alert('에러가 발생하였습니다.')
 				}
@@ -49,26 +79,15 @@ $j().ready(() => {
 					<td>
 						<table id ="formTable" border="1">
 							<tr >
-								<td align="center" width="120" rowspan="2">
+								<td align="center" width="120" >
 									id
 								</td >
 								<td>
 									<input class="inputId" name="id" value="" id="inputId" type="text" maxlength="15"  style="height: 22px;"/>
 								</td>
 							</tr>
-							<tr>
-								<td style="border:none;" align="center">
-									<span id="inputIdSpan">
-										<b>
-										2 ~ 15</b> 자의 
-										<b>
-										영문 소문자/숫자
-										</b>
-									</span>
-								</td>
-							</tr>
 							<tr >
-								<td align="center"  rowspan="2">
+								<td align="center" >
 									pw
 								</td >
 	
@@ -76,24 +95,12 @@ $j().ready(() => {
 									<input  id="inputPw" name="pw" type="password"  autocomplete="off" style="height: 22px;"/>
 								</td>
 							</tr>
-							<tr>
-								<td style="border:none;" align="center">
-									<span id="inputPwSpan">
-										<b>
-										6 ~ 12
-										</b>자의 
-										<b>
-										영문 대소문자/숫자
-										</b>
-									</span>
-								</td>
-							</tr>
 						</table>
 					</td>
 				</tr>
 				<tr>
 					<td align="right">
-						<input type="button" id="btn-submit" value="로그인"/>
+						<input type="button" id="submitBtn" value="로그인"/>
 					</td>
 				</tr>
 			</tbody>

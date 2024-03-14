@@ -103,8 +103,15 @@
 		<table  align="center">
 			<tr>
 	           <td>
-	           		<a href="/user/login.do">login</a>
-					<a href="/user/join.do">join</a>
+	           		<c:choose>
+	           			<c:when test="${empty user}">
+			           		<a href="/user/login.do">login</a>
+							<a href="/user/join.do">join</a>
+	           			</c:when>
+	           			<c:otherwise>
+	           				${user.getName()}
+	           			</c:otherwise>
+	           		</c:choose>
 	           </td>
             	<td style="text-align: right;">
             		total : <span id="boardCnt">${totalCnt}</span>

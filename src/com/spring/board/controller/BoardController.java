@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import com.spring.board.vo.BoardVo;
 import com.spring.board.vo.PageVo;
 import com.spring.board.vo.common.CommonCodeVo;
 import com.spring.common.CommonUtil;
+import com.spring.user.vo.UserVo;
 
 @Controller
 public class BoardController {
@@ -40,8 +43,12 @@ public class BoardController {
 
 	
 	@RequestMapping(value = "/board/boardList.do", method = RequestMethod.GET)
-	public String boardList(Locale locale, Model model, PageVo pageVo) throws Exception {
-
+	public String boardList(HttpSession session,Locale locale, Model model, PageVo pageVo) throws Exception {
+		
+		UserVo sessionUserVo = (UserVo) session.getAttribute("user");
+		/* UserVo userVo = sessionUserVo == null ? new UserVo() : sessionUserVo; */
+		model.addAttribute("user",sessionUserVo);
+		
 		List<BoardVo> boardList = new ArrayList<BoardVo>();
 		List<CommonCodeVo> commonCodeList = commonCodeService.selectCommonCodeList("menu");
 		List<String> boardTypeList = new ArrayList();
@@ -149,13 +156,6 @@ public class BoardController {
 		return callbackMsg;
 	}
 
-	
-	@RequestMapping(value = "/board/boardListAction.do", method = RequestMethod.GET)
-	@ResponseBody
-	public List<BoardVo> boardListAction(Locale locale,@RequestParam String boardType) throws Exception {
-		return null;
-	}
-	
 	
 	
 	@RequestMapping(value = "/board/boardModifyAction.do", method = RequestMethod.POST)
