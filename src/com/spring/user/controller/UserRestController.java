@@ -30,7 +30,20 @@ public class UserRestController {
 	
 	
 	
-	@RequestMapping(value = "/api/user/login/authenticateUser.do", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/user/logout.do", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String,String> logoutUser(HttpSession session, Locale locale) throws Exception{
+		Map<String,String> map = new HashMap<>();
+		try {
+			map.put("result","success");
+			session.removeAttribute("user");
+		}catch (Exception e) {
+			map.put("result", "error");
+		}
+		return map;
+	}
+	
+	@RequestMapping(value = "/api/user/authenticateUser.do", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,String> authenticateUser(HttpSession session, Locale locale, @RequestBody UserVo inputUserVo) throws Exception{
 		Map<String,String> map = new HashMap<>();

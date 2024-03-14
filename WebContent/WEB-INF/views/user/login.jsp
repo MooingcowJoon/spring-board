@@ -42,7 +42,7 @@ $j().ready(() => {
 		
 		$j.ajax({
 			type		: "POST",
-			url			: "/api/user/login/authenticateUser.do",
+			url			: "/api/user/authenticateUser.do",
 			data		: JSON.stringify(formData),
 			contentType	: "application/json",
 			success 	: function(res){
