@@ -9,42 +9,41 @@
 </head>
 <script>
 $j(document).ready(() => {
-	$j('#deleteBtn').on('click',(e)=>{
-		var result = confirm("정말로 삭제하시겠습니까?");
-	      if (result) {
-	    	 	var pathVariables = location.pathname.split('/');
-			    var boardType = pathVariables[2];
-			    var boardNum = pathVariables[3];
-			    
-			    param = "&boardType="+boardType+"&boardNum="+boardNum
-	    	  
-	            $j.ajax({
-	                type: "POST",
-	                url: "/board/boardDeleteAction.do",
-	                dataType: "json",
-	                data: param,
-	                success: function(res,textStatus, jqXHR) {
-	                	if(res.resultCode == 'success'){
-	                    	alert("게시물이 삭제되었습니다.");
-	                	}else if (res.resultCode == 'error'){
-	                		alert('게시물 삭제에 실패했습니다. 목록으로 돌아갑니다.')
-	                	}
-	                   	window.location.href="/board/boardList.do"
-	                },
-	                error: function(xhr, status, error) {
-	                	alert('게시물 삭제에 실패했습니다. 목록으로 돌아갑니다.')
-	                	window.location.href="/board/boardList.do"
-	                }
-	            });
-	        }
+	$j('#deleteLink').on('click',function(e){
+		e.preventDefault()
+		var deleteConfirm = confirm("정말로 삭제하시겠습니까?")
+		
+		if (deleteConfirm) {
+			var urlPathVariables = location.pathname.split('/')
+			var boardType = urlPathVariables[2]
+			var boardNum = urlPathVariables[3]
+			var creator = $j('#hiddenCreatorId').val()
+			$j.get('/api/board/'+boardType+'/'+boardNum+'/delete.do')
+					.done(res=>{
+						if(res.result === 'error'){
+						}else if(res.result === 'fail'){
+						}
+						else if(res.result === 'success'){
+						}
+						alert(res.msg)
+						location.href="/board/boardList.do"
+						return
+					})
+					.fail(e=>{
+						alert("에러가 발생하였습니다. 페이지를 새로고침")
+						location.reload()
+					})
+			}
 	})
+			
 })
 </script>
 <body>
+<input id="hiddenCreatorId" value="${board.creator}" type="hidden" />
 <c:choose>
     <c:when test="${response eq 'error'}">
         <script>
-            alert("삭제된 게시물입니다.");
+            alert("존재하지 않는 게시물입니다.");
             window.location.href = "/board/boardList.do";
         </script>
     </c:when>
@@ -70,8 +69,10 @@ $j(document).ready(() => {
             </tr>
             <tr>
                 <td align="right">
-                    <a href="/board/${board.boardType}/${board.boardNum}/boardModify.do?pageNo=1">수정</a>
-                    <input type="button" id="deleteBtn" value="삭제">
+                	<c:if test="${not empty user && user.id == board.creator}">
+	                    <a href="/board/${board.boardType}/${board.boardNum}/boardModify.do">Update</a>
+	                    <a href="" id="deleteLink" >Delete</a>
+                	</c:if>
                     <a href="/board/boardList.do">List</a>
                 </td>
             </tr>

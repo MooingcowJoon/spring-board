@@ -10,108 +10,139 @@
 <script type="text/javascript">
 
 	$j(document).ready(function(){
-		
-/* 		var redirectToList = function(){
-			var pageNo = $j('#pageNo').val()
-			var pageSize = $j('#pageSize').val()
-			
-			var url = "/board/boardList.do?pageNo="+pageNo+"&pageSize="+pageSize;
-			console.log("리다이렉트함수 호출 => "+url)
-			//나중에 url패스 변수 분리해서 인자로 받는걸로 분리해야함
-			location.href = url
-		}  */
-		
-		
 		$j("#submit").on("click",function(){
-			var $frm = $j('.boardWrite :input');
-			var param = $frm.serialize();
+			var inputTitle = $j('#inputTitle')
+			var inputComment = $j('#inputComment')
+			
+			var boardTitle = inputTitle.val()
+			var boardComment = inputComment.val()
+			
+			if(boardTitle.trim() === ''){
+				alert('공백이 아닌 제목을 입력하셔야 합니다.')
+				inputTitle.focus()
+				return
+			}
+			if(boardComment.trim() === ''){
+				alert('공백이 아닌 내용을 입력하셔야 합니다.')
+				inputComment.focus()
+				return
+			}
 			
 		    var pathVariables = location.pathname.split('/');
 		    var boardType = pathVariables[2];
 		    var boardNum = pathVariables[3];
-		    
-		    param+="&boardType="+boardType+"&boardNum="+boardNum
-		    
+		    var creator = $j('#creatorId').val()
+			var formData = {
+				boardType 		: 	boardType,
+				boardNum 		:	boardNum,
+				boardTitle		:	boardTitle,
+				boardComment	:	boardComment,
+				creator			:	creator
+			}
 			$j.ajax({
-			    url : "/board/boardModifyAction.do",
-			    dataType: "json",
+			    url : '/api/board/'+boardType+'/'+boardNum+'/modify.do',
 			    type: "POST",
-			    data : param,
-			    success: function(data, textStatus, jqXHR)
+			    contentType	: "application/json",
+			    data : JSON.stringify(formData),
+			    success: function(res)
 			    {
-					alert("작성완료");
-					
-					alert("메세지:"+data.success);
-	
-					var pageNo = $j('#pageNo').val()
-					var pageSize = $j('#pageSize').val()
-					
-					var url = "/board/boardList.do?pageNo="+pageNo+"&pageSize="+pageSize;
-					console.log("리다이렉트함수 호출 => "+url)
-					//나중에 url패스 변수 분리해서 인자로 받는걸로 분리해야함
-					location.href = url
-					
+					alert(res.msg)
+					location.href='/board/boardList.do'
 			    },
 			    error: function (jqXHR, textStatus, errorThrown)
 			    {
-			    	alert("실패");
+			    	alert("수정에 실패하였습니다. 목록으로 돌아갑니다.")
+			    	location.href='/board/boardList.do'
 			    }
-				});
-			});	
+				})
+			})	
 		$j('#toList').on('click',()=>{
-			var pageNo = $j('#pageNo').val()
-			var pageSize = $j('#pageSize').val()
-			var url = "/board/boardList.do?pageNo="+pageNo+"&pageSize="+pageSize;
-			console.log(url)
-			window.location.href = url
+			toList()
 		})
-		
+		$j('#toListBtn').on('click',()=>{
+			toList()
+		})
+			
+		function toList(){
+			var url = '/board/boardList.do'
+			window.location.href = url
+		}
 	});
-	
 
 </script>
 <body>
-<form class="boardWrite">
-	<table align="center">
-			<input type="hidden" id="pageNo" name="pageNo" value="${pageNo}">
-			<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}">
-
-		<tr>
-			<td>
-				<table border ="1"> 
+	<form >
+		<table align="center">
+			<c:choose>
+				<c:when test="${result eq 'fail'}">
+				<tr>
+					<td>
+					<c:choose>
+						<c:when test="${errorCode eq 'sessionExpired'}">
+							<h3>로그인 세션이 만료되었습니다. 다시 로그인해주세요.</h3>
+							<input type="button" id="toListBtn" value="목록으로 돌아가기"/>
+						</c:when>
+						<c:when test="${errorCode eq 'boardNotFound'}">
+							<h3>게시물을 찾을 수 없습니다.</h3>
+							<input type="button" id="toListBtn" value="목록으로 돌아가기"/>
+						</c:when>
+						<c:when test="${errorCode eq 'wrongUser'}">
+							<h3>잘못된 사용자입니다.</h3>
+							<input type="button" id="toListBtn" value="목록으로 돌아가기"/>
+						</c:when>
+					</c:choose>
+					</td>
+				</tr>
+				</c:when>
+				<c:when test="${result eq 'error'}">
 					<tr>
-						<td width="120" align="center">
-						Title
-						</td>
-						<td width="400">
-						<input name="boardTitle" type="text" size="50" value="${board.boardTitle}"> 
-						</td>
-					</tr>
-					<tr>
-						<td height="300" align="center">
-						Comment
-						</td>
-						<td valign="top">
-						<textarea name="boardComment"  rows="20" cols="55">${board.boardComment}</textarea>
-						</td>
-					</tr>
-					<tr>
-						<td align="center">
-						Writer
-						</td>
 						<td>
+							<h3>에러가 발생했습니다.</h3>
+							<input type="button" id="toListBtn" value="목록으로 돌아가기"/>
 						</td>
 					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td align="right">
-			<input id="submit" type="button" value="제출">
-			<input id="toList" type="button" value="목록"></input>
-			</td>
-		</tr>
-	</table>
-</form>	
+				</c:when>
+				<c:when test="${result eq 'success'}">
+					<tr>
+						<td>
+							<input id="creatorId" type="hidden" value="${board.creator}"/>
+							<table border ="1"> 
+								<tr>
+									<td width="120" align="center">
+									Title
+									</td>
+									<td width="400">
+									<input id="inputTitle" name="boardTitle" type="text" size="50" value="${board.boardTitle}"> 
+									</td>
+								</tr>
+								<tr>
+									<td height="300" align="center">
+									Comment
+									</td>
+									<td valign="top">
+									<textarea  id="inputComment" name="boardComment"  rows="20" cols="55">${board.boardComment}</textarea>
+									</td>
+								</tr>
+								<tr>
+									<td align="center">
+									Writer
+									</td>
+									<td>
+										${board.creator}
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+						<input id="submit" type="button" value="제출">
+						<input id="toList" type="button" value="목록"></input>
+						</td>
+					</tr>
+			</c:when>
+		</c:choose>
+		</table>
+	</form>	
 </body>
 </html>

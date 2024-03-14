@@ -128,7 +128,7 @@
 							<a href="/user/join.do">join</a>
 	           			</c:when>
 	           			<c:otherwise>
-	           				${user.getName()}
+	           				${user.name}
 	           			</c:otherwise>
 	           		</c:choose>
 	           </td>
@@ -181,8 +181,8 @@
 							<tr>
 								<td align="right" colspan="2">
 									<!-- <button id="boardWriteLink" >글쓰기</button> -->
-									<a href="/board/boardWrite.do">글쓰기</a>
 								<c:if test="${not empty user}">
+									<a href="/board/boardWrite.do">글쓰기</a>
 									<a href="" id="logoutLink" >로그아웃</a>
 								</c:if>
 								</td>

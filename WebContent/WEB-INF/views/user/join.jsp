@@ -145,8 +145,8 @@ $j().ready(() => {
     });
 	
 	
-	    
-	$j('#submit').on('click',function(event){
+	// 'join' 버튼 클릭시
+	$j('#submitLink').on('click',function(event){
 	    event.preventDefault(); // 기본제출 차단
 	    var checkedId = $j('#checkedId').val()
 	    var inputId = $j('#inputId').val()
@@ -404,7 +404,7 @@ $j().ready(() => {
 				</tr>
 				<tr>
 					<td align="right">
-						<input id="submit" type="button" value="테스트"/>
+						<a href="" id="submitLink" >join</a>
 					</td>
 				</tr>
 			</tbody>

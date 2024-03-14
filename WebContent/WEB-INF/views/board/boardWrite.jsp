@@ -159,7 +159,6 @@ $j(document).ready(function(){
             dataType: "json",
             type: "POST",
             success: function(data, textStatus, jqXHRt) {
-                alert("메세지:" + data.result);
                 if (data.result === "success") {
          		    alert("작성완료");
                 }else{
@@ -299,7 +298,7 @@ $j(document).ready(function(){
                         </tr>
                         <tr id="creatorRow">
                             <td colspan="1">작성자 </td>
-                            <td id="creatorId">SYSTEM</td>
+                            <td id="creatorId">${user.id}</td>
                         </tr>
                         <tr>
                             <td align="right" colspan="2">

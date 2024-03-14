@@ -38,9 +38,6 @@ public class BoardController {
 	CommonCodeService commonCodeService;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
-
-	
-
 	
 	@RequestMapping(value = "/board/boardList.do", method = RequestMethod.GET)
 	public String boardList(HttpSession session,Locale locale, Model model, PageVo pageVo) throws Exception {
@@ -77,36 +74,13 @@ public class BoardController {
 
 		return "board/boardList";
 	}
-
-	@ResponseBody
-	@RequestMapping(value="/api/board/list", method = RequestMethod.POST)
-	public Map<String,String> loadBoardList(Locale locale,@RequestBody List<String> param) throws Exception{
-    	Map<String,String> map = new HashMap<>();
-    	try {
-    		List<CommonCodeVo> commonCodeList = commonCodeService.selectCommonCodeList("menu");
-    		boolean selectNone = param.size()==0;
-			for(CommonCodeVo code : commonCodeList) {
-				if(selectNone) {
-					param.add(code.getCodeId());
-				}
-			}
-    		List<BoardVo> boardList = boardService.selectBoardListByType(param);
-    		map.put("result", "success");
-    		map.put("data", CommonUtil.toJson(boardList));
-    		map.put("boardCnt", ""+boardService.selectBoardCnt(param));
-    	}catch (Exception e) {
-    		map.put("result", "error");
-    	}
-    	return map;
-	}
-	
 	
 	
 	@RequestMapping(value = "/board/{boardType}/{boardNum}/boardView.do", method = RequestMethod.GET)
-	public String boardView(Locale locale, Model model, @PathVariable("boardType") String boardType,
+	public String boardView(HttpSession session, Locale locale, Model model, @PathVariable("boardType") String boardType,
 			@PathVariable("boardNum") int boardNum) throws Exception {
 
-
+		model.addAttribute("user",session.getAttribute("user"));
 		BoardVo board = boardService.selectBoard(boardType, boardNum);
 		
 		if(board == null) {
@@ -118,7 +92,7 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/board/boardWrite.do", method = RequestMethod.GET)
-	public String boardWrite(Locale locale, Model model, PageVo pageVo) throws Exception {
+	public String boardWrite(HttpSession session, Locale locale, Model model, PageVo pageVo) throws Exception {
 		List<CommonCodeVo> commonCodeList = commonCodeService.selectCommonCodeList("menu");
 
 		model.addAttribute("commonCodeList",commonCodeList);
@@ -126,18 +100,37 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/board/{boardType}/{boardNum}/boardModify.do", method = RequestMethod.GET)
-	public String boardModify(Locale locale, Model model, @PathVariable("boardType") String boardType,
-			@PathVariable("boardNum") int boardNum, PageVo pageVo) throws Exception {
-
-		model.addAttribute("pageNo", pageVo.getPageNo());
-		int pageSize = pageVo.getPageSize();
-		if (pageSize == 0) {
-			pageSize = 5;
+	public String boardModify(HttpSession session, Locale locale, Model model
+			,@PathVariable("boardType") String boardType
+			,@PathVariable("boardNum") int boardNum
+			) throws Exception {
+		try {
+			UserVo sessionUser = (UserVo) session.getAttribute("user");
+			if (sessionUser == null) {
+				model.addAttribute("result","fail");
+				model.addAttribute("errorCode","sessionExpired");
+				return "board/boardModify";
+			}
+			
+			BoardVo boardVo = boardService.selectBoard(boardType, boardNum);
+			if(boardVo == null) {
+				model.addAttribute("result","fail");
+				model.addAttribute("errorCode","boardNotFound");
+				return "board/boardModify";
+			}
+			
+			if(!boardVo.getCreator().equals(sessionUser.getId())){
+				model.addAttribute("result","fail");
+				model.addAttribute("errorCode","wrongUser");
+				return "board/boardModify";
+			}
+			
+			model.addAttribute("result","success");
+			model.addAttribute("board",boardVo);
+		}catch(Exception e){
+			model.addAttribute("result","error");
 		}
-		model.addAttribute("pageSize", pageSize);
-
-		model.addAttribute("board", boardService.selectBoard(boardType, boardNum));
-
+		
 		return "board/boardModify";
 	}
 
@@ -158,21 +151,6 @@ public class BoardController {
 
 	
 	
-	@RequestMapping(value = "/board/boardModifyAction.do", method = RequestMethod.POST)
-	@ResponseBody
-	public String boardModifyAction(Locale locale, BoardVo boardVo) throws Exception {
-
-		HashMap<String, String> result = new HashMap<String, String>();
-		CommonUtil commonUtil = new CommonUtil();
-
-		int resultCnt = boardService.boardUpdate(boardVo);
-
-		result.put("success", (resultCnt > 0) ? "Y" : "N");
-		String callbackMsg = commonUtil.getJsonCallBackString(" ", result);
-		System.out.println("callbackMsg::" + callbackMsg);
-
-		return callbackMsg;
-	}
 
 	@RequestMapping(value = "/board/boardDeleteAction.do", method = RequestMethod.POST)
 	@ResponseBody

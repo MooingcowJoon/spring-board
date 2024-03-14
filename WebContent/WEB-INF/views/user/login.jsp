@@ -20,7 +20,17 @@ span.pass {
 </head>
 <script>
 $j().ready(() => {
+	
 	$j('#submitBtn').on('click',()=>{
+		submit()
+		})
+	$j('#inputPw').on('keypress',function(e){
+		if(e.key === 'Enter'){
+			submit()
+			}
+		})
+	
+	function submit(){
 		var inputId = $j('#inputId')
 		var inputPw = $j('#inputPw')
 		
@@ -68,8 +78,12 @@ $j().ready(() => {
 	         	alert(error)
 	        }
 		})
-	})
+	}
+
 })
+	function toList(){
+		location.href='/board/boardList.do'
+	}
 </script>
 <body>
 <!-- 	<form> -->
@@ -101,6 +115,7 @@ $j().ready(() => {
 				<tr>
 					<td align="right">
 						<input type="button" id="submitBtn" value="로그인"/>
+						<input type="button" onclick="toList()" value="목록"/>
 					</td>
 				</tr>
 			</tbody>
