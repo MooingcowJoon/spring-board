@@ -311,12 +311,11 @@ $j().ready(() => {
 								</td >
 								<td>
 									<select id="inputPhone1" name="phone1" style="height: 30px;">
-										<option>
-											010
-										</option>
-										<option>
-											011
-										</option>
+										<c:forEach items="${phoneNos}" var="phoneNo">
+											<option>
+												${phoneNo}
+											</option>
+										</c:forEach>
 									</select>
 									-
 									<input id="inputPhone2" name="phone2" type="text" size="4" style="height: 22px; " maxlength="4" />
