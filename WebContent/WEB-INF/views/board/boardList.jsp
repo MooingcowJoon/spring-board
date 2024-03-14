@@ -142,9 +142,9 @@
 							<td width="300" align="center">
 								Title
 							</td>
-							<td>
+<!-- 							<td>
 								Writer
-							</td>
+							</td> -->
 <!-- 							<td width="120" align="center">
 								Create Time
 							</td>
@@ -163,10 +163,10 @@
 								<td>
 									<a href = "/board/${list.boardType}/${list.boardNum}/boardView.do">${list.boardTitle}</a>
 								</td>
-								<td>
+<%-- 								<td>
 									${list.creator}
 								</td>
-<%-- 								<td>
+ --%><%-- 								<td>
 									${list.createTime}
 								</td>
 								<td>

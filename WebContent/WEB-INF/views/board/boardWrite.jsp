@@ -298,7 +298,7 @@ $j(document).ready(function(){
                         </tr>
                         <tr id="creatorRow">
                             <td colspan="1">작성자 </td>
-                            <td id="creatorId">${user.id}</td>
+                            <td id="creatorId">${user.name}</td>
                         </tr>
                         <tr>
                             <td align="right" colspan="2">

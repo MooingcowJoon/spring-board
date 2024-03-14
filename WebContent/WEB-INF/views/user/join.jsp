@@ -21,11 +21,12 @@ span.pass {
 <script>
 $j().ready(() => {
 	/*
-		폼 내 인풋요소 = }
-			id  		=>	inputId 		: 2 ~ 15 자의 영문 소문자/숫자,
-			pw  		=> 	inputPw 		: 6 ~ 12 자의 영문 대소문자/숫자,
-			name 		=>	inputName		: 2 ~ 5 자의 한글,
-			phone 		=> 	inputPhone1		: 셀렉트요소로 'COM_CODE' 테이블 내, 
+		폼 내 인풋요소 = } 
+		##* 표시는 필수값
+			id*  		=>	inputId 		: 2 ~ 15 자의 영문 소문자/숫자,
+			pw*  		=> 	inputPw 		: 6 ~ 12 자의 영문 대소문자/숫자,
+			name* 		=>	inputName		: 2 ~ 5 자의 한글,
+			phone* 		=> 	inputPhone1		: 셀렉트요소로 'COM_CODE' 테이블 내, 
 											'CODE_ID = "phone"'인 CODE_NAME 국번 선택,
 						=>	inputPhone2,3	: 각각 4 자의 숫자,
 			postNo		=>	inputPostNo		: '000-000' 형태의 숫자/'-',
@@ -33,13 +34,38 @@ $j().ready(() => {
 			company		=> 	inputCompany	: 1 ~ 20 자의 한글/영문 대소문자/숫자/'-'
 			}
 	*/
-	
+	var regExpEnum = {
+			inputId			:	/^[a-z0-9]+$/, 	
+			inputPw 		:	/^[a-zA-Z0-9]+$/,
+			inputPwCheck 	:	/^[a-zA-Z0-9]+$/,
+			inputName		:	/^[가-힣]$/,
+			inputPhone2		:	/^[0-9]$/,
+			inputPhone3		: 	/^[0-9]$/,
+			inputPostNo		:	/^[0-9\-]$/,
+			inputAddress	:	/^[0-9a-zA-Z가-힣\s-]$/,
+			inputCompany	:	/^[0-9a-zA-Z가-힣\s-]$/
+		}
 	// 인풋요소
-	$j('#formTable').on('input','input[type="text"], input[type="password"]', function(){
-		isInputValid(this.id)
+	$j('#formTable').on('input','.userInput', function(e){
+		this.value
+		regExp = regExpEnum[this.id]
+		if(regExp.test(this.value)){
+		}else{
+			this.value = this.value.replace(regExp+'g', '');
+		}
     });
 	
-	function isInputValid(inputSelector){
+	function isNull(){
+		
+	}
+	function isEssential(){
+		
+	}
+	var isValid= function(){
+		
+	}
+	
+/* 	function isInputValid(inputSelector){
 		var isValid
 		var input = $j('#'+inputSelector)
 		var inputVal = input.val()
@@ -49,8 +75,8 @@ $j().ready(() => {
 			inputPw 		:	/^[a-zA-Z0-9]{6,12}$/,
 			inputPwCheck 	:	/^[a-zA-Z0-9]{6,12}$/,
 			inputName		:	/^[가-힣]{2,5}$/,
-			inputPhone2		:	/^[0-9]{4}$/,
-			inputPhone3		: 	/^[0-9]{4}$/,
+			inputPhone2		:	/^[0-9]$/,
+			inputPhone3		: 	/^[0-9]$/,
 			inputPostNo		:	/^[0-9]{3}\-[0-9]{3}$/,
 			inputAddress	:	/^(?=.*\S)[0-9a-zA-Z가-힣\s-]{1,30}$/,
 			inputCompany	:	/^(?=.*\S)[0-9a-zA-Z가-힣\s-]{1,20}$/
@@ -110,7 +136,7 @@ $j().ready(() => {
 		return isValid
 	};
 	
-	
+	 */
 	// '중복확인' 버튼 클릭시 
 	$j('#duplicateCheck').on('click', function(){
 		var inputIdElement = $j('#inputId')
@@ -140,7 +166,7 @@ $j().ready(() => {
  					alert('에러가 발생하였습니다.')
  			}
  		})
- 		.fail(res=>alert('HTTP 에러가 발생하였습니다.'))
+ 		.fail(res=>alert('에러가 발생하였습니다.'))
 
     });
 	
@@ -231,90 +257,45 @@ $j().ready(() => {
 					<td>
 						<table id="formTable" border="1">
 							<tr >
-								<td align="center" width="120" rowspan="2">
+								<td align="center" width="120" >
 									id
 								</td >
 								<td>
-									<input class="inputId" name="id" value="" id="inputId" type="text" maxlength="15"  style="height: 22px;"/>
+									<input class="userInput" name="id" value="" id="inputId" type="text" maxlength="15"  style="height: 22px;"/>
 									<input type="button" id="duplicateCheck" value="중복확인" /> 
 								</td>
 							</tr>
-							<tr>
-								<td style="border:none;" align="center">
-									<span id="inputIdSpan">
-										<b>
-										2 ~ 15</b> 자의 
-										<b>
-										영문 소문자/숫자 
-										</b>
-										및 
-									</span>
-									<span id="checkedIdSpan">
-										<b>중복 확인</b>
-									</span>
-								</td>
-							</tr>
 							<tr >
-								<td align="center"  rowspan="2">
+								<td align="center"  >
 									pw
 								</td >
 								<td >
-									<input  id="inputPw" name="pw" type="password"  autocomplete="off" style="height: 22px;"/>
+									<input class="userInput"  id="inputPw" name="pw" type="password" maxlength="12" autocomplete="off" style="height: 22px;"/>
 								</td>
 							</tr>
 							<tr>
-								<td style="border:none;" align="center">
-									<span id="inputPwSpan">
-										<b>
-										6 ~ 12
-										</b>자의 
-										<b>
-										영문 대소문자/숫자
-										</b>
-									</span>
-								</td>
-							</tr>
 							<tr >
-								<td align="center"  rowspan="2">
+								<td align="center"  >
 									pw check
 								</td >
 								<td >
-									<input id="inputPwCheck"  autocomplete="off" type="password"  style="height: 22px;"/>
-								</td>
-							</tr>
-							<tr>
-								<td style="border:none;" align="center">
-									<span id="inputPwCheckSpan">
-										<b>동일한 비밀번호</b>
-									</span>
+									<input class="userInput" id="inputPwCheck"  autocomplete="off" type="password"  maxlength="12" style="height: 22px;"/>
 								</td>
 							</tr>
 							<tr >
-								<td align="center"  rowspan="2">
+								<td align="center"  >
 									name
 								</td >
 								<td >
-									<input id="inputName" name="name" type="text"  style="height: 22px;"/>
+									<input class="userInput"  id="inputName" name="name" type="text" maxlength="5" style="height: 22px;"/>
 								</td>
 							</tr>
 							<tr>
-								<td style="border:none;" align="center">
-									<span id="inputNameSpan">
-										<b>
-										2 ~ 5
-										</b>자의 
-										<b>
-										한글
-										</b>
-									</span>
-								</td>
-							</tr>
-							<tr>
-								<td align="center"  rowspan="2">
+								<td align="center"  >
 									phone
 								</td >
 								<td>
-									<select id="inputPhone1" name="phone1" style="height: 30px;">
+									<select  class="userInput"  id="inputPhone1" name="phone1" style="height: 30px;">
 										<c:forEach items="${phoneNos}" var="phoneNo">
 											<option>
 												${phoneNo}
@@ -322,81 +303,33 @@ $j().ready(() => {
 										</c:forEach>
 									</select>
 									-
-									<input id="inputPhone2" name="phone2" type="text" size="4" style="height: 22px; " maxlength="4" />
+									<input class="userInput"  id="inputPhone2" name="phone2" type="text" size="4" style="height: 22px; " maxlength="4" />
 									-
-									<input id="inputPhone3" name="phone3" type="text" size="4" style="height: 22px; " maxlength="4" />
-								</td>
-							</tr>
-							<tr>
-								<td style="border:none;" align="center">
-									<span id="inputPhoneSpan">
-										<b>
-										각각 4
-										</b>자의 
-										<b>
-										숫자
-										</b>
-									</span>
+									<input class="userInput"  id="inputPhone3" name="phone3" type="text" size="4" style="height: 22px; " maxlength="4" />
 								</td>
 							</tr>
 							<tr >
-								<td  align="center"  rowspan="2">
+								<td  align="center" >
 									postNo
 								</td >
 								<td >
-									<input id="inputPostNo" name="addr1" type="text"  style="height: 22px;"/>
-								</td>
-							</tr>
-							<tr>
-								<td style="border:none;" align="center"> 
-									<span id="inputPostNoSpan">
-										<b>
-										'000-000'
-										</b>형태의
-										<b>
-										숫자/'-'
-										</b>
-									</span>
+									<input class="userInput"  id="inputPostNo" maxlength="7" name="addr1" type="text"  style="height: 22px;"/>
 								</td>
 							</tr>
 							<tr >
-								<td align="center"  rowspan="2">
+								<td align="center" >
 									address
 								</td >
 								<td >
-									<input id="inputAddress" name="addr2" type="text"  style="height: 22px;"/>
-								</td>
-							</tr>
-							<tr>
-								<td style="border:none;" align="center">
-									<span id="inputAddressSpan">
-										<b>
-										빈 문자열이 아닌 1 ~ 30 
-										</b>자의 
-										<b>
-										한글/영문 대소문자/'-'/' '
-										</b>
-									</span>
+									<input  class="userInput"  id="inputAddress"  maxlength="30" name="addr2" type="text"  style="height: 22px;"/>
 								</td>
 							</tr>
 							<tr >
-								<td  align="center"  rowspan="2">
+								<td  align="center"  >
 									company
 								</td >
 								<td >
-									<input id="inputCompany" name="company" type="text"  style="height: 22px;"/>
-								</td>
-							</tr>
-							<tr>
-								<td style="border:none;" align="center">
-									<span id="inputCompanySpan">
-										<b>
-										빈 문자열이 아닌 1 ~ 20 
-										</b>자의 
-										<b>
-										한글/영문 대소문자/숫자/'-'/' '
-										</b>
-									</span>
+									<input class="userInput"  id="inputCompany" maxlength="20" name="company" type="text"  style="height: 22px;"/>
 								</td>
 							</tr>
 						</table>
