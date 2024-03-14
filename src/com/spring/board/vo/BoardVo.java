@@ -15,6 +15,7 @@ public class BoardVo {
 	private String modifiedTime;
 	private int totalCnt;
 	private String boardTypeName;
+	private List<BoardVo> boardList;
 	
 	
     public String getBoardTypeName() {
@@ -24,7 +25,6 @@ public class BoardVo {
 	public void setBoardTypeName(String boardTypeName) {
 		this.boardTypeName = boardTypeName;
 	}
-	private List<BoardVo> boardList;
 
     public List<BoardVo> getBoardList() {
         return boardList;

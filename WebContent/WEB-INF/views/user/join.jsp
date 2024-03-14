@@ -25,20 +25,23 @@ $j().ready(() => {
 			id  		=>	inputId 		: 2 ~ 15 자의 영문 소문자/숫자,
 			pw  		=> 	inputPw 		: 6 ~ 12 자의 영문 대소문자/숫자,
 			name 		=>	inputName		: 2 ~ 5 자의 한글,
-			phone 		=> 	inputPhone1		: 셀렉트로 국번 선택,
-							inputPhone2,3	: 각각 4 자의 숫자,
+			phone 		=> 	inputPhone1		: 셀렉트요소로 'COM_CODE' 테이블 내, 
+											'CODE_ID = "phone"'인 CODE_NAME 국번 선택,
+						=>	inputPhone2,3	: 각각 4 자의 숫자,
 			postNo		=>	inputPostNo		: '000-000' 형태의 숫자/'-',
 			address		=>	inputAddress	: 1 ~ 30 자의 한글/영문 대소문자/'-',
 			company		=> 	inputCompany	: 1 ~ 20 자의 한글/영문 대소문자/숫자/'-'
 			}
 	*/
+	
+	// 인풋요소
 	$j('#formTable').on('input','input[type="text"], input[type="password"]', function(){
-		isInputValid(this)
+		isInputValid(this.id)
     });
 	
-	function isInputValid(input){
+	function isInputValid(inputSelector){
 		var isValid
-		input = $j(input)
+		input = $j('#'+inputSelector)
 		var inputVal = input.val()
 		// 각 인풋 요소들의 아이디에 맞는 정규표현식 이넘 초기화
 		var regExpEnum = {
@@ -80,27 +83,26 @@ $j().ready(() => {
 		
 		if(inputElementId === 'inputId'){
 			var checkedId = $j('#checkedId').val()
-			console.log(checkedId)
-			console.log(checkedId)
-			if(checkedId && checkedId === inputVal){
+			if(checkedId !=='' && checkedId === inputVal){
 				$j('#checkedIdSpan').removeClass('fail').addClass('pass')				
 			}else{
 				$j('#checkedIdSpan').removeClass('pass').addClass('fail')
 			}
 		}
-		
-		
+
 		if(inputElementId === 'inputPw' || inputElementId === 'inputPwCheck'){
-			if($j('#inputPwCheck').val() !==''
-					&&
-				$j('#inputPw').val() !== $j('#inputPwCheck').val()){
-				$j('#inputPwCheckSpan').removeClass('pass').addClass('fail')
-				if(inputElementId === 'inputPwCheck'){
+				var pw1 = $j('#inputPw').val()
+				var pw2 = $j('#inputPwCheck').val()
+			if(pw2 !==''){
+				if(pw1 === pw2){
+					$j('#inputPwCheckSpan').removeClass('fail').addClass('pass')
+				}else{
 					isValid = false
-				}
+					$j('#inputPwCheckSpan').removeClass('pass').addClass('fail')
+				}	
 			}
 		}
-
+		
 		if(inputVal===''){
 			CheckAlertSpan.removeClass('fail')
 			inputElementId === 'inputId' && $j('#checkedIdSpan').removeClass('fail').removeClass('pass')	
@@ -108,13 +110,15 @@ $j().ready(() => {
 		return isValid
 	};
 	
+	
+	// '중복확인' 버튼 클릭시 
 	$j('#duplicateCheck').on('click', function(){
 		var inputIdElement = $j('#inputId')
 		
 		$j('#checkedId').val('')
 		
 		
-		if(!isInputValid(inputIdElement)){
+		if(!isInputValid('inputId')){
 			alert("아이디를 올바르게 입력해 주십시오.")
 			inputIdElement.focus()
 			return
@@ -125,7 +129,7 @@ $j().ready(() => {
  		.done(res=>{
  			if(res.result === "success"){
  				if(res.isDuplicate === "true"){
- 					alert("중복 아이디입니다.")
+ 					alert("이미 사용중인 아이디입니다.")
 					$j('#checkedIdSpan').removeClass('pass').addClass('fail')
  				}else if(res.isDuplicate === "false"){
  					$j('#checkedId').val(id)
@@ -156,7 +160,7 @@ $j().ready(() => {
 	    var targetId = ''
 	    
 	    $j('#formTable').find('input[type="text"]').each((index,input)=>{
-	    	if(!isInputValid(input)){
+	    	if(!isInputValid(input.id)){
 	    		targetId = input.id
 	    	}
 	    })
