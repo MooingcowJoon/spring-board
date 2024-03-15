@@ -34,6 +34,21 @@ public class BoardRestController {
 	CommonCodeService commonCodeService;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
+	@RequestMapping(value = "/board/boardWriteAction.do", method = RequestMethod.POST)
+	@ResponseBody
+	public String boardWriteAction(Locale locale,@RequestBody BoardVo boardVo) throws Exception {
+
+		HashMap<String, String> result = new HashMap<String, String>();
+		CommonUtil commonUtil = new CommonUtil();		
+		List<BoardVo> boardList = boardVo.getBoardList();
+		int resultCnt = boardService.boardInsert(boardList);
+		result.put("result", resultCnt > 0 ? "success" : "error"); 
+		String callbackMsg = commonUtil.getJsonCallBackString(" ", result);
+		System.out.println("callbackMsg::" + callbackMsg);
+
+		return callbackMsg;
+	}
+
 	
 	@RequestMapping(value = "/api/board/{boardType}/{boardNum}/modify.do", method = RequestMethod.POST)
 	@ResponseBody
@@ -60,7 +75,7 @@ public class BoardRestController {
 				return map;
 			}
 			
-			if(!targetBoard.getCreator().equals(sessionUser.getId())){
+			if(!targetBoard.getCreatorId().equals(sessionUser.getId())){
 				map.put("result", "fail");
 				map.put("errorCode","wrongUser");
 				map.put("msg", "수정 권한이 없습니다. 목록으로 돌아갑니다.");
@@ -112,7 +127,7 @@ public class BoardRestController {
 				return map;
 			}
 			
-			if(!targetBoard.getCreator().equals(sessionUser.getId())){
+			if(!targetBoard.getCreatorId().equals(sessionUser.getId())){
 				map.put("result", "fail");
 				map.put("errorCode","wrongUser");
 				map.put("msg", "삭제 권한이 없습니다. 목록으로 돌아갑니다.");

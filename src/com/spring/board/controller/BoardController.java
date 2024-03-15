@@ -119,7 +119,7 @@ public class BoardController {
 				return "board/boardModify";
 			}
 			
-			if(!boardVo.getCreator().equals(sessionUser.getId())){
+			if(!boardVo.getCreatorId().equals(sessionUser.getId())){
 				model.addAttribute("result","fail");
 				model.addAttribute("errorCode","wrongUser");
 				return "board/boardModify";

@@ -39,7 +39,7 @@ $j(document).ready(() => {
 })
 </script>
 <body>
-<input id="hiddenCreatorId" value="${board.creator}" type="hidden" />
+<input id="hiddenCreatorId" value="${board.creatorId}" type="hidden" />
 <c:choose>
     <c:when test="${response eq 'error'}">
         <script>
@@ -62,7 +62,7 @@ $j(document).ready(() => {
                         </tr>
                         <tr>
                             <td align="center">Writer</td>
-                            <td>${board.creator}</td>
+                            <td>${board.creatorName}</td>
                         </tr>
                     </table>
                 </td>
@@ -70,7 +70,7 @@ $j(document).ready(() => {
             <tr>
                 <td align="right">
                     <a href="/board/boardList.do">List</a>
-                	<c:if test="${not empty user && user.id == board.creator}">
+                	<c:if test="${not empty user && user.id == board.creatorId}">
 	                    <a href="/board/${board.boardType}/${board.boardNum}/boardModify.do">Update</a>
 	                    <a href="" id="deleteLink" >Delete</a>
                 	</c:if>

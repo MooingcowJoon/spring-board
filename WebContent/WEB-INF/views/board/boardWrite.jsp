@@ -17,12 +17,13 @@ background-color:skyblue;
 
 $j(document).ready(function(){
 	class BoardVo {
-	    constructor(boardType, boardNum, boardTitle, boardComment, creator, modifier, totalCnt, createTime, modifiedTime) {
+	    constructor(boardType, boardNum, boardTitle, boardComment, creatorId, creatorName, modifier, totalCnt, createTime, modifiedTime) {
 	        this.boardType = boardType;
 	        this.boardNum = boardNum;
 	        this.boardTitle = boardTitle;
 	        this.boardComment = boardComment;
-	        this.creator = creator;
+	        this.creatorId = creatorId;
+	        this.creatorName = creatorName;
 	        this.modifier = modifier;
 	        this.totalCnt = totalCnt;
 	        this.createTime = createTime;
@@ -39,7 +40,7 @@ $j(document).ready(function(){
 			var boardType = el.find('select').val()
 			var title = el.find('input[type="text"]').val()
 			var comment = el.find('textarea').val()
-			forms.push(new BoardVo(boardType,0,title,comment,$j('#creatorId').text(),'',0,'',''))
+			forms.push(new BoardVo(boardType,0,title,comment,$j('#creatorId').val(),$j('#creatorName').val(),'',0,'',''))
 		})
 		return forms
 		
@@ -253,8 +254,8 @@ $j(document).ready(function(){
 </script>
 <body>
     <form class="boardWrite" id="formContainer">
-        <input type="hidden" id="pageNo" name="pageNo" value="${pageNo}">
-        <input type="hidden" id="pageSize" name="pageSize" value="${pageSize}">
+        <input type="hidden" id="creatorId" name="creatorId" value="${user.id}">
+        <input type="hidden" id="creatorName" name="creatorName" value="${user.name}">
         <table align="center">
             <tr align="right">
                 <th>행 추가 및 삭제</th>

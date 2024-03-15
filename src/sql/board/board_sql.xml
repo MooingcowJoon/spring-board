@@ -7,7 +7,8 @@
     	<result property="boardNum" 	column="BOARD_NUM"/>
     	<result property="boardTitle" 	column="BOARD_TITLE"/>
     	<result property="boardComment" column="BOARD_COMMENT"/>
-    	<result property="creator" column="CREATOR"/>
+    	<result property="creatorId" column="CREATOR_ID"/>
+    	<result property="creatorName" column="CREATOR_NAME"/>
     	<result property="createTime" column="CREATE_TIME"/>
     	<result property="modifier" column="MODIFIER"/>
     	<result property="modifiedTime" column="MODIFIED_TIME"/>
@@ -65,7 +66,8 @@
 			  ,A.BOARD_TITLE
 			  ,A.BOARD_COMMENT
 			  ,A.TOTAL_CNT
-			  ,A.CREATOR
+			  ,A.CREATOR_ID
+			  ,A.CREATOR_NAME
 			  ,A.CREATE_TIME
 			  ,A.MODIFIER
 			  ,A.MODIFIED_TIME
@@ -78,7 +80,8 @@
 				,BOARD_TITLE
 				,BOARD_COMMENT
 		      	,ROW_NUMBER() OVER(ORDER BY BOARD_NUM DESC) AS NUMROW
-		      	,CREATOR
+		      	,CREATOR_ID
+			  	,CREATOR_NAME
 		      	,CREATE_TIME
 		      	,MODIFIER
 		      	,MODIFIED_TIME
@@ -119,7 +122,8 @@
 			  ,A.BOARD_NUM
 			  ,A.BOARD_TITLE
 			  ,A.BOARD_COMMENT
-			  ,A.CREATOR
+			  ,A.CREATOR_ID
+			  ,A.CREATOR_NAME
 			  ,A.CREATE_TIME
 			  ,A.MODIFIER
 			  ,A.MODIFIED_TIME
@@ -141,7 +145,8 @@
 	        ,BOARD_NUM
 	        ,BOARD_TITLE
 	        ,BOARD_COMMENT
-	        ,CREATOR
+	        ,CREATOR_ID
+			,CREATOR_NAME
 	        ,CREATE_TIME
 	        ,MODIFIER
 	        ,MODIFIED_TIME
@@ -163,7 +168,8 @@
    			)
         ,#{boardTitle}
         ,#{boardComment}
-        ,#{creator}
+        ,#{creatorId}
+        ,#{creatorName}
         ,TO_CHAR(SYSTIMESTAMP, 'YY/MM/DD HH24:MI:SS')
         ,''
         ,TO_CHAR(SYSTIMESTAMP, 'YY/MM/DD HH24:MI:SS')

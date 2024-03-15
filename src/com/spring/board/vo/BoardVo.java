@@ -9,7 +9,8 @@ public class BoardVo {
 	private int 	boardNum;
 	private String 	boardTitle;
 	private String 	boardComment;
-	private String 	creator;
+	private String 	creatorId;
+	private String creatorName;
 	private String createTime;
 	private String	modifier;
 	private String modifiedTime;
@@ -18,7 +19,23 @@ public class BoardVo {
 	private List<BoardVo> boardList;
 	
 	
-    public String getBoardTypeName() {
+    public String getCreatorId() {
+		return creatorId;
+	}
+
+	public void setCreatorId(String creatorId) {
+		this.creatorId = creatorId;
+	}
+
+	public String getCreatorName() {
+		return creatorName;
+	}
+
+	public void setCreatorName(String creatorName) {
+		this.creatorName = creatorName;
+	}
+
+	public String getBoardTypeName() {
 		return boardTypeName;
 	}
 
@@ -65,12 +82,6 @@ public class BoardVo {
 	}
 	public void setBoardComment(String boardComment) {
 		this.boardComment = boardComment;
-	}
-	public String getCreator() {
-		return creator;
-	}
-	public void setCreator(String creator) {
-		this.creator = creator;
 	}
 	public String getModifier() {
 		return modifier;

@@ -34,188 +34,86 @@ $j().ready(() => {
 			company		=> 	inputCompany	: 1 ~ 20 자의 한글/영문 대소문자/숫자/'-'
 			}
 	*/
-	var regExpEnum = {
-			inputId			:	/^[a-z0-9]+$/, 	
-			inputPw 		:	/^[a-zA-Z0-9]+$/,
-			inputPwCheck 	:	/^[a-zA-Z0-9]+$/,
-			inputName		:	/^[가-힣]$/,
-			inputPhone2		:	/^[0-9]$/,
-			inputPhone3		: 	/^[0-9]$/,
-			inputPostNo		:	/^[0-9\-]$/,
-			inputAddress	:	/^[0-9a-zA-Z가-힣\s-]$/,
-			inputCompany	:	/^[0-9a-zA-Z가-힣\s-]$/
-		}
-	// 인풋요소
-	$j('#formTable').on('input','.userInput', function(e){
-		this.value
-		regExp = regExpEnum[this.id]
-		if(regExp.test(this.value)){
-		}else{
-			this.value = this.value.replace(regExp+'g', '');
-		}
-    });
 	
-	function isNull(){
-		
-	}
-	function isEssential(){
-		
-	}
-	var isValid= function(){
-		
-	}
-	
-/* 	function isInputValid(inputSelector){
-		var isValid
-		var input = $j('#'+inputSelector)
-		var inputVal = input.val()
-		// 각 인풋 요소들의 아이디에 맞는 정규표현식 이넘 초기화
-		var regExpEnum = {
-			inputId			:	/^[a-z0-9]{2,15}$/, 	
-			inputPw 		:	/^[a-zA-Z0-9]{6,12}$/,
-			inputPwCheck 	:	/^[a-zA-Z0-9]{6,12}$/,
-			inputName		:	/^[가-힣]{2,5}$/,
-			inputPhone2		:	/^[0-9]$/,
-			inputPhone3		: 	/^[0-9]$/,
-			inputPostNo		:	/^[0-9]{3}\-[0-9]{3}$/,
-			inputAddress	:	/^(?=.*\S)[0-9a-zA-Z가-힣\s-]{1,30}$/,
-			inputCompany	:	/^(?=.*\S)[0-9a-zA-Z가-힣\s-]{1,20}$/
-		}
-		// 인풋요소의 id 
-		var inputElementId = input.attr('id')
-		// 인풋요소의 아이디를 키로 이넘값 참조하여 regExp 변수에 할당
-		var regExp = regExpEnum[inputElementId]
-		
-		// 정규식 테스트 결과에 따른 반영
-		if(regExp.test(inputVal)){
-			isValid = true
-		}else if(!regExp.test(inputVal)){
-			isValid = false
-		}
-		
-		
-		// 유효여부에 따라 색변경할 스팬요소
-		var CheckAlertSpan = $j('#'+inputElementId+'Span')
-		// id === inputPhone2Span ? inputPhoneSpan : id+Span
-		if(inputElementId === 'inputPhone2' || inputElementId === 'inputPhone3'){
-			var CheckAlertSpan = $j('#'+inputElementId.slice(0,-1)+'Span')
-		}
-		
-		if(isValid){
-			CheckAlertSpan.removeClass('fail').addClass('pass')
-		}else{
-			CheckAlertSpan.removeClass('pass').addClass('fail')
-		}
-		
-		if(inputElementId === 'inputId'){
-			var checkedId = $j('#checkedId').val()
-			if(checkedId !=='' && checkedId === inputVal){
-				$j('#checkedIdSpan').removeClass('fail').addClass('pass')				
-			}else{
-				$j('#checkedIdSpan').removeClass('pass').addClass('fail')
-			}
-		}
-
-		if(inputElementId === 'inputPw' || inputElementId === 'inputPwCheck'){
-				var pw1 = $j('#inputPw').val()
-				var pw2 = $j('#inputPwCheck').val()
-			if(pw2 !==''){
-				if(pw1 === pw2){
-					$j('#inputPwCheckSpan').removeClass('fail').addClass('pass')
-				}else{
-					isValid = false
-					$j('#inputPwCheckSpan').removeClass('pass').addClass('fail')
-				}	
-			}
-		}
-		
-		if(inputVal===''){
-			CheckAlertSpan.removeClass('fail')
-			inputElementId === 'inputId' && $j('#checkedIdSpan').removeClass('fail').removeClass('pass')	
-		}
-		return isValid
-	};
-	
-	 */
-	// '중복확인' 버튼 클릭시 
-	$j('#duplicateCheck').on('click', function(){
-		var inputIdElement = $j('#inputId')
-		
-		$j('#checkedId').val('')
-		
-		
-		if(!isInputValid('inputId')){
-			alert("아이디를 올바르게 입력해 주십시오.")
-			inputIdElement.focus()
-			return
-		}
-		
-		var id = inputIdElement.val()
- 		$j.get('/api/user/join/duplicateCheck.do?userId='+id)
- 		.done(res=>{
- 			if(res.result === "success"){
- 				if(res.isDuplicate === "true"){
- 					alert("이미 사용중인 아이디입니다.")
-					$j('#checkedIdSpan').removeClass('pass').addClass('fail')
- 				}else if(res.isDuplicate === "false"){
- 					$j('#checkedId').val(id)
- 					alert("사용 가능한 아이디입니다.")
- 					$j('#checkedIdSpan').removeClass('fail').addClass('pass')
- 				}	
- 			}else{
- 					alert('에러가 발생하였습니다.')
- 			}
- 		})
- 		.fail(res=>alert('에러가 발생하였습니다.'))
-
-    });
-	
-	
-	// 'join' 버튼 클릭시
-	$j('#submitLink').on('click',function(event){
-	    event.preventDefault(); // 기본제출 차단
-	    var checkedId = $j('#checkedId').val()
-	    var inputId = $j('#inputId').val()
-	    
-	    if( checkedId ==='' || checkedId !== inputId){
-			alert('아이디 중복확인이 필요합니다.')
-			$j('#duplicateCheck').focus()
-			return
-		}
-	    
-	    //유효하지않은 인풋필드 요소 id --> 유효성 검사돌려서 유효하지않은 인풋요소 id 대입됨
-	    var targetId = ''
-	    
-	    $j('#formTable').find('input[type="text"]').each((index,input)=>{
-	    	if(!isInputValid(input.id)){
-	    		targetId = input.id
-	    	}
-	    })
-
-	    if(targetId !== ''){	
-	    	alert("입력값을 확인해주십시오")
-			// 유효여부에 따라 색변경할 스팬요소
-			var CheckAlertSpan = $j('#'+targetId+'Span')
-			// id === inputPhone2Span ? inputPhoneSpan : id+Span
-			if(targetId === 'inputPhone2' || targetId === 'inputPhone3'){
-				var CheckAlertSpan = $j('#'+targetId.slice(0,-1)+'Span')
-			}
-	    	CheckAlertSpan.addClass('fail').removeClass('pass')
-	    	$j('#'+targetId).focus()
-	    	
-	    	return
+	// 각 input필드별로 유효성 검증에 필요한 데이터를 모아놓을 클래스
+	class RULE {
+	    constructor(isEssential, name, min, max, patternInfo, falseRegExp) {
+	        this.isEssential = isEssential;
+	        this.name = name;
+	        this.min = min;
+	        this.max = max;
+	        this.patternInfo = patternInfo;
+	        this.falseRegExp = falseRegExp;
 	    }
-	    
+	}
+	
+////////////////////////////////	
+// 전역 변수 	
+	// RULE 클래스 객체들을 input필드요소의 id로 매핑한 객체 초기화 
+	var INPUT_RESTRICTION = {
+	    inputId: new RULE(true, '아이디는 ', 2, 15, '2자 이상 15자 이하의\n영문 소문자/숫자 형식', /[^a-z0-9]/g),
+	    inputPw: new RULE(true, '비밀번호는 ', 6, 15, '6자 이상 15자 이하의\n영문 대소문자/숫자 형식', /[^a-zA-Z0-9]/g),
+	    inputPwCheck: new RULE(true, '비밀번호 확인은 ', 6, 15, '6자 이상 15자 이하의\n영문 대소문자/숫자 형식', /[^a-zA-Z0-9]/g),
+	    inputName: new RULE(true, '이름은 ', 2, 5, '2자 이상 5자 이하의\n한글 형식', /[^ㄱ-ㅎㅏ-ㅣ가-힣]/g),
+	    inputPhone2: new RULE(true, '핸드폰번호는 ', 4, 4, '4자리의 숫자 형식', /[^0-9]/g),
+	    inputPhone3: new RULE(true, '핸드폰번호는 ', 4, 4, '4자리의 숫자 형식', /[^0-9]/g),
+	    inputPostNo: new RULE(false, '우편번호는 ', 7, 7, '000-000 형식', /[^0-9-]/g),
+	    inputAddress: new RULE(false, '주소는 ', 1, 30, '1자 이상 30자 이하의\n한글, 영문 대소문자, 숫자, "-" 형식', /[^0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s-]/g),
+	    inputCompany: new RULE(false, '회사명은 ', 1, 20, '1자 이상 30자 이하의\n한글, 영문 대소문자, 숫자, "-" 형식', /[^0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s-]/g)
+	};
+
+	// 중복확인이 완료된 아이디 ('' 이면 중복확인 안됨 )
+	var CHECKED_ID =''
+	// 자주사용하는 요소선택함수
+	var idFind = (elementId)=>document.getElementById(elementId)
+	// 유효성검사해야되는 타겟 인풋 필드들
+	var targetInputs = document.querySelectorAll('input[type="text"], input[type="password"]')
+/////////////
+	// 전역변수 끝//
+//////////////////////////////////////////////////////////////
+	
+	// 타겟 필드 입력들어올 시 형식 안맞는 입력값들 삭제 함수 
+	var inputRestrict = function(e){
+			var input = e.target
+		   var regExp = INPUT_RESTRICTION[input.id].falseRegExp
+		    if (regExp.test(input.value)) {
+		    	input.value = input.value.replace(regExp, '');
+		    }
+		}
+	// 각 타겟 필드들에 inputRestrict 이벤트 핸들러 함수 등록
+	targetInputs.forEach(input =>input.addEventListener('input',inputRestrict))
+	
+	// 'join' 링크 클릭시 이벤트 핸들러 함수 등록
+	$j('#submitLink').on('click',function(e){
+		e.preventDefault()
+		
+		for(var i=0; i<targetInputs.length; i++){
+			var failMsg =inputChecker(targetInputs[i])
+			if(failMsg){
+				alert(failMsg)
+				targetInputs[i].focus()
+				return
+				}
+			}
+		
+		var inputId = idFind('inputId')
+		if(CHECKED_ID === '' || CHECKED_ID !== inputId.value){
+				alert('아이디 중복확인이 필요합니다.')
+				idFind('idCheckBtn').focus()
+				return
+			}
+		
    	   	var formData = {}
 	    $j('#joinForm').serializeArray().forEach((input)=>{
-	   		formData[input.name]=input.value	
+	   		formData[input.name]=input.value.trim()	
    	   	})
    	   	
 		console.log("==================================")
 		console.log("ajax 요청 : 폼 입력 키:값 JSON형태로 요청바디에 담아서 전송: ")
 		console.log(JSON.stringify(formData))
 		console.log("==================================")
- 		$j.ajax({
+ 		
+		$j.ajax({
 			type		: "POST",
 			url			: "/api/user/join/submit.do",
 			data		: JSON.stringify(formData),
@@ -226,26 +124,105 @@ $j().ready(() => {
 					location.href="/board/boardList.do"
 				}else if(res.result === 'error'){
 					if(res.errorCode === 'duplicateId'){
-						$j('#checkedId').val('')
-						$j('#checkedIdSpan').removeClass('pass').addClass('fail')
+						CHECKED_ID=''
 						alert('중복된 아이디입니다. 아이디를 다시 확인해주세요.')
-						$j('#inputId').focus()
+						inputId.focus()
 						return
-					}
+						}
 					alert('에러가 발생하였습니다.')
-					
-				}
-			},
+					}
+				},
 			error		: function(xhr, status, error) {
 	         	alert(error)
-	        }
+	        	}
+			})
 		})
-	}) 
+
+		
+
+	// 인풋 요소를 인자로 받아 조건에 맞춰 에러메시지를 반환하는 함수
+	// 요소 하나당 순차적으로 아래 내용 검증하는 퍼널형 구조
+	// 1. 공백값 체크및 허용여부 --> 2. 입력조건 준수여부(글자수, 패턴) --> 3. 비밀번호 요소일시 비번체크여부
+	// 반환값이 '' 이면 통과
+	var inputChecker = function(input){
+		var rule = INPUT_RESTRICTION[input.id]
+		console.log(rule)
+		console.log(input)
+		if(input.value.trim() === ''){
+			if(rule.isEssential){
+				return rule.name + '필수 입력값입니다.'
+				}
+			return ''
+		}
+		
+		if(isInvalid(input)){
+			return rule.name + rule.patternInfo + '으로 입력하셔야 합니다.'
+			}
+		
+		if(input.id === 'inputPwCheck' && input.value !== idFind('inputPw').value){
+			return '동일한 비밀번호를 입력하셔야 합니다.'	
+			}
+		}
+	
+	// inputChecker 함수가 
+	//2. 입력조건 준수여부(글자수, 패턴) 검사시 호출하는 콜백함수 (true or false 반환)
+	var isInvalid = function(input){
+		var rule = INPUT_RESTRICTION[input.id]
+		var val = input.value
+		
+		if(val.length <rule.min || val.length >rule.max){
+			return true
+			}
+		return rule.falseRegExp.test(val)
+		
+		}
+	
+
+
+	
+	// '중복확인' 버튼 클릭시 중복여부 확인하여 확인하는 함수
+	// 전역변수 CHECKED_ID에 값 할당하는함수
+	$j('#idCheckBtn').on('click', function(){
+		var input = idFind('inputId')
+		var failMsg = inputChecker(input)
+		if(failMsg){
+			alert(failMsg)
+			input.focus()
+			return
+		}
+		
+		CHECKED_ID = ''
+ 		$j.get('/api/user/join/duplicateCheck.do?userId='+input.value)
+ 		.done(res=>{
+ 			if(res.result === "success"){
+ 				if(res.isDuplicate === "true"){
+ 					alert("이미 사용중인 아이디입니다.")
+ 					input.focus()
+ 				}else if(res.isDuplicate === "false"){
+ 					alert("사용 가능한 아이디입니다.")
+ 					CHECKED_ID = input.value
+ 					for (var i=0; i<targetInputs.length; i++){
+ 						if(inputChecker(targetInputs[i])){
+ 							targetInputs[i].focus()
+ 							return
+ 						}
+ 					}
+ 					findId('submitLink').focus()
+ 				}	
+ 			}else{
+ 					alert('에러가 발생하였습니다.')
+ 			}
+ 		})
+ 		.fail(res=>alert('에러가 발생하였습니다.'))
+    });
+	
+
+	
+	
 })
 </script>
 <body>
 	<form id="joinForm">
-		<input type="hidden" id="checkedId" value=""/>
 		<table align="center" >
 			<tbody>
 				<tr>
@@ -258,16 +235,16 @@ $j().ready(() => {
 						<table id="formTable" border="1">
 							<tr >
 								<td align="center" width="120" >
-									id
+									id*
 								</td >
 								<td>
 									<input class="userInput" name="id" value="" id="inputId" type="text" maxlength="15"  style="height: 22px;"/>
-									<input type="button" id="duplicateCheck" value="중복확인" /> 
+									<input type="button" id="idCheckBtn" value="중복확인" /> 
 								</td>
 							</tr>
 							<tr >
 								<td align="center"  >
-									pw
+									pw*
 								</td >
 								<td >
 									<input class="userInput"  id="inputPw" name="pw" type="password" maxlength="12" autocomplete="off" style="height: 22px;"/>
@@ -276,7 +253,7 @@ $j().ready(() => {
 							<tr>
 							<tr >
 								<td align="center"  >
-									pw check
+									pw check*
 								</td >
 								<td >
 									<input class="userInput" id="inputPwCheck"  autocomplete="off" type="password"  maxlength="12" style="height: 22px;"/>
@@ -284,7 +261,7 @@ $j().ready(() => {
 							</tr>
 							<tr >
 								<td align="center"  >
-									name
+									name*
 								</td >
 								<td >
 									<input class="userInput"  id="inputName" name="name" type="text" maxlength="5" style="height: 22px;"/>
@@ -292,7 +269,7 @@ $j().ready(() => {
 							</tr>
 							<tr>
 								<td align="center"  >
-									phone
+									phone*
 								</td >
 								<td>
 									<select  class="userInput"  id="inputPhone1" name="phone1" style="height: 30px;">
