@@ -88,7 +88,7 @@ $j().ready(() => {
 		e.preventDefault()
 		
 		for(var i=0; i<targetInputs.length; i++){
-			var failMsg =inputChecker(targetInputs[i])
+			var failMsg = inputChecker(targetInputs[i])
 			if(failMsg){
 				alert(failMsg)
 				targetInputs[i].focus()
@@ -146,8 +146,6 @@ $j().ready(() => {
 	// 반환값이 '' 이면 통과
 	var inputChecker = function(input){
 		var rule = INPUT_RESTRICTION[input.id]
-		console.log(rule)
-		console.log(input)
 		if(input.value.trim() === ''){
 			if(rule.isEssential){
 				return rule.name + '필수 입력값입니다.'

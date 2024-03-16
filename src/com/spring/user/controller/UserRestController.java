@@ -60,9 +60,9 @@ public class UserRestController {
 				return map;
 			}
 			
-			
-			dbUserVo.setPw("");
-			session.setAttribute("user", dbUserVo);
+			UserVo sessionUserDto= dbUserVo;
+			sessionUserDto.setPw("");
+			session.setAttribute("user", sessionUserDto);
 			map.put("result","success");
 			
 		}catch (Exception e) {

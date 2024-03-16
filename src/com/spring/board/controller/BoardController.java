@@ -134,22 +134,7 @@ public class BoardController {
 		return "board/boardModify";
 	}
 
-	@RequestMapping(value = "/board/boardWriteAction.do", method = RequestMethod.POST)
-	@ResponseBody
-	public String boardWriteAction(Locale locale,@RequestBody BoardVo boardVo) throws Exception {
 
-		HashMap<String, String> result = new HashMap<String, String>();
-		CommonUtil commonUtil = new CommonUtil();		
-		List<BoardVo> boardList = boardVo.getBoardList();
-		int resultCnt = boardService.boardInsert(boardList);
-		result.put("result", resultCnt > 0 ? "success" : "error"); 
-		String callbackMsg = commonUtil.getJsonCallBackString(" ", result);
-		System.out.println("callbackMsg::" + callbackMsg);
-
-		return callbackMsg;
-	}
-
-	
 	
 
 	@RequestMapping(value = "/board/boardDeleteAction.do", method = RequestMethod.POST)

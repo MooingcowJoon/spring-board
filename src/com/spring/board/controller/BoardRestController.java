@@ -35,7 +35,7 @@ public class BoardRestController {
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
 	@RequestMapping(value = "/board/boardWriteAction.do", method = RequestMethod.POST)
-	@ResponseBody
+	@ResponseBody	
 	public String boardWriteAction(Locale locale,@RequestBody BoardVo boardVo) throws Exception {
 
 		HashMap<String, String> result = new HashMap<String, String>();
