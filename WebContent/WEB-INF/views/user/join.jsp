@@ -58,7 +58,7 @@ $j().ready(() => {
 	    inputName: new RULE(true, '이름은 ', 2, 5, '2자 이상 5자 이하의\n한글 형식', /[^ㄱ-ㅎㅏ-ㅣ가-힣]/g,/[가-힣]{2,5}$/),
 	    inputPhone2: new RULE(true, '핸드폰번호는 ', 4, 4, '4자리의 숫자 형식', /[^0-9]/g, /[0-9]{4}$/),
 	    inputPhone3: new RULE(true, '핸드폰번호는 ', 4, 4, '4자리의 숫자 형식', /[^0-9]/g, /[0-9]{4}$/),
-	    inputPostNo: new RULE(false, '우편번호는 ', 7, 7, '000-000 형식', /[^0-9-]/g, /\d{3}-\d{3}$/),
+	    inputPostNo: new RULE(false, '우편번호는 ', 7, 7, '000-000 형식', /[^0-9]/g, /\d{3}-\d{3}$/),
 	    inputAddress: new RULE(false, '주소는 ', 1, 30, '1자 이상 30자 이하의\n한글, 영문 대소문자, 숫자, "-" 형식', /[^0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s-]/g,/[0-9a-zA-Z가-힣\s-]{1,30}$/),
 	    inputCompany: new RULE(false, '회사명은 ', 1, 20, '1자 이상 30자 이하의\n한글, 영문 대소문자, 숫자, "-" 형식', /[^0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s-]/g, /[0-9a-zA-Z가-힣\s-]{1,30}$/)
 	};
@@ -80,23 +80,48 @@ $j().ready(() => {
 		    if (regExp.test(input.value)) {
 		    	input.value = input.value.replace(regExp, '');
 		    }
+			// 만약 입력필드가 비밀번호 또는 비밀번호 확인일 경우
 			if(input.id === 'inputPwCheck' || input.id === 'inputPw'){
 				var pw = idFind('inputPw')
 				var pwChk = idFind('inputPwCheck')
-				
+				// 둘중 하나 값 공백일 경우 안내문구 제거				
 				if(pw.value === '' || pwChk.value === ''){
 					$j('#pwCheckSpan').removeClass().text('')
-				}else{
-					if(pw.value === pwChk.value){
-						$j('#pwCheckSpan').removeClass().addClass('pass').html('비밀번호 <b>일치</b>')
-					}else{
-						$j('#pwCheckSpan').removeClass().addClass('fail').html('비밀번호 <b>불일치</b>')
+				// 공백 아닌데 값 같으면 일치, 아니면 불일치
+				}else if(pw.value === pwChk.value){
+					$j('#pwCheckSpan').removeClass().addClass('pass').html('비밀번호 <b>일치</b>')
+				}else if(pw.value !== pwChk.value){
+					$j('#pwCheckSpan').removeClass().addClass('fail').html('비밀번호 <b>불일치</b>')
 					}					
 				}
+	
+			// 입력필드가 폰2일경우 4자리 입력하면 다음 필드로 이동
+			if(input.id === 'inputPhone2' ){
+				if(input.value.length === 4){
+					idFind('inputPhone3').focus()
+				}
 			}
+			
+			// 우편번호일경우 3글자 초과시 '-' 하나 추가
+			if(input.id === 'inputPostNo'){
+				var value = input.value.replaceAll('-','')
+				if(value.length > 3){
+					input.value = value.slice(0,3)+'-'+value.slice(3,6)
+				}
+			}
+			
 		}
 	// 각 타겟 필드들에 inputRestrict 이벤트 핸들러 함수 등록
-	targetInputs.forEach(input =>input.addEventListener('input',inputRestrict))
+	$j(targetInputs).on('input', inputRestrict);
+
+	// 핸드폰번호 뒷 4자리 입력필드에서 공백일 때 백스페이스 누르면 가운데자리 마지막자 지워지는 이벤트 핸들러 함수 등록 
+	idFind('inputPhone3').addEventListener('keydown',function(e){
+		if(e.key === 'Backspace' && this.value === ''){
+			var phone2 = idFind('inputPhone2')
+			phone2.focus()
+		}
+	})
+	
 	
 	// 'join' 링크 클릭시 이벤트 핸들러 함수 등록
 	$j('#submitLink').on('click',function(e){
@@ -204,20 +229,25 @@ $j().ready(() => {
  		$j.get('/api/user/join/duplicateCheck.do?userId='+input.value)
  		.done(res=>{
  			if(res.result === "success"){
+ 				// 중복일시 리턴
  				if(res.isDuplicate === "true"){
  					alert("이미 사용중인 아이디입니다.")
  					input.focus()
- 				}else if(res.isDuplicate === "false"){
+ 					return
+ 				}
+ 				// 중복아닐시 CHECKED_ID 변수에 값 할당 
+ 				if(res.isDuplicate === "false"){
  					alert("사용 가능한 아이디입니다.")
- 					CHECKED_ID = input.value
- 					for (var i=0; i<targetInputs.length; i++){
- 						if(inputChecker(targetInputs[i])){
- 							targetInputs[i].focus()
- 							return
- 						}
- 					}
- 					idFind('submitLink').focus()
- 				}	
+					CHECKED_ID = input.value
+ 				}
+ 				
+				for (var i=0; i<targetInputs.length; i++){
+					if(inputChecker(targetInputs[i])){
+						targetInputs[i].focus()
+						return
+					}
+				}
+				idFind('submitLink').focus()
  			}else{
  					alert('에러가 발생하였습니다.')
  			}

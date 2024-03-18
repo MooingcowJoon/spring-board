@@ -66,10 +66,12 @@ $j().ready(() => {
 		
 		if(inputId.val() === ''){
 			alert('아이디를 입력하여 주십시오.')
+			inputId.focus()
 			return
 		}
 		if(inputPw.val()===''){
 			alert('비밀번호를 입력하여 주십시오.')
+			inputPw.focus()
 			return
 		}
 		
