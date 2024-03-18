@@ -5,14 +5,6 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<style>
-span{
-font-size: 0.7em; /* 조금 작게 만들기 */
-}
-span.fail {
-    color: red; /* 빨간색 텍스트 */
-}
-</style>
 <title>로그인 페이지</title>
 </head>
 <script>
@@ -62,21 +54,6 @@ $j().ready(() => {
 		}else if(!regExp.test(inputVal)){
 			isValid = false
 		}
-		
-		
-		// 유효여부에 따라 색변경할 스팬요소
-		var CheckAlertSpan = $j('#'+fieldId+'Span')
-		// id === inputPhone2Span ? inputPhoneSpan : id+Span
-		
-		if(isValid){
-			CheckAlertSpan.removeClass('fail').addClass('pass')
-		}else{
-			CheckAlertSpan.removeClass('pass').addClass('fail')
-		}
-		
-		if(inputVal===''){
-			CheckAlertSpan.removeClass('fail')
-		}
 		return isValid
 	};	
 	
@@ -87,6 +64,15 @@ $j().ready(() => {
 		var inputId = $j('#inputId')
 		var inputPw = $j('#inputPw')
 		
+		if(inputId.val() === ''){
+			alert('아이디를 입력하여 주십시오.')
+			return
+		}
+		if(inputPw.val()===''){
+			alert('비밀번호를 입력하여 주십시오.')
+			return
+		}
+		
 		// formData객체에 저장
 		var formData = {				
 				id : inputId.val(),
@@ -95,12 +81,12 @@ $j().ready(() => {
 		
 		// id, pw 각각 1차 유효성검사 미통과시 알림 표시 후 포커스
 		if(!isInputValid(inputId.attr('id'))){
-			alert('아이디 입력을 확인하여 주십시오.')
+			alert('아이디를 올바르게 입력하여 주십시오.\n(2~15자의 영문 소문자 및 숫자)')
 			inputId.focus()
 			return
 		}
 		if(!isInputValid(inputPw.attr('id'))){
-			alert('비밀번호 입력을 확인하여 주십시오.')
+			alert('비밀번호 입력을 확인하여 주십시오.\n(6~15자의 영문 대소문자 및 숫자)')
 			inputPw.focus()
 			return
 		}
@@ -149,7 +135,7 @@ $j().ready(() => {
 					<td>
 						<table id ="formTable" border="1">
 							<tr >
-								<td align="center" width="120" rowspan="2" >
+								<td align="center" width="120">
 									id
 								</td >
 								<td>
@@ -157,36 +143,12 @@ $j().ready(() => {
 								</td>
 							</tr>
 							<tr>
-								<td>
-									<span id="inputIdSpan">
-										<b>
-										2 ~ 15</b> 자의 
-										<b>
-										영문 소문자/숫자 
-										</b>
-										및 
-									</span>
-								</td>
-							</tr>
-							<tr>
-								<td align="center" rowspan="2" >
+								<td align="center" >
 									pw
 								</td >
 	
 								<td >
 									<input  id="inputPw" name="pw" type="password"  maxlength="12" autocomplete="off" style="height: 22px;"/>
-								</td>
-							</tr>
-							<tr>
-								<td style="border:none;" align="center">
-									<span id="inputPwSpan">
-										<b>
-										6 ~ 12
-										</b>자의 
-										<b>
-										영문 대소문자/숫자
-										</b>
-									</span>
 								</td>
 							</tr>
 						</table>

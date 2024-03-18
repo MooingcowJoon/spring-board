@@ -42,7 +42,6 @@ public class UserRestController {
 		}
 		return map;
 	}
-	
 	@RequestMapping(value = "/api/user/loginUser.do", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,String> loginUser(HttpSession session, Locale locale, @RequestBody UserVo inputUserVo) throws Exception{
@@ -70,7 +69,6 @@ public class UserRestController {
 		}
 		return map;
 	}
-	
 	@RequestMapping(value = "/api/user/join/duplicateCheck.do", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String,String> joinDuplicateCheck(Locale locale, @RequestParam String userId) throws Exception{
@@ -89,8 +87,6 @@ public class UserRestController {
 		}
 		return map;
 	}
-	
-	
 	@RequestMapping(value = "/api/user/join/submit.do", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,String> join(HttpServletRequest request, Locale locale,@RequestBody UserVo userVo ) throws Exception{

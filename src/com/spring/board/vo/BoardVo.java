@@ -18,7 +18,8 @@ public class BoardVo {
 	private String boardTypeName;
 	private List<BoardVo> boardList;
 	
-	
+	public BoardVo() {
+	}
     public String getCreatorId() {
 		return creatorId;
 	}
@@ -51,8 +52,7 @@ public class BoardVo {
         this.boardList = boardList;
     }
 	
-	public BoardVo() {
-	}
+
 	public int getTotalCnt() {
 		return totalCnt;
 	}

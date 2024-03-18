@@ -37,13 +37,14 @@ $j().ready(() => {
 	
 	// 각 input필드별로 유효성 검증에 필요한 데이터를 모아놓을 클래스
 	class RULE {
-	    constructor(isEssential, name, min, max, patternInfo, falseRegExp) {
+	    constructor(isEssential, name, min, max, patternInfo, inputPattern,validPattern) {
 	        this.isEssential = isEssential;
 	        this.name = name;
 	        this.min = min;
 	        this.max = max;
 	        this.patternInfo = patternInfo;
-	        this.falseRegExp = falseRegExp;
+	        this.inputPattern = inputPattern;
+	        this.validPattern = validPattern;
 	    }
 	}
 	
@@ -51,15 +52,15 @@ $j().ready(() => {
 // 전역 변수 	
 	// RULE 클래스 객체들을 input필드요소의 id로 매핑한 객체 초기화 
 	var INPUT_RESTRICTION = {
-	    inputId: new RULE(true, '아이디는 ', 2, 15, '2자 이상 15자 이하의\n영문 소문자/숫자 형식', /[^a-z0-9]/g),
-	    inputPw: new RULE(true, '비밀번호는 ', 6, 15, '6자 이상 15자 이하의\n영문 대소문자/숫자 형식', /[^a-zA-Z0-9]/g),
-	    inputPwCheck: new RULE(true, '비밀번호 확인은 ', 6, 15, '6자 이상 15자 이하의\n영문 대소문자/숫자 형식', /[^a-zA-Z0-9]/g),
-	    inputName: new RULE(true, '이름은 ', 2, 5, '2자 이상 5자 이하의\n한글 형식', /[^ㄱ-ㅎㅏ-ㅣ가-힣]/g),
-	    inputPhone2: new RULE(true, '핸드폰번호는 ', 4, 4, '4자리의 숫자 형식', /[^0-9]/g),
-	    inputPhone3: new RULE(true, '핸드폰번호는 ', 4, 4, '4자리의 숫자 형식', /[^0-9]/g),
-	    inputPostNo: new RULE(false, '우편번호는 ', 7, 7, '000-000 형식', /[^0-9-]/g),
-	    inputAddress: new RULE(false, '주소는 ', 1, 30, '1자 이상 30자 이하의\n한글, 영문 대소문자, 숫자, "-" 형식', /[^0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s-]/g),
-	    inputCompany: new RULE(false, '회사명은 ', 1, 20, '1자 이상 30자 이하의\n한글, 영문 대소문자, 숫자, "-" 형식', /[^0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s-]/g)
+	    inputId: new RULE(true, '아이디는 ', 2, 15, '2자 이상 15자 이하의\n영문 소문자/숫자 형식', /[^a-z0-9]/g, /[a-z0-9]{2,15}$/),
+	    inputPw: new RULE(true, '비밀번호는 ', 6, 15, '6자 이상 15자 이하의\n영문 대소문자/숫자 형식', /[^a-zA-Z0-9]/g, /[a-zA-Z0-9]{6,15}$/ ),
+	    inputPwCheck: new RULE(true, '비밀번호 확인은 ', 6, 15, '6자 이상 15자 이하의\n영문 대소문자/숫자 형식', /[^a-zA-Z0-9]/g, /[a-zA-Z0-9]{6,15}$/),
+	    inputName: new RULE(true, '이름은 ', 2, 5, '2자 이상 5자 이하의\n한글 형식', /[^ㄱ-ㅎㅏ-ㅣ가-힣]/g,/[가-힣]{2,5}$/),
+	    inputPhone2: new RULE(true, '핸드폰번호는 ', 4, 4, '4자리의 숫자 형식', /[^0-9]/g, /[0-9]{4}$/),
+	    inputPhone3: new RULE(true, '핸드폰번호는 ', 4, 4, '4자리의 숫자 형식', /[^0-9]/g, /[0-9]{4}$/),
+	    inputPostNo: new RULE(false, '우편번호는 ', 7, 7, '000-000 형식', /[^0-9-]/g, /\d{3}-\d{3}$/),
+	    inputAddress: new RULE(false, '주소는 ', 1, 30, '1자 이상 30자 이하의\n한글, 영문 대소문자, 숫자, "-" 형식', /[^0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s-]/g,/[0-9a-zA-Z가-힣\s-]{1,30}$/),
+	    inputCompany: new RULE(false, '회사명은 ', 1, 20, '1자 이상 30자 이하의\n한글, 영문 대소문자, 숫자, "-" 형식', /[^0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣\s-]/g, /[0-9a-zA-Z가-힣\s-]{1,30}$/)
 	};
 
 	// 중복확인이 완료된 아이디 ('' 이면 중복확인 안됨 )
@@ -75,10 +76,24 @@ $j().ready(() => {
 	// 타겟 필드 입력들어올 시 형식 안맞는 입력값들 삭제 함수 
 	var inputRestrict = function(e){
 			var input = e.target
-		   var regExp = INPUT_RESTRICTION[input.id].falseRegExp
+		   var regExp = INPUT_RESTRICTION[input.id].inputPattern
 		    if (regExp.test(input.value)) {
 		    	input.value = input.value.replace(regExp, '');
 		    }
+			if(input.id === 'inputPwCheck' || input.id === 'inputPw'){
+				var pw = idFind('inputPw')
+				var pwChk = idFind('inputPwCheck')
+				
+				if(pw.value === '' || pwChk.value === ''){
+					$j('#pwCheckSpan').removeClass().text('')
+				}else{
+					if(pw.value === pwChk.value){
+						$j('#pwCheckSpan').removeClass().addClass('pass').html('비밀번호 <b>일치</b>')
+					}else{
+						$j('#pwCheckSpan').removeClass().addClass('fail').html('비밀번호 <b>불일치</b>')
+					}					
+				}
+			}
 		}
 	// 각 타겟 필드들에 inputRestrict 이벤트 핸들러 함수 등록
 	targetInputs.forEach(input =>input.addEventListener('input',inputRestrict))
@@ -146,6 +161,8 @@ $j().ready(() => {
 	// 반환값이 '' 이면 통과
 	var inputChecker = function(input){
 		var rule = INPUT_RESTRICTION[input.id]
+		
+		// 입력값 미입력 여부 체크
 		if(input.value.trim() === ''){
 			if(rule.isEssential){
 				return rule.name + '필수 입력값입니다.'
@@ -168,11 +185,7 @@ $j().ready(() => {
 		var rule = INPUT_RESTRICTION[input.id]
 		var val = input.value
 		
-		if(val.length <rule.min || val.length >rule.max){
-			return true
-			}
-		return rule.falseRegExp.test(val)
-		
+		return !rule.validPattern.test(val)
 		}
 	
 
@@ -235,7 +248,7 @@ $j().ready(() => {
 								<td align="center" width="120" >
 									id*
 								</td >
-								<td>
+								<td width="260">
 									<input class="userInput" name="id" value="" id="inputId" type="text" maxlength="15"  style="height: 22px;"/>
 									<input type="button" id="idCheckBtn" value="중복확인" /> 
 								</td>
@@ -255,6 +268,7 @@ $j().ready(() => {
 								</td >
 								<td >
 									<input class="userInput" id="inputPwCheck"  autocomplete="off" type="password"  maxlength="12" style="height: 22px;"/>
+									<span id="pwCheckSpan" ></span>
 								</td>
 							</tr>
 							<tr >

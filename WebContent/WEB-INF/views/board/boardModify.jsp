@@ -30,15 +30,19 @@
 			}
 			
 		    var pathVariables = location.pathname.split('/');
+		    
 		    var boardType = pathVariables[2];
 		    var boardNum = pathVariables[3];
-		    var creator = $j('#creatorId').val()
+		    var creatorId = $j('#creatorId').val()
+		    var creatorName = $j('#creatorName').val()
+		    
 			var formData = {
 				boardType 		: 	boardType,
 				boardNum 		:	boardNum,
 				boardTitle		:	boardTitle,
 				boardComment	:	boardComment,
-				creator			:	creator
+				creatorId		:	creatorId,
+				creatorName		: 	creatorName
 			}
 			console.log("==================================")
 			console.log("ajax 요청 : 'update' 버튼 클릭시 ajax 요청바디 (JSON): ")
@@ -93,7 +97,7 @@
 							<input type="button" id="toListBtn" value="목록으로 돌아가기"/>
 						</c:when>
 						<c:when test="${errorCode eq 'wrongUser'}">
-							<h3>잘못된 사용자입니다.</h3>
+							<h3>게시물 수정권한이 없습니다.</h3>
 							<input type="button" id="toListBtn" value="목록으로 돌아가기"/>
 						</c:when>
 					</c:choose>
@@ -111,7 +115,8 @@
 				<c:when test="${result eq 'success'}">
 					<tr>
 						<td>
-							<input id="creatorId" type="hidden" value="${board.creator}"/>
+							<input id="creatorId" type="hidden" value="${board.creatorId}"/>
+							<input id="creatorName" type="hidden" value="${board.creatorName}"/>
 							<table border ="1"> 
 								<tr>
 									<td width="120" align="center">
@@ -134,7 +139,7 @@
 									Writer
 									</td>
 									<td>
-										${board.creator}
+										${board.creatorName}
 									</td>
 								</tr>
 							</table>
