@@ -95,7 +95,6 @@
 				$j.get('/api/user/logout.do')
 				.done(res=>{
 					if(res.result === 'success'){
-						alert('로그아웃 되었습니다. 페이지가 새로고침됩니다.')
 						location.reload()
 					}else if(res.result === 'error'){
 						alert('에러가 발생하였습니다.')

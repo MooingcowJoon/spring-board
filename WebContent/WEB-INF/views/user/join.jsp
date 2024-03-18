@@ -188,8 +188,6 @@ $j().ready(() => {
 		return !rule.validPattern.test(val)
 		}
 	
-
-
 	
 	// '중복확인' 버튼 클릭시 중복여부 확인하여 확인하는 함수
 	// 전역변수 CHECKED_ID에 값 할당하는함수
@@ -218,7 +216,7 @@ $j().ready(() => {
  							return
  						}
  					}
- 					findId('submitLink').focus()
+ 					idFind('submitLink').focus()
  				}	
  			}else{
  					alert('에러가 발생하였습니다.')
