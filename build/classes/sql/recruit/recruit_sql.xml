@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="recruit">
+    <resultMap type="com.spring.recruit.vo.RecruitVo" id="recruitVo">
+    	<result property="seq" 	column="SEQ"/>
+    	<result property="name" 	column="NAME"/>
+    	<result property="birth" 	column="BIRTH"/>
+    	<result property="gender" 	column="GENDER"/>
+    	<result property="phone" column="PHONE"/>
+    	<result property="email" column="EMAIL"/>
+    	<result property="addr" column="ADDR"/>
+    	<result property="location" column="LOCATION"/>
+    	<result property="workType" column="WORK_TYPE"/>
+    	<result property="submit" column="SUBMIT"/>
+    </resultMap>
+    
+    <!-- CareerVo ResultMap -->
+	<resultMap type="com.spring.recruit.vo.CareerVo" id="careerVo">
+	    <result property="carSeq" column="CAR_SEQ"/>
+	    <result property="seq" column="SEQ"/>
+	    <result property="compName" column="COMP_NAME"/>
+	    <result property="location" column="LOCATION"/>
+	    <result property="startPeriod" column="START_PERIOD"/>
+	    <result property="endPeriod" column="END_PERIOD"/>
+	    <result property="task" column="TASK"/>
+	    <result property="salary" column="SALARY"/>
+	</resultMap>
+	
+	<!-- CertificateVo ResultMap -->
+	<resultMap type="com.spring.recruit.vo.CertificateVo" id="certificateVo">
+	    <result property="certSeq" column="CERT_SEQ"/>
+	    <result property="seq" column="SEQ"/>
+	    <result property="qualifiName" column="QUALIFI_NAME"/>
+	    <result property="acquDate" column="ACQU_DATE"/>
+	    <result property="organizeName" column="ORGANIZE_NAME"/>
+	</resultMap>
+	
+	<!-- EducationVo ResultMap -->
+	<resultMap type="com.spring.recruit.vo.EducationVo" id="educationVo">
+	    <result property="seq" column="SEQ"/>
+	    <result property="eduSeq" column="EDU_SEQ"/>
+	    <result property="schoolName" column="SCHOOL_NAME"/>
+	    <result property="division" column="DIVISION"/>
+	    <result property="startPeriod" column="START_PERIOD"/>
+	    <result property="endPeriod" column="END_PERIOD"/>
+	    <result property="major" column="MAJOR"/>
+	    <result property="grade" column="GRADE"/>
+	    <result property="location" column="LOCATION"/>
+	</resultMap>
+
+    <!-- BOARD_NUM 채번 시 COALESCE 함수로 null을 1로 변환 (게시글 1개도 없는 경우)-->
+    <insert id="insertRecruit" parameterType="com.spring.recruit.vo.RecruitVo">
+    	<selectKey keyProperty="seq" resultType="String" order="BEFORE">
+    		SELECT COALESCE(MAX(TO_NUMBER(SEQ)) + 1, 1) AS seq FROM RECRUIT
+    	</selectKey>
+	
+	BEGIN
+	    <!-- 마스터 엔티티(Recruit) 레코드 삽입 -->
+	    INSERT 
+	    	INTO 
+	    		RECRUIT 
+	    		(SEQ, NAME, BIRTH, GENDER, PHONE, EMAIL, ADDR, LOCATION, WORK_TYPE, SUBMIT)
+	    		VALUES 
+	    		(#{seq}, #{name}, #{birth}, #{gender}, #{phone}, #{email}, #{addr}, #{location}, #{workType}, #{submit});
+
+		INSERT ALL 
+				INTO 
+					EDUCATION
+						(SEQ, EDU_SEQ, SCHOOL_NAME, DIVISION, START_PERIOD, END_PERIOD, MAJOR, GRADE, LOCATION)
+  				<foreach collection="educationList" item="education" separator="UNION ALL" open="" close=";">
+        		SELECT 
+        		#{seq} AS SEQ, #{education.eduSeq} AS EDU_SEQ, #{education.schoolName} AS SCHOOL_NAME, #{education.division} AS DIVISION, #{education.startPeriod} AS START_PERIOD, #{education.endPeriod} AS END_PERIOD, #{education.major} AS MAJOR, #{education.grade} AS GRADE, #{education.location} AS LOCATION 
+        		FROM 
+        			DUAL
+     			</foreach>
+		INSERT ALL 
+				INTO 
+					CAREER
+						(SEQ, CAR_SEQ, COMP_NAME, LOCATION, START_PERIOD, END_PERIOD, TASK, SALARY)
+  				<foreach collection="careerList" item="career" separator="UNION ALL" open="" close=";">
+        		SELECT 
+        		#{seq} AS SEQ, #{career.carSeq} AS CAR_SEQ, #{career.compName} AS COMP_NAME, #{career.location} AS LOCATION, #{career.startPeriod} AS START_PERIOD, #{career.endPeriod} AS END_PERIOD, #{career.task} AS TASK, #{career.salary} AS SALARY
+        		FROM 
+        			DUAL
+     			</foreach>
+		INSERT ALL 
+				INTO 
+					CERTIFICATE
+						(SEQ, CERT_SEQ, QUALIFI_NAME, ACQU_DATE, ORGANIZE_NAME)
+  				<foreach collection="certificateList" item="certificate" separator="UNION ALL" open="" close=";">
+        		SELECT 
+        		#{seq} AS SEQ, #{certificate.certSeq} AS CERT_SEQ, #{certificate.qualifiName} AS QUALIFI_NAME, #{certificate.acquDate} AS ACQU_DATE, #{certificate.organizeName} AS ORGANIZE_NAME 
+        		FROM 
+        			DUAL
+     			</foreach>
+	END;
+		    
+    </insert>
+	
+	
+	
+</mapper>
