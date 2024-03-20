@@ -49,54 +49,183 @@
 	</resultMap>
 
     <!-- BOARD_NUM 채번 시 COALESCE 함수로 null을 1로 변환 (게시글 1개도 없는 경우)-->
-    <insert id="insertRecruit" parameterType="com.spring.recruit.vo.RecruitVo">
-    	<selectKey keyProperty="seq" resultType="String" order="BEFORE">
-    		SELECT COALESCE(MAX(TO_NUMBER(SEQ)) + 1, 1) AS seq FROM RECRUIT
+    <insert id="insertOrUpdateRecruit"  parameterType="com.spring.recruit.vo.RecruitVo">
+    	<selectKey keyProperty="seq" order="BEFORE" resultType="String" >
+    		SELECT COALESCE(
+           		(
+           		SELECT 
+           			SEQ 
+           		FROM 
+           			RECRUIT 
+         		WHERE 
+         			NAME = #{name} 
+        		AND 
+        			PHONE = #{phone}
+       			),(
+       			SELECT 
+       				COALESCE(TO_CHAR(MAX(TO_NUMBER(SEQ)+1)),'1') 
+      			FROM 
+      				RECRUIT)
+			       ) 
+			FROM DUAL
     	</selectKey>
 	
 	BEGIN
-	    <!-- 마스터 엔티티(Recruit) 레코드 삽입 -->
-	    INSERT 
-	    	INTO 
-	    		RECRUIT 
-	    		(SEQ, NAME, BIRTH, GENDER, PHONE, EMAIL, ADDR, LOCATION, WORK_TYPE, SUBMIT)
-	    		VALUES 
-	    		(#{seq}, #{name}, #{birth}, #{gender}, #{phone}, #{email}, #{addr}, #{location}, #{workType}, #{submit});
-
-		INSERT ALL 
-				INTO 
-					EDUCATION
-						(SEQ, EDU_SEQ, SCHOOL_NAME, DIVISION, START_PERIOD, END_PERIOD, MAJOR, GRADE, LOCATION)
+	
+	    MERGE INTO
+    			RECRUIT R
+	    	USING DUAL ON(
+	    			R.SEQ = #{seq}	
+	    		)    			
+		WHEN MATCHED THEN
+				UPDATE
+					SET
+						BIRTH		=	#{birth},
+						GENDER		=	#{gender},
+						PHONE		=	#{phone},
+						EMAIL		=	#{email},
+						ADDR		=	#{addr},
+						LOCATION	= 	#{location},
+						WORK_TYPE	=	#{workType},
+						SUBMIT		=	'N'			
+  		WHEN	NOT MATCHED THEN
+  				INSERT
+  					(SEQ, NAME, BIRTH, GENDER, PHONE, EMAIL, ADDR, LOCATION, WORK_TYPE, SUBMIT)
+ 				VALUES
+ 					(#{seq}, #{name}, #{birth}, #{gender}, #{phone}, #{email}, #{addr}, #{location}, #{workType}, 'N');
+	    
+ 	    DELETE 
+	    	FROM
+	    		EDUCATION
+    		WHERE
+    			SEQ = #{seq};
+	    DELETE 
+	    	FROM
+	    		CAREER
+    		WHERE
+    			SEQ = #{seq};
+	    DELETE 
+	    	FROM
+	    		CERTIFICATE
+    		WHERE
+    			SEQ = #{seq};
+   		
+		INSERT ALL INTO
+			EDUCATION
+				(
+				SEQ,
+				EDU_SEQ,
+				SCHOOL_NAME,
+				DIVISION,
+				START_PERIOD,
+				END_PERIOD,
+				MAJOR,
+				GRADE,
+				LOCATION
+				)
   				<foreach collection="educationList" item="education" separator="UNION ALL" open="" close=";">
         		SELECT 
-        		#{seq} AS SEQ, #{education.eduSeq} AS EDU_SEQ, #{education.schoolName} AS SCHOOL_NAME, #{education.division} AS DIVISION, #{education.startPeriod} AS START_PERIOD, #{education.endPeriod} AS END_PERIOD, #{education.major} AS MAJOR, #{education.grade} AS GRADE, #{education.location} AS LOCATION 
+	        		#{seq} AS SEQ,
+	        		#{education.eduSeq} AS EDU_SEQ,
+	        		#{education.schoolName} AS SCHOOL_NAME,
+	        		#{education.division} AS DIVISION,
+	        		#{education.startPeriod} AS START_PERIOD,
+	        		#{education.endPeriod} AS END_PERIOD,
+	        		#{education.major} AS MAJOR,
+	        		#{education.grade} AS GRADE,
+	        		#{education.location} AS LOCATION 
         		FROM 
-        			DUAL
-     			</foreach>
-		INSERT ALL 
-				INTO 
-					CAREER
-						(SEQ, CAR_SEQ, COMP_NAME, LOCATION, START_PERIOD, END_PERIOD, TASK, SALARY)
+        			DUAL</foreach>
+		INSERT ALL INTO 
+			CAREER
+				(
+				SEQ,
+				CAR_SEQ,
+				COMP_NAME,
+				LOCATION,
+				START_PERIOD,
+				END_PERIOD,
+				TASK
+				)
   				<foreach collection="careerList" item="career" separator="UNION ALL" open="" close=";">
         		SELECT 
-        		#{seq} AS SEQ, #{career.carSeq} AS CAR_SEQ, #{career.compName} AS COMP_NAME, #{career.location} AS LOCATION, #{career.startPeriod} AS START_PERIOD, #{career.endPeriod} AS END_PERIOD, #{career.task} AS TASK, #{career.salary} AS SALARY
+	        		#{seq} AS SEQ,
+	        		#{career.carSeq} AS CAR_SEQ,
+	        		#{career.compName} AS COMP_NAME,
+	        		#{career.location} AS LOCATION,
+	        		#{career.startPeriod} AS START_PERIOD,
+	        		#{career.endPeriod} AS END_PERIOD,
+	        		#{career.task} AS TASK
         		FROM 
-        			DUAL
-     			</foreach>
-		INSERT ALL 
-				INTO 
-					CERTIFICATE
-						(SEQ, CERT_SEQ, QUALIFI_NAME, ACQU_DATE, ORGANIZE_NAME)
+        			DUAL</foreach>
+		INSERT ALL INTO 
+			CERTIFICATE
+			(
+				SEQ,
+				CERT_SEQ,
+				QUALIFI_NAME,
+				ACQU_DATE,
+				ORGANIZE_NAME
+			)
   				<foreach collection="certificateList" item="certificate" separator="UNION ALL" open="" close=";">
         		SELECT 
-        		#{seq} AS SEQ, #{certificate.certSeq} AS CERT_SEQ, #{certificate.qualifiName} AS QUALIFI_NAME, #{certificate.acquDate} AS ACQU_DATE, #{certificate.organizeName} AS ORGANIZE_NAME 
+        			#{seq} AS SEQ,
+        			#{certificate.certSeq} AS CERT_SEQ,
+        			#{certificate.qualifiName} AS QUALIFI_NAME,
+        			#{certificate.acquDate} AS ACQU_DATE,
+        			#{certificate.organizeName} AS ORGANIZE_NAME 
         		FROM 
-        			DUAL
-     			</foreach>
+        			DUAL</foreach>
 	END;
-		    
     </insert>
 	
-	
+	<!-- Mapper XML 파일의 SELECT 쿼리 -->
+<select id="selectRecruit" parameterType="com.spring.recruit.vo.RecruitVo" resultMap="recruitVo">
+    SELECT
+        R.SEQ,
+        R.NAME,
+        R.BIRTH,
+        R.GENDER,
+        R.PHONE,
+        R.EMAIL,
+        R.ADDR,
+        R.LOCATION,
+        R.WORK_TYPE,
+        R.SUBMIT,
+        E.EDU_SEQ,
+        E.SCHOOL_NAME,
+        E.DIVISION,
+        E.START_PERIOD,
+        E.END_PERIOD,
+        E.MAJOR,
+        E.GRADE,
+        E.LOCATION AS EDU_LOCATION,
+        C.CAR_SEQ,
+        C.COMP_NAME,
+        C.LOCATION AS CAR_LOCATION,
+        C.START_PERIOD AS CAR_START_PERIOD,
+        C.END_PERIOD AS CAR_END_PERIOD,
+        C.TASK,
+        C.SALARY,
+        CE.CERT_SEQ,
+        CE.QUALIFI_NAME,
+        CE.ACQU_DATE,
+        CE.ORGANIZE_NAME
+    FROM
+        RECRUIT R
+    LEFT JOIN
+        EDUCATION E ON R.SEQ = E.SEQ
+    LEFT JOIN
+        CAREER C ON R.SEQ = C.SEQ
+    LEFT JOIN
+        CERTIFICATE CE ON R.SEQ = CE.SEQ
+    WHERE
+        R.SEQ = (
+            SELECT COALESCE(
+                (SELECT SEQ FROM RECRUIT WHERE NAME = #{name} AND PHONE = #{phone}),
+               ''
+            ) FROM DUAL
+        )
+</select>
 	
 </mapper>

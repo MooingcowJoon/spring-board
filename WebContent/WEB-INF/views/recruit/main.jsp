@@ -191,7 +191,7 @@ $j().ready(() => {
 											이름
 										</td>
 										<td>
-											<input name="name" type="text" readonly value="${name}">
+											<input name="name" type="text" readonly value="${r.name}">
 										</td>
 										<td>
 											생년월일
@@ -216,7 +216,7 @@ $j().ready(() => {
 											연락처
 										</td>
 										<td>
-											<input name="phone" type="text" readonly value="${phone}">
+											<input name="phone" type="text" readonly value="${r.phone}">
 										</td>
 									</tr>
 									<tr>
@@ -224,13 +224,13 @@ $j().ready(() => {
 											email
 										</td>
 										<td>
-											<input name="email" type="text"  value="">
+											<input name="email" type="text"  value="${r.email}">
 										</td>
 										<td>
 											주소
 										</td>
 										<td>
-											<input name="addr" type="text"  value="">
+											<input name="addr" type="text"  value="${r.addr}">
 										</td>
 									</tr>
 									<tr>
@@ -346,7 +346,7 @@ $j().ready(() => {
 															<input type="checkbox"/>
 														</td>
 														<td align="center">
-															<input name="startPeriod" type="text"/>
+															<input name="startPeriod" type="text" value="${e.get(0).startPeriod}"/>
 															<br/>
 															~
 															<input name="endPeriod" type="text"/>

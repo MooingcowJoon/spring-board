@@ -5,7 +5,7 @@
 	
 	<!-- SqlSessionTemplate 관련 설정 -->
 	<settings>
-		<setting name="jdbcTypeForNull" value="NULL"/>
+		<setting name="jdbcTypeForNull" value="VARCHAR"/>
  	</settings>
 	
 	<!-- 별칭 작성 부분 -->

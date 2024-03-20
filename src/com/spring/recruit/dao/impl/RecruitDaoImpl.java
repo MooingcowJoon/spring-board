@@ -15,11 +15,10 @@ public class RecruitDaoImpl implements RecruitDao{
 	
 	@Override
 	public int insertRecruit(RecruitVo recruitVo) {
-		return sqlSession.insert("recruit.insertRecruit",recruitVo);
+		return sqlSession.insert("recruit.insertOrUpdateRecruit",recruitVo);
 	}
 	@Override
 	public RecruitVo selectRecruit(RecruitVo recruitVo) {
-		// TODO Auto-generated method stub
-		return null;
+		return sqlSession.selectOne("selectRecruit",recruitVo);
 	}
 }

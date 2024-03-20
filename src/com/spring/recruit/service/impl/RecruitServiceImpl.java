@@ -20,7 +20,6 @@ public class RecruitServiceImpl implements RecruitService {
 	
 	@Override
 	public RecruitVo selectRecruit(RecruitVo recruitVo) {
-		// TODO Auto-generated method stub
-		return null;
+		return recruitDao.selectRecruit(recruitVo);
 	}
 }
