@@ -1,6 +1,8 @@
 package com.spring.recruit.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -14,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.spring.common.CommonUtil;
 import com.spring.recruit.service.RecruitService;
+import com.spring.recruit.vo.CareerVo;
+import com.spring.recruit.vo.CertificateVo;
+import com.spring.recruit.vo.EducationVo;
 import com.spring.recruit.vo.RecruitVo;
 
 @Controller
@@ -33,6 +38,19 @@ public class RecruitController {
 		
 		if(recruitVo == null) {
 			recruitVo = paramRecruitVo;
+			List<EducationVo> eduList = new ArrayList<>();
+			eduList.add(new EducationVo());
+			
+			List<CareerVo> carList = new ArrayList<>();
+			carList.add(new CareerVo());
+			
+			List<CertificateVo> certList = new ArrayList<>();
+			certList.add(new CertificateVo());
+			
+			recruitVo.setEducationList(eduList);
+			recruitVo.setCareerList(carList);
+			recruitVo.setCertificateList(certList);
+			
 		}
 		System.out.println(CommonUtil.toJson(recruitVo));
 		model.addAttribute("r",recruitVo);

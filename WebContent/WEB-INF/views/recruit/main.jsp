@@ -25,42 +25,277 @@ $j().ready(() => {
 			그 외 		-> 제출 이후 readonly
 	*/
 	
+
+	var INPUT_RULE = 
+	{
+		recruitForm:
+			
+		{
+			isEssential : true,
+			birth	: 	{
+					    	TYPE	: 'DATE',
+					    	NAME	:	'생년월일을',
+							INFO 	: '1900.01.01 ~ 2099.12.31',
+							INPUT	:	/[^0-9]/g,
+							SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2]).(0[1-9]|[12][0-9]|3[01])$/
+						}, 
+			email	: 	{
+					    	TYPE	: 'EMAIL',
+					    	NAME	:	'이메일주소를',
+							INFO 	: 'aaa@aaa.aa',
+							INPUT	:	/[^a-zA-Z0-9@.-]/g, 
+							SUBMIT	:	/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+						}, 
+			addr	: 	{
+					    	TYPE	: 'TEXT',
+					    	NAME	:	'주소를',
+							INFO 	: '1 ~ 30자 이상의 문자 및 "-" 기호, 띄어쓰기',
+							INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g,
+							SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
+						},
+			
+		},
+		eduForm:
+			{
+			isEssential : true,
+				startPeriod	:{
+								TYPE	:	'DATE',
+								NAME	:	'시작연월을',
+								INFO	:	'1900.01 ~ 2099.12',
+								INPUT	: 	/[^0-9]/g, 
+								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
+							},
+				endPeriod	:{
+								TYPE	:	'DATE',
+								NAME	:	'종료연월을',
+								INFO	:	'1900.01 ~ 2099.12',
+								INPUT	:	/[^0-9]/g, 
+								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
+							},
+				schoolName	:{
+						    	TYPE	: 'TEXT',
+						    	NAME	:	'학교명을',
+								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
+								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
+								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
+							},
+				major		:{
+								TYPE	: 'TEXT',
+								NAME	:'전공명을',
+								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
+								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
+								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
+							},
+				grade		:{
+								TYPE	: 'GRADE',
+								NAME	:	'평균학점을',
+								INFO 	: "'3.2', '3.65' 등의",						
+								INPUT	:	/[^0-9.]/g,
+								SUBMIT	:	/^\d{1}\.\d{1,2}$/
+							}
+			},
+		carForm:
+				{
+			isEssential : false,
+				startPeriod	:{
+								TYPE	:	'DATE',
+								NAME	:	'시작연월을',
+								INFO	:	'1900.01 ~ 2099.12',
+								INPUT	: 	/[^0-9]/g, 
+								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
+				},
+				endPeriod	:{
+								TYPE	:	'DATE',
+								NAME	:	'종료연월을',
+								INFO	:	'1900.01 ~ 2099.12',
+								INPUT	:	/[^0-9]/g, 
+								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
+							},
+				compName	:{
+								TYPE	: 'TEXT',
+								NAME	:	'회사명을',
+								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
+								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
+								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
+							},
+ 				task		:{
+			 					TYPE	: 'TEXT',
+			 					NAME	:	'부서/직급/직책을',
+								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
+								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
+								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
+							},
+				location	:{
+								TYPE	: 'TEXT',
+								NAME	:	'근무지의 지역을',
+								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
+								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
+								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
+							}
+				},
+ 		certForm:
+			{
+ 			isEssential : false,
+				qualifiName	:{
+								TYPE	: 'TEXT',
+								NAME	:	'자격증명을',
+								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
+								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
+								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
+							},
+				acquDate	:{
+								TYPE	:	'DATE',
+								NAME	:	'자격증 취득일을',
+								INFO	:	'1900.01 ~ 2099.12',
+								INPUT	:	/[^0-9]/g, 
+								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
+							},
+				organizeName	:{
+								TYPE	: 'TEXT',
+								NAME	:	'자격증 발행처를',
+								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
+								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
+								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/
+							}
+		}
+	}
+	var getInputRuleByInput = function(input){
+				var sectionName = $j(input).closest('form').attr('class')
+				var inputName = input.name
+				return INPUT_RULE[sectionName][inputName]
+				
+			}
+	
+	
+			
+			
+	// 텍스트 입력필드에 입력값 입력시 제한된 입력 막는 기능과,
+	// 날짜 필드에 숫자 입력시 '.' 자동으로 추가해주는 기능 
+	$j(document).on('input','input[type="text"]',function(e){
+		var sectionName = $j(this).closest('form').attr('class')
+		var inputName = this.name
+		
+		var rule = INPUT_RULE[sectionName][inputName]
+		
+		var regExp = rule.INPUT
+		
+	    if (regExp.test(this.value)) {
+	    	this.value = this.value.replace(regExp, '');
+	    }
+		
+		if(rule.TYPE === 'DATE'){
+			var text = this.value.replaceAll('.','')
+			if(text.length > 6 ){
+				text  = text.slice(0,4)+'.'+text.slice(4,6)+'.'+text.slice(6)
+			}else if(text.length > 4){
+				text  = text.slice(0,4)+'.'+text.slice(4)
+			}
+			this.value=text
+		}
+		
+	})
+	// 미입력값 부분의 유효성 체크해주는 함수
+	var isFormComplete = function(form){
+		var isEssential = INPUT_RULE[form.className]['isEssential']
+		var nullInput = null
+
+		var inputs = $j(form).find('input[type="text"]')
+		
+		for(var i=0; i<inputs.length; i++){
+			if(inputs[i].value.trim() === '' && !nullInput){
+				nullInput = inputs[i];
+			}else{
+				isEssential = true
+			}
+		}
+		return isEssential? nullInput : null
+		}
+		
+	// 유효값 안맞는 요소 있을시 해당 요소와 메시지로 이루어진 response 객체 반환
+ 	var isFormValid = function(form){
+		var invalidInput = null
+		
+		var inputs = $j(form).find('input[type="text"]:not([readonly])')
+		
+		for(var i=0; i<inputs.length; i++){
+			var input 	=	inputs[i]
+			var regEx = getInputRuleByInput(input)['SUBMIT']
+			
+			if(!regEx.test(input.value)){
+				invalidInput = input
+				return invalidInput
+				}
+			}
+		return invalidInput
+		}
+	
+	// 폼들 받아서 입력값 순차적으로 처리해주는 함수
+	function inputChecker(formsToCheck){
+		var result = {
+				invalidInput :null,
+				msg :''
+		}
+		for(var i = 0; i<formsToCheck.length; i++){
+			 
+			var nullInput = isFormComplete(formsToCheck[i])
+			if(nullInput){
+				alert(getInputRuleByInput(nullInput)['NAME']+' 입력하셔야 합니다.')
+				nullInput.focus()
+				result = 
+			}
+			var invalidInput = isFormValid(formsToCheck[i])
+			if(invalidInput){
+				alert(getInputRuleByInput(invalidInput)['INFO']+'\n형식으로 입력하셔야 합니다.')
+				invalidInput.focus()
+				return
+				}
+			}
+	}
+	
+				
+	// 저장 기능 함수
 	var save = function(){
-		var form= $j('.inputRow').first().find('form')
-		form=seriForm(form)		
-		var educationForms = []
-		var careerForms = []
-		var certificateForms = []
+		var recruitForms_Unchecked = $j('.recruitForm')
+		var eduForms_Unchecked	=	$j('.eduForm')
+		var carForm_Unchecked 	=	$j('.carForm')
+		var certForm_Unchecked 	=	$j('.certForm')
 		
-		var edu = $j('#educationRow').find('.inputRow').each(function(index, row){
-			var form = seriForm($j(this).find('form'))
-			form["eduSeq"]=index
-			educationForms.push(form)
+		formsToCheck= []
+		formsToCheck.push(...recruitForms_Unchecked.get()
+							,...eduForms_Unchecked.get()
+							,...carForm_Unchecked.get()
+							,...certForm_Unchecked.get())
+							
+		
+		
+		recruitForm=seriForm(recruitForms_Unchecked.get(0))
+		
+		var eduForms = eduForms_Unchecked.map((index,eduForm)=>{
+			eduForm=seriForm(eduForm)
+			eduForm["eduSeq"]=index
+			return eduForm
 		})
-		var career = $j('#careerRow').find('.inputRow').each(function(index, row){
-			var form = seriForm($j(this).find('form'))
-			form["carSeq"]=index
-			careerForms.push(form)
+		var carForms = carForm_Unchecked.map((index,carForm)=>{
+			carForm=seriForm(carForm)
+			carForm["carSeq"]=index
+			return carForm
 		})
-		var certi = $j('#certificateRow').find('.inputRow').each(function(index,row){
-			var form = seriForm($j(this).find('form'))
-			form["certSeq"]=index
-			certificateForms.push(form)
+		var certForms = certForm_Unchecked.map((index,certForm)=>{
+			certForm=seriForm(certForm)
+			certForm["certSeq"]=index
+			return certForm
 		})
 		
-		form['educationList']=educationForms
-		form['careerList']=careerForms
-		form['certificateList']=certificateForms
-// 		form.push(	{	name:	"educationList",		value:	educationForms}
-// 					,{	name:	"careerList",			value:	careerForms}
-// 					,{	name:	"certificateList", 		value:	certificateForms})
-					
-		console.log(JSON.stringify(form))
+		recruitForm['educationList']=eduForms.get()
+		recruitForm['careerList']=carForms.get()
+		recruitForm['certificateList']=certForms.get()
+
+		console.log(recruitForm)
 		
 		$j.ajax({
 			type			: 	"POST",
 			url				: 	"/api/recruit/main/submit.do",
-			data			:	JSON.stringify(form),
+			data			:	JSON.stringify(recruitForm),
 			contentType		:	"application/json",
 			success			:	function(res){
 				console.log(res.msg)
@@ -176,6 +411,20 @@ $j().ready(() => {
 		return targetInput
 	}
 	
+	
+	// 폼 직렬화 함수
+	var seriForm= function(form){
+	    var formDataArray = {};
+	    form=$j(form)
+	    // 폼 내의 모든 입력 요소를 순회하며 이름과 값을 배열에 추가
+	    form.find('input[type="text"], select, textarea').each(function() {
+	        var name = $j(this).attr('name');
+	        var value = $j(this).val().trim();
+	       	formDataArray[name]=value
+	    });
+	    
+	    return formDataArray;
+	}
 	// dom 루트에 모든 하위 체크박스 요소 클릭시 해당 테이블에 checked 속성 토글하는 함수	
 	$j(document).on('click','input[type="checkbox"]',function(e){
 		var checked = $j(this).prop('checked')
@@ -201,7 +450,7 @@ $j().ready(() => {
 					<table id ="formTable" border="1" width="900">
 						<tr class="inputRow">
 							<td style="border:none;" align="center">
-							<form>
+							<form class="recruitForm">
 								<table border="1" >
 									<tr>
 										<td align="center" width="90"><b>이름</b>
@@ -212,7 +461,7 @@ $j().ready(() => {
 										<td align="center" width="90"><b>생년월일</b>
 										</td>
 										<td>
-											<input name="birth" type="text"  value="${r.birth}">
+											<input name="birth" maxlength="10" type="text"  value="${r.birth}">
 										</td>
 									</tr>
 									<tr>
@@ -336,7 +585,7 @@ $j().ready(() => {
 									<c:forEach var="edu" items="${eduList}" >
 									<tr class="inputRow">
 										<td align="center" >
-										<form>
+										<form class="eduForm">
 											<table border="1"  width="780">
 												<thead>
 													<tr>
@@ -365,10 +614,10 @@ $j().ready(() => {
 															<input type="checkbox"/>
 														</td>
 														<td align="center">
-															<input name="startPeriod" type="text" value="${edu.startPeriod}"/>
+															<input name="startPeriod" maxlength="7" type="text" value="${edu.startPeriod}"/>
 															<br/>
 															~
-															<input name="endPeriod" type="text" value="${edu.endPeriod}"/>
+															<input name="endPeriod" maxlength="7"  type="text" value="${edu.endPeriod}"/>
 														</td>
 														<td align="center">
 															<select name="division">
@@ -397,10 +646,10 @@ $j().ready(() => {
 															</select>
 														</td>
 														<td align="center">
-															<input type="text" name="major" value="${edu.major}"/>
+															<input type="text" maxlength="30" name="major" value="${edu.major}"/>
 														</td>
 														<td align="center">
-															<input type="text" name="grade" value="${edu.grade }"/>
+															<input type="text" maxlength="4" name="grade" value="${edu.grade }"/>
 														</td>
 													</tr>
 												</tbody>
@@ -429,7 +678,7 @@ $j().ready(() => {
 									<c:forEach var="car" items="${carList}">
 									<tr class="inputRow">
 										<td align="center" >
-											<form>
+											<form class="carForm">
 											<table  border="1" width="780">
 												<thead>
 													<tr>
@@ -455,20 +704,20 @@ $j().ready(() => {
 															<input type="checkbox"/>
 														</td>
 														<td >
-															<input  name="startPeriod" type="text" value="${car.startPeriod}"/>
+															<input  name="startPeriod" maxlength="7"  type="text" value="${car.startPeriod}"/>
 															<br/>
 															~
 															<br/>
-															<input type="text" name="endPeriod" value="${car.endPeriod}" />
+															<input type="text" maxlength="7"  name="endPeriod" value="${car.endPeriod}" />
 														</td>
 														<td >
-															<input name="compName" type="text" value="${car.compName }"/>
+															<input name="compName" maxlength="30" type="text" value="${car.compName }"/>
 														</td>
 														<td >
-															<input name="task" type="text" value="${car.task }"/>
+															<input name="task" maxlength="30" type="text" value="${car.task }"/>
 														</td>
 														<td >
-															<input name="location" type="text" value="${car.location }"/>
+															<input name="location" maxlength="30" type="text" value="${car.location }"/>
 														</td>
 													</tr>
 												</tbody>
@@ -497,7 +746,7 @@ $j().ready(() => {
 									<c:forEach var="cert" items="${certList}">
 									<tr class="inputRow">
 										<td align="center">
-										<form>
+										<form class="certForm">
 											<table  width="780" border="1">
 												<thead>
 													<tr>
@@ -520,13 +769,13 @@ $j().ready(() => {
 															<input type="checkbox"/>
 														</td>
 														<td >
-															<input name="qualifiName" type="text" value="${cert.qualifiName }"/>
+															<input name="qualifiName" maxlength="30" type="text" value="${cert.qualifiName }"/>
 														</td>
 														<td >
-															<input name="acquDate" type="text" value="${cert.acquDate }"/>
+															<input name="acquDate" maxlength="7"  type="text" value="${cert.acquDate }"/>
 														</td>
 														<td >
-															<input name="organizeName" type="text" value="${cert.organizeName }"/>
+															<input name="organizeName" maxlength="30" type="text" value="${cert.organizeName }"/>
 														</td>
 													</tr>
 												</tbody>

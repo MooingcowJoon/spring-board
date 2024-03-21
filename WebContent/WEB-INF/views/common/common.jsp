@@ -14,18 +14,7 @@
 <script type="text/javascript">
 	var $j = jQuery.noConflict();
 	var idFind =(elementId)=>document.getElementById(elementId)
-	var seriForm= function(form){
-	    var formDataArray = {};
-	    
-	    // 폼 내의 모든 입력 요소를 순회하며 이름과 값을 배열에 추가
-	    form.find('input[type="text"], select, textarea').each(function() {
-	        var name = $j(this).attr('name');
-	        var value = $j(this).val();
-	       	formDataArray[name]=value
-	    });
-	    
-	    return formDataArray;
-	}
+
 </script>
 <body>
 
