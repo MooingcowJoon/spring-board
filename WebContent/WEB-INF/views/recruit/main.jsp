@@ -82,6 +82,13 @@ $j().ready(() => {
 	
 	// 행추가 버튼 눌렀을 시
 	$j('.addRow').on('click',function(e){
+		var sectionTitle = $j(this).closest('tbody').find('h3').text()
+		var inputRows = $j(this).closest('tbody').children('.inputRow')
+		if( inputRows.length === 5 ){
+			alert('더 이상의 '+sectionTitle+' 정보를 추가하실 수 없습니다.')
+			return
+		}
+		
 		var rowClone = $j(this).closest('tr').next().clone()
 		
 		// 입력 필드 초기화
@@ -197,22 +204,19 @@ $j().ready(() => {
 							<form>
 								<table border="1" >
 									<tr>
-										<td>
-											이름
+										<td align="center" width="90"><b>이름</b>
 										</td>
 										<td>
 											<input name="name" type="text" readonly value="${r.name}">
 										</td>
-										<td>
-											생년월일
+										<td align="center" width="90"><b>생년월일</b>
 										</td>
 										<td>
 											<input name="birth" type="text"  value="${r.birth}">
 										</td>
 									</tr>
 									<tr>
-										<td>
-											성별
+										<td align="center"><b>성별</b>
 										</td>
 										<td>
 											<select name="gender">
@@ -222,30 +226,26 @@ $j().ready(() => {
 												</option>
 											</select>
 										</td>
-										<td>
-											연락처
+										<td align="center"><b>연락처</b>
 										</td>
 										<td>
 											<input name="phone" type="text" readonly value="${r.phone}">
 										</td>
 									</tr>
 									<tr>
-										<td>
-											email
+										<td align="center"><b>email</b>
 										</td>
 										<td>
 											<input name="email" type="text"  value="${r.email}">
 										</td>
-										<td>
-											주소
+										<td align="center"><b>주소</b>
 										</td>
 										<td>
 											<input name="addr" type="text"  value="${r.addr}">
 										</td>
 									</tr>
 									<tr>
-										<td>
-											희망근무지
+										<td align="center"><b>희망근무지</b>
 										</td>
 										<td>
 											<select name="location">
@@ -265,16 +265,14 @@ $j().ready(() => {
 												</option>
 											</select>
 										</td>
-										<td>
-											근무형태
-										</td>
+										<td align="center"><b>근무형태</b></td>
 										<td>
 											<select name="workType">
+												<option <c:if test ="${'계약직' eq r.workType}">selected</c:if> value="계약직">
+													계약직
+												</option>
 												<option <c:if test ="${'정규직' eq r.workType}">selected</c:if> value="정규직">
 													정규직
-												</option>
-												<option <c:if test ="${'반정규직' eq r.workType}">selected</c:if> value="반정규직">
-													반정규직
 												</option>
 											</select>
 										</td>
