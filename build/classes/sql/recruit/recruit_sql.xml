@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="recruit">
-    <resultMap type="com.spring.recruit.vo.RecruitVo" id="recruitVo">
-    	<result property="seq" 	column="SEQ"/>
+    <resultMap type="com.spring.recruit.vo.RecruitVo" id="recruitResult">
+    	<id property="seq" 	column="SEQ"/>
     	<result property="name" 	column="NAME"/>
     	<result property="birth" 	column="BIRTH"/>
     	<result property="gender" 	column="GENDER"/>
@@ -12,40 +12,43 @@
     	<result property="location" column="LOCATION"/>
     	<result property="workType" column="WORK_TYPE"/>
     	<result property="submit" column="SUBMIT"/>
+    	<collection property="educationList" resultMap="educationResult"></collection>
+    	<collection property="careerList" resultMap="careerResult"></collection>
+    	<collection property="certificateList" resultMap="certificateResult"></collection>
     </resultMap>
     
-    <!-- CareerVo ResultMap -->
-	<resultMap type="com.spring.recruit.vo.CareerVo" id="careerVo">
-	    <result property="carSeq" column="CAR_SEQ"/>
-	    <result property="seq" column="SEQ"/>
-	    <result property="compName" column="COMP_NAME"/>
-	    <result property="location" column="LOCATION"/>
-	    <result property="startPeriod" column="START_PERIOD"/>
-	    <result property="endPeriod" column="END_PERIOD"/>
-	    <result property="task" column="TASK"/>
-	    <result property="salary" column="SALARY"/>
-	</resultMap>
-	
-	<!-- CertificateVo ResultMap -->
-	<resultMap type="com.spring.recruit.vo.CertificateVo" id="certificateVo">
-	    <result property="certSeq" column="CERT_SEQ"/>
-	    <result property="seq" column="SEQ"/>
-	    <result property="qualifiName" column="QUALIFI_NAME"/>
-	    <result property="acquDate" column="ACQU_DATE"/>
-	    <result property="organizeName" column="ORGANIZE_NAME"/>
-	</resultMap>
-	
 	<!-- EducationVo ResultMap -->
-	<resultMap type="com.spring.recruit.vo.EducationVo" id="educationVo">
-	    <result property="seq" column="SEQ"/>
-	    <result property="eduSeq" column="EDU_SEQ"/>
+	<resultMap type="com.spring.recruit.vo.EducationVo" id="educationResult">
+	    <id 	property="eduSeq" column="EDU_SEQ"/>
+	    <result	property="seq" column="SEQ"/>
 	    <result property="schoolName" column="SCHOOL_NAME"/>
 	    <result property="division" column="DIVISION"/>
 	    <result property="startPeriod" column="START_PERIOD"/>
 	    <result property="endPeriod" column="END_PERIOD"/>
 	    <result property="major" column="MAJOR"/>
 	    <result property="grade" column="GRADE"/>
-	    <result property="location" column="LOCATION"/>
+	    <result property="location" column="EDU_LOCATION"/>
+	</resultMap>
+	
+    <!-- CareerVo ResultMap -->
+	<resultMap type="com.spring.recruit.vo.CareerVo" id="careerResult">
+	    <id 	property="carSeq" column="CAR_SEQ"/>
+	    <result property="seq" column="SEQ"/>
+	    <result property="compName" column="COMP_NAME"/>
+	    <result property="location" column="CAR_LOCATION"/>
+	    <result property="startPeriod" column="CAR_START_PERIOD"/>
+	    <result property="endPeriod" column="CAR_END_PERIOD"/>
+	    <result property="task" column="TASK"/>
+	    <result property="salary" column="SALARY"/>
+	</resultMap>
+	
+	<!-- CertificateVo ResultMap -->
+	<resultMap type="com.spring.recruit.vo.CertificateVo" id="certificateResult">
+	    <id		property="certSeq" column="CERT_SEQ"/>
+	    <result property="seq" column="SEQ"/>
+	    <result property="qualifiName" column="QUALIFI_NAME"/>
+	    <result property="acquDate" column="ACQU_DATE"/>
+	    <result property="organizeName" column="ORGANIZE_NAME"/>
 	</resultMap>
 
     <!-- BOARD_NUM 채번 시 COALESCE 함수로 null을 1로 변환 (게시글 1개도 없는 경우)-->
@@ -111,7 +114,7 @@
     			SEQ = #{seq};
    		
 		INSERT ALL INTO
-			EDUCATION
+		EDUCATION
 				(
 				SEQ,
 				EDU_SEQ,
@@ -137,7 +140,7 @@
         		FROM 
         			DUAL</foreach>
 		INSERT ALL INTO 
-			CAREER
+		CAREER
 				(
 				SEQ,
 				CAR_SEQ,
@@ -159,7 +162,7 @@
         		FROM 
         			DUAL</foreach>
 		INSERT ALL INTO 
-			CERTIFICATE
+		CERTIFICATE
 			(
 				SEQ,
 				CERT_SEQ,
@@ -180,7 +183,7 @@
     </insert>
 	
 	<!-- Mapper XML 파일의 SELECT 쿼리 -->
-<select id="selectRecruit" parameterType="com.spring.recruit.vo.RecruitVo" resultMap="recruitVo">
+<select id="selectRecruit" parameterType="com.spring.recruit.vo.RecruitVo" resultMap="recruitResult">
     SELECT
         R.SEQ,
         R.NAME,
@@ -192,33 +195,33 @@
         R.LOCATION,
         R.WORK_TYPE,
         R.SUBMIT,
-        E.EDU_SEQ,
-        E.SCHOOL_NAME,
-        E.DIVISION,
-        E.START_PERIOD,
-        E.END_PERIOD,
-        E.MAJOR,
-        E.GRADE,
-        E.LOCATION AS EDU_LOCATION,
-        C.CAR_SEQ,
-        C.COMP_NAME,
-        C.LOCATION AS CAR_LOCATION,
-        C.START_PERIOD AS CAR_START_PERIOD,
-        C.END_PERIOD AS CAR_END_PERIOD,
-        C.TASK,
-        C.SALARY,
-        CE.CERT_SEQ,
-        CE.QUALIFI_NAME,
-        CE.ACQU_DATE,
-        CE.ORGANIZE_NAME
+        EDU.EDU_SEQ,
+        EDU.SCHOOL_NAME,
+        EDU.DIVISION,
+        EDU.START_PERIOD,
+        EDU.END_PERIOD,
+        EDU.MAJOR,
+        EDU.GRADE,
+        EDU.LOCATION AS EDU_LOCATION,
+        CAR.CAR_SEQ,
+        CAR.COMP_NAME,
+        CAR.LOCATION AS CAR_LOCATION,
+        CAR.START_PERIOD AS CAR_START_PERIOD,
+        CAR.END_PERIOD AS CAR_END_PERIOD,
+        CAR.TASK,
+        CAR.SALARY,
+        CERT.CERT_SEQ,
+        CERT.QUALIFI_NAME,
+        CERT.ACQU_DATE,
+        CERT.ORGANIZE_NAME
     FROM
         RECRUIT R
     LEFT JOIN
-        EDUCATION E ON R.SEQ = E.SEQ
+        EDUCATION EDU ON R.SEQ = EDU.SEQ
     LEFT JOIN
-        CAREER C ON R.SEQ = C.SEQ
+        CAREER CAR ON R.SEQ = CAR.SEQ
     LEFT JOIN
-        CERTIFICATE CE ON R.SEQ = CE.SEQ
+        CERTIFICATE CERT ON R.SEQ = CERT.SEQ
     WHERE
         R.SEQ = (
             SELECT COALESCE(

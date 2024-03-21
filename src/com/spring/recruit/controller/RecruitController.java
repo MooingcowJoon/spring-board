@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.spring.common.CommonUtil;
 import com.spring.recruit.service.RecruitService;
 import com.spring.recruit.vo.RecruitVo;
 
@@ -22,9 +23,9 @@ public class RecruitController {
 	RecruitService recruitService;
 	
 	@RequestMapping(value="/recruit/main.do",method = RequestMethod.GET)
-	public String main(Locale locale,Model model
+	public String main(Locale locale,Model model 
 							,@RequestParam String name
-							,@RequestParam String phone) {
+							,@RequestParam String phone) throws Exception {
 		RecruitVo paramRecruitVo = new RecruitVo();
 		paramRecruitVo.setName(name);
 		paramRecruitVo.setPhone(phone);
@@ -33,11 +34,11 @@ public class RecruitController {
 		if(recruitVo == null) {
 			recruitVo = paramRecruitVo;
 		}
-		
+		System.out.println(CommonUtil.toJson(recruitVo));
 		model.addAttribute("r",recruitVo);
-		model.addAttribute("e",recruitVo.getEducationList());
-		model.addAttribute("c",recruitVo.getCareerList());
-		model.addAttribute("f",recruitVo.getCertificateList());
+		model.addAttribute("eduList",recruitVo.getEducationList());
+		model.addAttribute("carList",recruitVo.getCareerList());
+		model.addAttribute("certList",recruitVo.getCertificateList());
 		
 		return "recruit/main";
 	}

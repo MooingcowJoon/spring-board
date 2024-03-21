@@ -15,7 +15,17 @@ th {
 </head>
 <script>
 $j().ready(() => {
-	var submit = function(){
+	
+	/* 
+		프로세스
+		1. 저장 또는 제출 버튼 클릭시 유효성 검사
+		2. 유효성 검사 통과하면 제출하는데, 저장버튼이냐 제출버튼이냐에 따라 submit 함수 인자를 다르게 줘서 분기처리
+		3. 셀렉트와 텍스트입력필드의 경우, 
+			이름, 핸드폰번호 	-> readonly
+			그 외 		-> 제출 이후 readonly
+	*/
+	
+	var save = function(){
 		var form= $j('.inputRow').first().find('form')
 		form=seriForm(form)		
 		var educationForms = []
@@ -63,10 +73,10 @@ $j().ready(() => {
 	}
 	
 	
-	//제출 버튼 눌렀을시
-	$j('#submitBtn').on('click',function(e){
+	//저장 버튼 눌렀을시
+	$j('#saveBtn').on('click',function(e){
 		e.preventDefault()
-		submit()
+		save()
 		
 	})
 	
@@ -197,7 +207,7 @@ $j().ready(() => {
 											생년월일
 										</td>
 										<td>
-											<input name="birth" type="text"  value="">
+											<input name="birth" type="text"  value="${r.birth}">
 										</td>
 									</tr>
 									<tr>
@@ -206,9 +216,9 @@ $j().ready(() => {
 										</td>
 										<td>
 											<select name="gender">
-												<option value="남자">남자
+												<option <c:if test ="${'남자' eq r.gender}">selected</c:if> value="남자">남자
 												</option>
-												<option value="여자">여자
+												<option <c:if test ="${'여자' eq r.gender}">selected</c:if> value="여자">여자
 												</option>
 											</select>
 										</td>
@@ -239,9 +249,19 @@ $j().ready(() => {
 										</td>
 										<td>
 											<select name="location">
-												<option value="서울">서울
+												<option <c:if test ="${'서울' eq r.location}">selected</c:if> value="서울">서울
 												</option>
-												<option value="지방">지방
+												<option <c:if test ="${'경기' eq r.location}">selected</c:if> value="경기">경기
+												</option>
+												<option <c:if test ="${'충청' eq r.location}">selected</c:if> value="충청">충청
+												</option>
+												<option <c:if test ="${'강원' eq r.location}">selected</c:if> value="강원">강원
+												</option>
+												<option <c:if test ="${'전라' eq r.location}">selected</c:if> value="전라">전라
+												</option>
+												<option <c:if test ="${'경상' eq r.location}">selected</c:if> value="경상">경상
+												</option>
+												<option <c:if test ="${'제주' eq r.location}">selected</c:if> value="제주">제주
 												</option>
 											</select>
 										</td>
@@ -250,10 +270,10 @@ $j().ready(() => {
 										</td>
 										<td>
 											<select name="workType">
-												<option value="정규직">
+												<option <c:if test ="${'정규직' eq r.workType}">selected</c:if> value="정규직">
 													정규직
 												</option>
-												<option value="반정규직">
+												<option <c:if test ="${'반정규직' eq r.workType}">selected</c:if> value="반정규직">
 													반정규직
 												</option>
 											</select>
@@ -315,6 +335,7 @@ $j().ready(() => {
 											<input class="removeRow" type="button" value="삭제">
 										</td>
 									</tr>
+									<c:forEach var="edu" items="${eduList}" >
 									<tr class="inputRow">
 										<td align="center" >
 										<form>
@@ -346,29 +367,42 @@ $j().ready(() => {
 															<input type="checkbox"/>
 														</td>
 														<td align="center">
-															<input name="startPeriod" type="text" value="${e.get(0).startPeriod}"/>
+															<input name="startPeriod" type="text" value="${edu.startPeriod}"/>
 															<br/>
 															~
-															<input name="endPeriod" type="text"/>
+															<input name="endPeriod" type="text" value="${edu.endPeriod}"/>
 														</td>
 														<td align="center">
 															<select name="division">
-																<option>졸업</option>
-																<option>중퇴</option>
+																<option value="재학" <c:if test ="${'재학' eq edu.division}">selected</c:if>>재학</option>
+																<option value="중퇴" <c:if test ="${'중퇴' eq edu.division}">selected</c:if>>중퇴</option>
+																<option value="졸업" <c:if test ="${'졸업' eq edu.division}">selected</c:if>>졸업</option>
 															</select>
 														</td>
 														<td >
-															<input name="schoolName" type="text"/>
+															<input name="schoolName" type="text" value="${edu.schoolName }"/>
 															<select name="location">
-																<option>서울</option>
-																<option>지방</option>
+																<option <c:if test ="${'서울' eq edu.location}">selected</c:if> value="서울">서울
+																</option>
+																<option <c:if test ="${'경기' eq edu.location}">selected</c:if> value="경기">경기
+																</option>
+																<option <c:if test ="${'충청' eq edu.location}">selected</c:if> value="충청">충청
+																</option>
+																<option <c:if test ="${'강원' eq edu.location}">selected</c:if> value="강원">강원
+																</option>
+																<option <c:if test ="${'전라' eq edu.location}">selected</c:if> value="전라">전라
+																</option>
+																<option <c:if test ="${'경상' eq edu.location}">selected</c:if> value="경상">경상
+																</option>
+																<option <c:if test ="${'제주' eq edu.location}">selected</c:if> value="제주">제주
+																</option>
 															</select>
 														</td>
 														<td align="center">
-															<input type="text" name="major"/>
+															<input type="text" name="major" value="${edu.major}"/>
 														</td>
 														<td align="center">
-															<input type="text" name="grade"/>
+															<input type="text" name="grade" value="${edu.grade }"/>
 														</td>
 													</tr>
 												</tbody>
@@ -376,6 +410,7 @@ $j().ready(() => {
 										</form>
 										</td>
 									</tr>
+								</c:forEach>
 								</table>
 							</td>
 						</tr>
@@ -393,6 +428,7 @@ $j().ready(() => {
 											<input class="removeRow"type="button" value="삭제">
 										</td>
 									</tr>
+									<c:forEach var="car" items="${carList}">
 									<tr class="inputRow">
 										<td align="center" >
 											<form>
@@ -421,20 +457,20 @@ $j().ready(() => {
 															<input type="checkbox"/>
 														</td>
 														<td >
-															<input name="startPeriod" type="text"/>
+															<input  name="startPeriod" type="text" value="${car.startPeriod}"/>
 															<br/>
 															~
 															<br/>
-															<input name="endPeriod" type="text"/>
+															<input type="text" name="endPeriod" value="${car.endPeriod}" />
 														</td>
 														<td >
-															<input name="compName" type="text"/>
+															<input name="compName" type="text" value="${car.compName }"/>
 														</td>
 														<td >
-															<input name="task" type="text"/>
+															<input name="task" type="text" value="${car.task }"/>
 														</td>
 														<td >
-															<input name="location" type="text"/>
+															<input name="location" type="text" value="${car.location }"/>
 														</td>
 													</tr>
 												</tbody>
@@ -442,6 +478,7 @@ $j().ready(() => {
 											</form>
 										</td>
 									</tr>
+								</c:forEach>
 								</table>
 							</td>
 						</tr>
@@ -459,6 +496,7 @@ $j().ready(() => {
 											<input class="removeRow"type="button" value="삭제">
 										</td>
 									</tr>
+									<c:forEach var="cert" items="${certList}">
 									<tr class="inputRow">
 										<td align="center">
 										<form>
@@ -484,13 +522,13 @@ $j().ready(() => {
 															<input type="checkbox"/>
 														</td>
 														<td >
-															<input name="qualifiName" type="text"/>
+															<input name="qualifiName" type="text" value="${cert.qualifiName }"/>
 														</td>
 														<td >
-															<input name="acquDate" type="text"/>
+															<input name="acquDate" type="text" value="${cert.acquDate }"/>
 														</td>
 														<td >
-															<input name="organizeName" type="text"/>
+															<input name="organizeName" type="text" value="${cert.organizeName }"/>
 														</td>
 													</tr>
 												</tbody>
@@ -498,6 +536,7 @@ $j().ready(() => {
 										</form>
 										</td>
 									</tr>
+									</c:forEach>
 								</table>
 							</td>
 						</tr>

@@ -15,9 +15,9 @@ public class RecruitVo {
 	private String submit;
 	
 	
+	private List<EducationVo> educationList;
 	private List<CareerVo> careerList;
 	private List<CertificateVo> certificateList;
-	private List<EducationVo> educationList;
 	
 	public RecruitVo() {}
 	public String getSeq() {

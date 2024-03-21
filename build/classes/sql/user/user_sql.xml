@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="user">
     <resultMap type="com.spring.user.vo.UserVo" id="UserVo">
-        <result property="id" 	column="USER_ID"/>
+        <id		property="id" 	column="USER_ID"/>
         <result property="pw" 	column="USER_PW"/>
         <result property="name" 	column="USER_NAME"/>
         <result property="phone1" 	column="USER_PHONE1"/>
