@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@include file="/WEB-INF/views/common/common.jsp"%>    
+<%@include file="/WEB-INF/views/recruit/regexp.jsp"%>    
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -18,6 +19,7 @@ $j().ready(() => {
 	
 	/* 
 		프로세스
+		0. 제출된 폼인지, 제출안된 폼인지 체크하여 분기처리
 		1. 저장 또는 제출 버튼 클릭시 유효성 검사
 		2. 유효성 검사 통과하면 제출하는데, 저장버튼이냐 제출버튼이냐에 따라 submit 함수 인자를 다르게 줘서 분기처리
 		3. 셀렉트와 텍스트입력필드의 경우, 
@@ -26,151 +28,35 @@ $j().ready(() => {
 	*/
 	
 	
-	var INPUT_RULE = 
-	{
-		recruitForm:
-		{
-			isEssential : true,
-			birth	: 	{
-					    	TYPE	: 'DATE',
-					    	NAME	:	'생년월일을',
-							INFO 	: '1900.01.01 ~ 2099.12.31',
-							INPUT	:	/[^0-9]/g,
-							SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2]).(0[1-9]|[12][0-9]|3[01])$/
-						}, 
-			email	: 	{
-					    	TYPE	: 'EMAIL',
-					    	NAME	:	'이메일주소를',
-							INFO 	: 'aaa@aaa.aa',
-							INPUT	:	/[^a-zA-Z0-9@.-]/g, 
-							SUBMIT	:	/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-						}, 
-			addr	: 	{
-					    	TYPE	: 'TEXT',
-					    	NAME	:	'주소를',
-							INFO 	: '1 ~ 30자 이상의 문자 및 "-" 기호, 띄어쓰기',
-							INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g,
-							SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
-						},
-			
-		},
-		eduForm:
-			{
-			isEssential : true,
-				startPeriod	:{
-								TYPE	:	'DATE',
-								NAME	:	'재학기간의 시작연월을',
-								INFO	:	'1900.01 ~ 2099.12',
-								INPUT	: 	/[^0-9]/g, 
-								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
-							},
-				endPeriod	:{
-								TYPE	:	'DATE',
-								NAME	:	'재학기간의 종료연월을',
-								INFO	:	'1900.01 ~ 2099.12',
-								INPUT	:	/[^0-9]/g, 
-								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
-							},
-				schoolName	:{
-						    	TYPE	: 'TEXT',
-						    	NAME	:	'학교명을',
-								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
-								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
-								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
-							},
-				major		:{
-								TYPE	: 'TEXT',
-								NAME	:'전공명을',
-								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
-								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
-								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
-							},
-				grade		:{
-								TYPE	: 'GRADE',
-								NAME	:	'평균학점을',
-								INFO 	: "'3.2', '3.65' 등의",						
-								INPUT	:	/[^0-9.]/g,
-								SUBMIT	:	/^\d{1}\.\d{1,2}$/
-							}
-			},
-		carForm:
-				{
-			isEssential : false,
-				startPeriod	:{
-								TYPE	:	'DATE',
-								NAME	:	'근무기간의 시작연월을',
-								INFO	:	'1900.01 ~ 2099.12',
-								INPUT	: 	/[^0-9]/g, 
-								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
-				},
-				endPeriod	:{
-								TYPE	:	'DATE',
-								NAME	:	'근무기간의 종료연월을',
-								INFO	:	'1900.01 ~ 2099.12',
-								INPUT	:	/[^0-9]/g, 
-								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
-							},
-				compName	:{
-								TYPE	: 'TEXT',
-								NAME	:	'회사명을',
-								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
-								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
-								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
-							},
- 				task		:{
-			 					TYPE	: 'TEXT',
-			 					NAME	:	'부서/직급/직책을',
-								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
-								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
-								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
-							},
-				location	:{
-								TYPE	: 'TEXT',
-								NAME	:	'근무지의 지역을',
-								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
-								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
-								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
-							}
-				},
- 		certForm:
-			{
- 			isEssential : false,
-				qualifiName	:{
-								TYPE	: 'TEXT',
-								NAME	:	'자격증명을',
-								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
-								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
-								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/ 
-							},
-				acquDate	:{
-								TYPE	:	'DATE',
-								NAME	:	'자격증 취득일을',
-								INFO	:	'1900.01 ~ 2099.12',
-								INPUT	:	/[^0-9]/g, 
-								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
-							},
-				organizeName	:{
-								TYPE	: 'TEXT',
-								NAME	:	'자격증 발행처를',
-								INFO 	: '1 ~ 30자 이상의 완성형 숫자, 문자 및 "-" 기호, 띄어쓰기',
-								INPUT	:	/[^a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣-\s-]/g, 
-								SUBMIT	:	/[0-9a-zA-Z가-힣-\s-]{1,30}$/
-							}
-		}
-	}
-			
-	// 인풋요소 넣으면 RULE 반환하는 함수
+	if('Y' === $j('#saveSubmitBtnTd').data('submit')){
+		$j('input[type="button"]').hide()
+		$j('input[type="text"]').each((index,el)=>el.readOnly=true)
+		$j('select').each((index,el)=>{
+			var selectedValue = el.value
+			$j(el).children().each(function(){
+				if(this.value !== selectedValue){
+					this.remove()
+				}
+			})
+		})
+	}else{
+	
+		// 인풋요소 넣으면 RULE 반환하는 함수
 	var getInputRule = function(input){
 				var sectionName = $j(input).closest('form').attr('class')
 				var inputName = input.name
 				return INPUT_RULE[sectionName][inputName]
 				
 			}
-	
-	
-	// 
+			
+	// 저장 및 제출버튼 클릭 이벤트 핸들러 함수
+	// 유효성 검사가 완료된 checkedFormData 객체 받아서 제출/저장 분기처리후 서버에제출
+	// checkedFormData가 null 이면 유효성 검사가 안된것이므로 리턴 (alert출력은 getCheckedFormData 함수가처리)
 	$j('#saveSubmitBtnTd').on('click','input[type="button"]',function(e){
 		var checkedFormData = getCheckedFormData()
+		if(!checkedFormData){
+			return
+		}
 		var isSubmit = false
 		if(this.id == 'saveBtn'){
 			checkedFormData["submit"]='N'
@@ -181,7 +67,7 @@ $j().ready(() => {
 		
 		
 		if(isSubmit){
-			if(!confirm("제출하신 이후에는 조회만 가능하며, 더이상 수정하실 수 없습니다.\n정말 제출하시겠습니까?")){
+			if(!confirm("제출하신 이후에는 조회만 가능하며, 더 이상 수정하실 수 없습니다.\n정말 제출하시겠습니까?")){
 				return
 			}
 		}
@@ -252,12 +138,7 @@ $j().ready(() => {
 		recruitForm['certificateList']=certForms.get()
 
 		return recruitForm
-		
-		
-		
 	}
-			
-			
 
 	// 미입력값 부분의 유효성 체크해주는 함수
 	var isFormComplete = function(form){
@@ -286,6 +167,8 @@ $j().ready(() => {
 		
 	// 유효값 안맞는 요소 있을시 해당 요소와 메시지로 이루어진 response 객체 반환
  	var isFormValid = function(form){
+		
+		
 		var invalidInput = null
 		
 		var inputs = $j(form).find('input[type="text"]:not([readonly])')
@@ -296,7 +179,12 @@ $j().ready(() => {
 			if(input.value.trim() === ''){
 				continue
 			}
-			var regEx = getInputRule(input)['SUBMIT']
+			var inputRule = getInputRule(input)
+			if(inputRule['TYPE'] === 'DATE'){
+				
+			}
+			
+			var regEx = inputRule['SUBMIT']
 			
 			if(!regEx.test(input.value)){
 				invalidInput = input
@@ -347,6 +235,26 @@ $j().ready(() => {
 				}
 				return inputCheckResult
 			}
+			
+			
+			if($j(formsToCheck[i]).find('input[name="startPeriod"]').length>0){
+				var startPeriodInput = $j(formsToCheck[i]).find('input[name="startPeriod"]')
+				var endPeriodInput = $j(formsToCheck[i]).find('input[name="endPeriod"]')
+				
+				var start = startPeriodInput.val().replace('.','')
+				var end = endPeriodInput.val().replace('.','')
+				
+				var startNumber  = parseInt(start)
+				var endNumber = parseInt(end)
+				
+				if (startNumber > endNumber){
+					inputCheckResult={
+							invalidInput : endPeriodInput.get(0),
+							msg : '종료기간은 시작기간의 이후여야 합니다.'
+					}
+				}
+			}
+				
 		}
 		return inputCheckResult
 		
@@ -510,7 +418,7 @@ $j().ready(() => {
 	// dom 루트에 모든 하위 체크박스 요소 클릭시 해당 테이블에 checked 속성 토글하는 함수	
 	$j(document).on('click','input[type="checkbox"]',function(e){
 		var checked = $j(this).prop('checked')
-		var tr = $j(this).closest('table').closest('tr')
+		var tr = $j(this).closest('.inputRow')
 		
 		if(checked){
 			tr.addClass('checked')
@@ -520,6 +428,8 @@ $j().ready(() => {
 		}
 		return		
 	})
+	
+	}
 })
 
 </script>
@@ -612,6 +522,7 @@ $j().ready(() => {
 							</form>
 							</td>
 						</tr>
+						<c:if test="${summary ne null}">
 						<tr>
 							<td align="center" style="border:none;">
 								<table border="1" width="750">
@@ -634,22 +545,24 @@ $j().ready(() => {
 									<tbody>
 										<tr>
 											<td align="center">
-												대학교 재학
+												${summary.highestDegree}
 											</td>
 											<td align="center">
-												0년 2개월
+												${summary.careerHistory}
 											</td>
 											<td align="center">
-												회사내규에 따름
+												${summary.preferredSalary}
 											</td>
 											<td align="center">
-												회사내규에 따름
+												${summary.preferredLocation}
+												${summary.preferredWorkType}
 											</td>
 										</tr>
 									</tbody>
 								</table>
 							</td>
 						</tr>
+						</c:if>
 						<tr id="educationRow">
 							<td style="border:none;">
 								<table width="100%">
@@ -665,7 +578,7 @@ $j().ready(() => {
 										</td>
 									</tr>
 									<c:forEach var="edu" items="${eduList}" >
-									<tr class="inputRow">
+									<tr >
 										<td align="center" >
 										<form class="eduForm">
 											<table border="1"  width="780">
@@ -691,7 +604,7 @@ $j().ready(() => {
 													</tr>
 												</thead>
 												<tbody>
-													<tr>
+													<tr class="inputRow">
 														<td align="center">
 															<input type="checkbox"/>
 														</td>
@@ -873,7 +786,7 @@ $j().ready(() => {
 				</td>
 			</tr>
 			<tr>
-				<td align="center" id="saveSubmitBtnTd">
+				<td  align="center" id="saveSubmitBtnTd" data-submit="${r.submit}">
 					<input id="saveBtn" type="button" value="저장"/>
 					<input id="submitBtn" type="button" value="제출"/>
 				</td>

@@ -20,6 +20,7 @@ import com.spring.recruit.vo.CareerVo;
 import com.spring.recruit.vo.CertificateVo;
 import com.spring.recruit.vo.EducationVo;
 import com.spring.recruit.vo.RecruitVo;
+import com.spring.recruit.vo.Summary;
 
 @Controller
 public class RecruitController {
@@ -51,6 +52,8 @@ public class RecruitController {
 			recruitVo.setCareerList(carList);
 			recruitVo.setCertificateList(certList);
 			
+		}else if(recruitVo != null) {
+			model.addAttribute("summary",new Summary(recruitVo));
 		}
 		System.out.println(CommonUtil.toJson(recruitVo));
 		model.addAttribute("r",recruitVo);

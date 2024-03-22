@@ -90,12 +90,12 @@
 						ADDR		=	#{addr},
 						LOCATION	= 	#{location},
 						WORK_TYPE	=	#{workType},
-						SUBMIT		=	'N'			
+						SUBMIT		=	#{submit}			
   		WHEN	NOT MATCHED THEN
   				INSERT
   					(SEQ, NAME, BIRTH, GENDER, PHONE, EMAIL, ADDR, LOCATION, WORK_TYPE, SUBMIT)
  				VALUES
- 					(#{seq}, #{name}, #{birth}, #{gender}, #{phone}, #{email}, #{addr}, #{location}, #{workType}, 'N');
+ 					(#{seq}, #{name}, #{birth}, #{gender}, #{phone}, #{email}, #{addr}, #{location}, #{workType}, #{submit});
 	    
  	    DELETE 
 	    	FROM
