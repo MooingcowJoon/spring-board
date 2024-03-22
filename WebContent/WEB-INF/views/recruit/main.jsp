@@ -25,11 +25,10 @@ $j().ready(() => {
 			그 외 		-> 제출 이후 readonly
 	*/
 	
-
+	
 	var INPUT_RULE = 
 	{
 		recruitForm:
-			
 		{
 			isEssential : true,
 			birth	: 	{
@@ -60,14 +59,14 @@ $j().ready(() => {
 			isEssential : true,
 				startPeriod	:{
 								TYPE	:	'DATE',
-								NAME	:	'시작연월을',
+								NAME	:	'재학기간의 시작연월을',
 								INFO	:	'1900.01 ~ 2099.12',
 								INPUT	: 	/[^0-9]/g, 
 								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
 							},
 				endPeriod	:{
 								TYPE	:	'DATE',
-								NAME	:	'종료연월을',
+								NAME	:	'재학기간의 종료연월을',
 								INFO	:	'1900.01 ~ 2099.12',
 								INPUT	:	/[^0-9]/g, 
 								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
@@ -99,14 +98,14 @@ $j().ready(() => {
 			isEssential : false,
 				startPeriod	:{
 								TYPE	:	'DATE',
-								NAME	:	'시작연월을',
+								NAME	:	'근무기간의 시작연월을',
 								INFO	:	'1900.01 ~ 2099.12',
 								INPUT	: 	/[^0-9]/g, 
 								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
 				},
 				endPeriod	:{
 								TYPE	:	'DATE',
-								NAME	:	'종료연월을',
+								NAME	:	'근무기간의 종료연월을',
 								INFO	:	'1900.01 ~ 2099.12',
 								INPUT	:	/[^0-9]/g, 
 								SUBMIT	:	/^(19\d\d|20\d\d).(0[1-9]|1[0-2])$/
@@ -159,7 +158,9 @@ $j().ready(() => {
 							}
 		}
 	}
-	var getInputRuleByInput = function(input){
+			
+	// 인풋요소 넣으면 RULE 반환하는 함수
+	var getInputRule = function(input){
 				var sectionName = $j(input).closest('form').attr('class')
 				var inputName = input.name
 				return INPUT_RULE[sectionName][inputName]
@@ -167,94 +168,48 @@ $j().ready(() => {
 			}
 	
 	
-			
-			
-	// 텍스트 입력필드에 입력값 입력시 제한된 입력 막는 기능과,
-	// 날짜 필드에 숫자 입력시 '.' 자동으로 추가해주는 기능 
-	$j(document).on('input','input[type="text"]',function(e){
-		var sectionName = $j(this).closest('form').attr('class')
-		var inputName = this.name
-		
-		var rule = INPUT_RULE[sectionName][inputName]
-		
-		var regExp = rule.INPUT
-		
-	    if (regExp.test(this.value)) {
-	    	this.value = this.value.replace(regExp, '');
-	    }
-		
-		if(rule.TYPE === 'DATE'){
-			var text = this.value.replaceAll('.','')
-			if(text.length > 6 ){
-				text  = text.slice(0,4)+'.'+text.slice(4,6)+'.'+text.slice(6)
-			}else if(text.length > 4){
-				text  = text.slice(0,4)+'.'+text.slice(4)
-			}
-			this.value=text
+	// 
+	$j('#saveSubmitBtnTd').on('click','input[type="button"]',function(e){
+		var checkedFormData = getCheckedFormData()
+		var isSubmit = false
+		if(this.id == 'saveBtn'){
+			checkedFormData["submit"]='N'
+		}else if(this.id === 'submitBtn'){
+			checkedFormData["submit"]='Y'
+			isSubmit = true
 		}
 		
-	})
-	// 미입력값 부분의 유효성 체크해주는 함수
-	var isFormComplete = function(form){
-		var isEssential = INPUT_RULE[form.className]['isEssential']
-		var nullInput = null
-
-		var inputs = $j(form).find('input[type="text"]')
 		
-		for(var i=0; i<inputs.length; i++){
-			if(inputs[i].value.trim() === '' && !nullInput){
-				nullInput = inputs[i];
-			}else{
-				isEssential = true
-			}
-		}
-		return isEssential? nullInput : null
-		}
-		
-	// 유효값 안맞는 요소 있을시 해당 요소와 메시지로 이루어진 response 객체 반환
- 	var isFormValid = function(form){
-		var invalidInput = null
-		
-		var inputs = $j(form).find('input[type="text"]:not([readonly])')
-		
-		for(var i=0; i<inputs.length; i++){
-			var input 	=	inputs[i]
-			var regEx = getInputRuleByInput(input)['SUBMIT']
-			
-			if(!regEx.test(input.value)){
-				invalidInput = input
-				return invalidInput
-				}
-			}
-		return invalidInput
-		}
-	
-	// 폼들 받아서 입력값 순차적으로 처리해주는 함수
-	function inputChecker(formsToCheck){
-		var result = {
-				invalidInput :null,
-				msg :''
-		}
-		for(var i = 0; i<formsToCheck.length; i++){
-			 
-			var nullInput = isFormComplete(formsToCheck[i])
-			if(nullInput){
-				alert(getInputRuleByInput(nullInput)['NAME']+' 입력하셔야 합니다.')
-				nullInput.focus()
-				result = 
-			}
-			var invalidInput = isFormValid(formsToCheck[i])
-			if(invalidInput){
-				alert(getInputRuleByInput(invalidInput)['INFO']+'\n형식으로 입력하셔야 합니다.')
-				invalidInput.focus()
+		if(isSubmit){
+			if(!confirm("제출하신 이후에는 조회만 가능하며, 더이상 수정하실 수 없습니다.\n정말 제출하시겠습니까?")){
 				return
-				}
 			}
-	}
+		}
+		console.log(checkedFormData)
+		$j.ajax({
+			type			: 	"POST",
+			url				: 	"/api/recruit/main/submit.do",
+			data			:	JSON.stringify(checkedFormData),
+			contentType		:	"application/json",
+			success			:	function(res){
+				console.log(res.msg)
+				if(isSubmit){
+					alert('입력정보를 제출하였습니다.')
+					location.reload()
+				}else{
+				alert('입력정보가 저장되었습니다.')
+				}
+			},
+			error			:	function(res){
+				console.log(res)
+			}
+		})
+		
+	})	
 	
-				
-	// 저장 기능 함수
-	var save = function(){
+	// 폼 유효성 체크 이후 
+	// ajax에 리퀘스트바디에 json으로 넣을 폼 반환하는 함수 
+	var getCheckedFormData = function(){
 		var recruitForms_Unchecked = $j('.recruitForm')
 		var eduForms_Unchecked	=	$j('.eduForm')
 		var carForm_Unchecked 	=	$j('.carForm')
@@ -266,7 +221,13 @@ $j().ready(() => {
 							,...carForm_Unchecked.get()
 							,...certForm_Unchecked.get())
 							
+		inputCheckResult = inputCheck(formsToCheck)
 		
+		if(inputCheckResult){
+			alert(inputCheckResult.msg)
+			inputCheckResult.invalidInput.focus()
+			return
+		}
 		
 		recruitForm=seriForm(recruitForms_Unchecked.get(0))
 		
@@ -290,30 +251,151 @@ $j().ready(() => {
 		recruitForm['careerList']=carForms.get()
 		recruitForm['certificateList']=certForms.get()
 
-		console.log(recruitForm)
+		return recruitForm
 		
-		$j.ajax({
-			type			: 	"POST",
-			url				: 	"/api/recruit/main/submit.do",
-			data			:	JSON.stringify(recruitForm),
-			contentType		:	"application/json",
-			success			:	function(res){
-				console.log(res.msg)
-			},
-			error			:	function(res){
-				console.log(res)
+		
+		
+	}
+			
+			
+
+	// 미입력값 부분의 유효성 체크해주는 함수
+	var isFormComplete = function(form){
+		var isEssential = INPUT_RULE[form.className]['isEssential']
+		var nullInput = null
+
+		var inputs = $j(form).find('input[type="text"]')
+		
+		var hasAnyInputFilled = false
+		
+		for(var i=0; i<inputs.length; i++){
+			if(inputs[i].value.trim() === ''){
+				if (!nullInput){
+					nullInput=inputs[i]
+				}
+			}else{
+				hasAnyInputFilled = true
 			}
-		})
+		}
+		if(!isEssential && !hasAnyInputFilled ){
+			nullInput = null
+		}
+		
+		return nullInput
+		}
+		
+	// 유효값 안맞는 요소 있을시 해당 요소와 메시지로 이루어진 response 객체 반환
+ 	var isFormValid = function(form){
+		var invalidInput = null
+		
+		var inputs = $j(form).find('input[type="text"]:not([readonly])')
+		
+		for(var i=0; i<inputs.length; i++){
+			var input 	=	inputs[i]
+			// 공백값에 대한 검사는 이미 수행되었기에 공백값이면 스킵
+			if(input.value.trim() === ''){
+				continue
+			}
+			var regEx = getInputRule(input)['SUBMIT']
+			
+			if(!regEx.test(input.value)){
+				invalidInput = input
+				return invalidInput
+				}
+			}
+		return invalidInput
+		}
+	
+	// 폼들 받아서 순차적으로 유효성 검사 수행
+	// 문제요소 확인되면 해당 요소와 함께 alert 띄울 메시지 반환
+	// 문제없을시 null 반환
+	function inputCheck(formsToCheck){
+		var inputCheckResult = null
+		
+		
+		for(var i = 0; i<formsToCheck.length; i++){
+			
+			// 널 유효성 검사 함수 호출
+			var nullInput = isFormComplete(formsToCheck[i])
+			if(nullInput){
+				var invalidInput = nullInput;
+				var msg = getInputRule(nullInput)['NAME']+' 입력해주세요.'
+				var sectionName = formsToCheck[i].className
+				if(INPUT_RULE[sectionName]['isEssential']){
+					
+					if(sectionName === 'recruitForm'){
+						var addMsg = '지원자 정보의 모든 항목을 입력하셔야 합니다.\n'
+					}
+					if(sectionName === 'eduForm'){
+						var addMsg = '최소 하나 이상의 학력 정보를 빠짐없이 입력하셔야 합니다.\n'
+					}
+					msg = addMsg + msg
+				}
+				inputCheckResult={
+					invalidInput : invalidInput,
+					msg : msg
+				}
+				return inputCheckResult
+			}
+			
+			// 정규식 패턴 검사 함수 호출
+			var invalidPatternInput = isFormValid(formsToCheck[i])
+			if(invalidPatternInput){
+				inputCheckResult={
+						invalidInput : invalidPatternInput,
+						msg : getInputRule(invalidPatternInput)['INFO']+'\n형식으로 입력하셔야 합니다.'
+				}
+				return inputCheckResult
+			}
+		}
+		return inputCheckResult
 		
 	}
 	
 	
-	//저장 버튼 눌렀을시
-	$j('#saveBtn').on('click',function(e){
-		e.preventDefault()
-		save()
+	
+	
+	
+	
+	
+	// 텍스트 입력필드에 입력값 입력시 제한된 입력 막는 기능과,
+	// 날짜 필드에 숫자 입력시 '.' 자동으로 추가해주는 기능 
+	$j(document).on('input','input[type="text"]',function(e){
+		
+		var rule = getInputRule(this)
+		// 유효성규칙에서 정규표현식 패턴 확보
+		var regExp = rule.INPUT
+		
+		// 허용되지않는 값 삭제
+	    if (regExp.test(this.value)) {
+	    	this.value = this.value.replace(regExp, '');
+	    }
+		
+		// 입력필드 타입이 날짜일 경우
+		if(rule.TYPE === 'DATE'){
+			var text = this.value.replaceAll('.','')
+			if(text.length > 6 ){
+				text  = text.slice(0,4)+'.'+text.slice(4,6)+'.'+text.slice(6)
+			}else if(text.length > 4){
+				text  = text.slice(0,4)+'.'+text.slice(4)
+			}
+			this.value=text
+		}
 		
 	})
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
 	
 	// 행추가 버튼 눌렀을 시
 	$j('.addRow').on('click',function(e){
@@ -791,7 +873,7 @@ $j().ready(() => {
 				</td>
 			</tr>
 			<tr>
-				<td align="center">
+				<td align="center" id="saveSubmitBtnTd">
 					<input id="saveBtn" type="button" value="저장"/>
 					<input id="submitBtn" type="button" value="제출"/>
 				</td>
