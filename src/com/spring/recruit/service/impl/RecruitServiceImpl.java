@@ -14,8 +14,8 @@ public class RecruitServiceImpl implements RecruitService {
 	RecruitDao recruitDao;
 	
 	@Override
-	public int insertRecruit(RecruitVo recruitVo) {
-		return recruitDao.insertRecruit(recruitVo);
+	public int insertOrUpdateRecruit(RecruitVo recruitVo) {
+		return recruitDao.insertOrUpdateRecruit(recruitVo);
 	}
 	
 	@Override

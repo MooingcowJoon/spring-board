@@ -40,7 +40,8 @@ $j().ready(() => {
 			})
 		})
 	}else{
-
+	
+	// 날짜인풋 요소 또는 문자열을 받아서 6자리 자연수로 반환하는 함수
 	var getDateNumber = function(input){
 		if(typeof input === 'string'){
 			return parseInt(input.replace(".",''))
@@ -53,17 +54,17 @@ $j().ready(() => {
 		아래 3가지 체크하여 ture / false 반환
 		1. 날짜 기간의 시작기간이 종료기간과 같거나 이후일때 -> false
 		2. 출생일을 제외한 어떤 날짜라도 출생일보다 같거나 이전일때 -> false
-		3. 학력 기간이 학력 기간과 겹칠 때 or 근무 기간이 근무 기간과 겹칠 때 -> false
+		3. 재학 기간이 서로다른 재학 기간과 겹칠 때 or 근무 기간이 근무 기간과 겹칠 때 -> false
 		--> 3개 다 통과 시 -> true
 	*/
 	var dateCheck = function(){
-		// 생년월일을 '월' 까지만 추린 숫자 (ex : 199111)
-		var birthNumber = getDateNumber($j('input[name="birth"]').get(0))
-		
-		// 학력 기간 입력들과 근무 기간 입력들 중 입력값이 있는 요소들만 추림 
+		// 재학 기간 입력들과 근무 기간 입력들 중 입력값이 있는 요소들만 추림 
+		// dateCheck 함수가 호출되기 이전에 이미 null인풋에 대한 유효성 검사가 끝났으므로, 
+		// value가 있으면 날짜유효성 빼고는 체크된 대상임
+			// 재학 기간
 		var eduStarts = $j('#eduForm').find('input[name="startPeriod"]').get().filter((input)=>input.value.trim())
 		var eduEnds = $j('#eduForm').find('input[name="endPeriod"]').get().filter((input)=>input.value.trim())
-		
+			// 근무 기간
 		var carStarts = $j('#carForm').find('input[name="startPeriod"]').get().filter((input)=>input.value.trim())
 		var carEnds = $j('#carForm').find('input[name="endPeriod"]').get().filter((input)=>input.value.trim())
 		
@@ -84,13 +85,15 @@ $j().ready(() => {
 			}
 		}
 		
-		// 모든 시작 날짜(자격증취득일 추가)
+		// 2. 출생일을 제외한(자격증취득일포함) 어떤 날짜라도 출생일보다 같거나 이전일때 -> false
+			// 생년월일을 '월' 까지만 추린 숫자 (ex : 199111)
+		var birthNumber = getDateNumber($j('input[name="birth"]').get(0))
+			// 모든 시작 날짜(자격증취득일 추가)
 		var dates = [...eduStarts,...carStarts]
 		dates.push(...$j('#certForm')
 							.find('input[name="acquDate"]').get()
 							.filter(input=>input.value.trim()))
-		
-		// 2. 출생일을 제외한 어떤 날짜라도 출생일보다 같거나 이전일때 -> false
+		// 모든 날짜에 대한 검사 시작 : 어떤 날짜라도 출생일보다 같거나 이전일때 -> false
 		for(var i = 0; i < dates.length; i++){
 			if(getDateNumber(dates[i]) <= birthNumber){
 				alert(getInputRule(dates[i])['NAME']+' 출생연도 이후로 입력하셔야 합니다.')
@@ -124,7 +127,7 @@ $j().ready(() => {
 		CAR.sort((car1,car2)=>getDateNumber(car1.s)-getDateNumber(car2.s))
 		
 		
-//		3-3. 정렬된 배열이기 때문에, 뒤의 뒷 원소의 시작기간이 앞 원소의 종료기간보다 작으면 기간이 겹친다.
+//		3-3. 정렬된 배열이기 때문에, 뒤의 뒷 원소의 시작기간이 앞 원소의 종료기간보다 작거나 같으면 기간이 겹친다.
 //				-> alert 출력 및 false 반환
 		for(var i=0; i<EDU.length-1; i++){
 			if(getDateNumber(EDU[i].e) >= getDateNumber(EDU[i+1].s)){
@@ -197,7 +200,6 @@ $j().ready(() => {
 			data			:	JSON.stringify(checkedFormData),
 			contentType		:	"application/json",
 			success			:	function(res){
-				console.log(res.msg)
 				if(isSubmit){
 					alert('입력정보를 제출하였습니다.')
 					location.reload()
@@ -261,7 +263,7 @@ $j().ready(() => {
 		})
 		
 		
-		var rowIndex = 0 
+/* 		var rowIndex = 0 
 		recruitForm['educationList'].sort((eduRow1,eduRow2) => getDateNumber(eduRow2.startPeriod)-getDateNumber(eduRow1.startPeriod))
 									.forEach(row=>row.eduSeq=rowIndex++)
 		
@@ -271,7 +273,7 @@ $j().ready(() => {
 									
 		rowIndex = 0 
 		recruitForm['certificateList'].sort((certRow1,certRow2)=>	getDateNumber(certRow2.acquDate)-getDateNumber(certRow1.acquDate))
-									.forEach(row=>row.certSeq=rowIndex++)
+									.forEach(row=>row.certSeq=rowIndex++) */
 		return recruitForm
 	}
 
@@ -877,7 +879,7 @@ $j().ready(() => {
 												</thead>
 												<tbody>
 												<c:forEach var="cert" items="${certList}">
-													<tr  class="inputRow">
+													<tr class="inputRow">
 														<td >
 															<input type="checkbox"/>
 														</td>

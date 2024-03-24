@@ -14,7 +14,7 @@ public class RecruitDaoImpl implements RecruitDao{
 	SqlSession sqlSession;
 	
 	@Override
-	public int insertRecruit(RecruitVo recruitVo) {
+	public int insertOrUpdateRecruit(RecruitVo recruitVo) {
 		return sqlSession.insert("recruit.insertOrUpdateRecruit",recruitVo);
 	}
 	@Override

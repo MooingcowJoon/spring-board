@@ -85,7 +85,7 @@ public class Summary {
 			m+= Integer.parseInt(end[1])-Integer.parseInt(start[1]);
 		}
 		y+=m/12;
-		m=m/12;
+		m=m%12;
 		if(flag) {
 			carHistory="경력사항 없음";
 		}else{
