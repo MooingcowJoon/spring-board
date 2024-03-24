@@ -11,8 +11,7 @@ public class EducationVo {
 	private String major;
 	private String grade;
 	private String location;
-	
-	
+
 	public String getSeq() {
 		return seq;
 	}

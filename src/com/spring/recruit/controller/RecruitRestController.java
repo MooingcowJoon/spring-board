@@ -23,7 +23,6 @@ import com.spring.recruit.vo.RecruitVo;
 
 @Controller
 public class RecruitRestController {
-	
 	@Autowired
 	RecruitService recruitService;
 	
