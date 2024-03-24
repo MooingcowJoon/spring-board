@@ -26,7 +26,8 @@ $j().ready(() => {
 			이름, 핸드폰번호 	-> readonly
 			그 외 		-> 제출 이후 readonly
 	*/
-
+	
+	// 0.제출된 폼인지, 제출안된 폼인지 체크하여 분기처리
 	if('Y' === $j('#saveSubmitBtnTd').data('submit')){
 		$j('input[type="button"]').hide()
 		$j('input[type="text"]').each((index,el)=>el.readOnly=true)
@@ -39,16 +40,7 @@ $j().ready(() => {
 			})
 		})
 	}else{
-	
-	class Interval{
-		constructor(s,e,sI,eI){
-		this.sI = sI
-		this.eI = eI
-		this.s = s;
-		this.e = e;
-		}
-	}	
-	
+
 	var getDateNumber = function(input){
 		if(typeof input === 'string'){
 			return parseInt(input.replace(".",''))
@@ -74,6 +66,7 @@ $j().ready(() => {
 		
 		var carStarts = $j('#carForm').find('input[name="startPeriod"]').get().filter((input)=>input.value.trim())
 		var carEnds = $j('#carForm').find('input[name="endPeriod"]').get().filter((input)=>input.value.trim())
+		
 		
 		// 1. 날짜 기간의 시작기간이 종료기간과 같거나 이후일때 -> false
 		for(var i=0; i<eduStarts.length; i++){
@@ -106,52 +99,50 @@ $j().ready(() => {
 			}
 		}
 		
-		// 학력, 근무기간끼리 겹치는 기간 있는지 정렬하기 위한 Interval 리스트 
-		eduIntervalList = []
-		carIntervalList = []
+		// 3. 학력 기간이 학력 기간과 겹칠 때 or 근무 기간이 근무 기간과 겹칠 때 -> false
+		//
+		// 		3-1. 재학기간, 근무기간을 시작일과 종료일로 묶어서 저장할 배열들 선언 및 값 할당
+		//		3-2. 시작일 순으로 정렬
+		//		3-3. 정렬된 배열이기 때문에, 뒤의 뒷 원소의 시작기간이 앞 원소의 종료기간보다 작으면 기간이 겹친다.
+		//				-> alert 출력 및 false 반환
 		
-		// 학력기간과 근무기간을 정렬하기 위해 
+		// 	3-1. 재학기간, 근무기간을 시작기간과 종료기간으로 묶어서 저장할 배열들 선언 및 값 할당
+		var EDU = []
+		var CAR = []
 		// 날짜를 숫자로 변환 후 Interval 객체에 넣어서 인터벌리스트에 추가
 		for (var i = 0; i<eduStarts.length; i++){
-			eduIntervalList.push(new Interval(
-											getDateNumber(eduStarts[i])
-											,getDateNumber(eduEnds[i])
-											,eduStarts[i]
-											,eduEnds[i])		)
+			EDU.push({s: eduStarts[i],
+						e: eduEnds[i]})
 		}
-		
 		for (var i = 0; i<carStarts.length; i++){
-			carIntervalList.push(new Interval(
-											getDateNumber(carStarts[i])
-											,getDateNumber(carEnds[i])
-											,carStarts[i]
-											,carEnds[i])		)
+			CAR.push({s: carStarts[i],
+						e: carEnds[i]})
 		}
 		
-		// 각 인터벌 리스트 시작기간 기준으로 정렬 및 변수명 축약
-		var EDU = eduIntervalList.sort((itv_1, itv_2)=>itv_1.s - itv_2.s)
-		var CAR = carIntervalList.sort((itv_1, itv_2)=>itv_1.s - itv_2.s)
+//		3-2. 시작일 순으로 정렬
+		EDU.sort((edu1,edu2)=>getDateNumber(edu1.s)-getDateNumber(edu2.s))
+		CAR.sort((car1,car2)=>getDateNumber(car1.s)-getDateNumber(car2.s))
 		
 		
-		// 3. 학력 기간이 학력 기간과 겹칠 때 or 근무 기간이 근무 기간과 겹칠 때 -> false
+//		3-3. 정렬된 배열이기 때문에, 뒤의 뒷 원소의 시작기간이 앞 원소의 종료기간보다 작으면 기간이 겹친다.
+//				-> alert 출력 및 false 반환
 		for(var i=0; i<EDU.length-1; i++){
-			// 정렬된 리스트이기 때문에, 뒤의 뒷 원소의 시작기간이 앞 원소의 종료기간보다 작으면 기간이 겹친다.
-			if(EDU[i].e > EDU[i+1].s){
+			if(getDateNumber(EDU[i].e) >= getDateNumber(EDU[i+1].s)){
 				var alertMsg = '같은 기간의 재학기간을 중복하여 입력하실 수 없습니다.'
 				alert(alertMsg)					
-				focusEnd(EDU[i+1].sI)
+				focusEnd(EDU[i+1].s)
 				return false
 			}
 		}
 		for(var i=0; i<CAR.length-1; i++){
-			if(CAR[i].e > CAR[i+1].s){
+			if(getDateNumber(CAR[i].e) >= getDateNumber(CAR[i+1].s)){
 				var alertMsg = '같은 기간의 근무기간을 중복하여 입력하실 수 없습니다.'
 				alert(alertMsg)
-				focusEnd(CAR[i+1].sI)
+				focusEnd(CAR[i+1].s)
 				return false
 			}
 		}
-		
+		// --> 3개 다 통과 시 -> true
 		return true
 	}	
 		
