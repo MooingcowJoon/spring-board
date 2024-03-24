@@ -26,8 +26,7 @@ $j().ready(() => {
 			이름, 핸드폰번호 	-> readonly
 			그 외 		-> 제출 이후 readonly
 	*/
-	
-	
+
 	if('Y' === $j('#saveSubmitBtnTd').data('submit')){
 		$j('input[type="button"]').hide()
 		$j('input[type="text"]').each((index,el)=>el.readOnly=true)
@@ -41,18 +40,145 @@ $j().ready(() => {
 		})
 	}else{
 	
-		// 인풋요소 넣으면 RULE 반환하는 함수
+	class Interval{
+		constructor(s,e,sI,eI){
+		this.sI = sI
+		this.eI = eI
+		this.s = s;
+		this.e = e;
+		}
+	}	
+	
+	var getDateNumber = function(input){
+		return parseInt(input.value.replace(".",''))
+	}
+	
+	// 날짜 유효성 체크 함수
+	/*
+		아래 3가지 체크하여 ture / false 반환
+		1. 날짜 기간의 시작기간이 종료기간 이후일때 -> false
+		2. 출생일을 제외한 어떤 날짜라도 출생일보다 같거나 이전일때 -> false
+		3. 학력 기간이 학력 기간과 겹칠 때 or 근무 기간이 근무 기간과 겹칠 때 -> false
+		-->3개 다 통과 시 -> true
+	*/
+	var dateCheck = function(){
+		// 생년월일을 '월' 까지만 추린 숫자 (ex : 199111)
+		var birthNumber = getDateNumber($j('input[name="birth"]').get(0))
+		
+		// 학력 기간 입력들과 근무 기간 입력들 중 입력값이 있는 요소들만 추림 
+		var eduStarts = $j('#eduForm').find('input[name="startPeriod"]').get().filter((input)=>input.value.trim())
+		var eduEnds = $j('#eduForm').find('input[name="endPeriod"]').get().filter((input)=>input.value.trim())
+		
+		var carStarts = $j('#carForm').find('input[name="startPeriod"]').get().filter((input)=>input.value.trim())
+		var carEnds = $j('#carForm').find('input[name="endPeriod"]').get().filter((input)=>input.value.trim())
+		
+		// 1. 날짜 기간의 시작기간이 종료기간 이후일때 -> false
+		for(var i=0; i<eduStarts.length; i++){
+			if(getDateNumber(eduStarts[i]) > getDateNumber(eduEnds[i])){
+				alert('종료기간을 시작기간 이전으로 입력하실 수 없습니다.')
+				focusEnd(eduEnds[i])
+				return false
+			}
+		}
+		for(var i=0; i<carStarts.length; i++){
+			if(getDateNumber(carStarts[i]) > getDateNumber(carEnds[i])){
+				alert('종료기간을 시작기간 이전으로 입력하실 수 없습니다.')
+				focusEnd(carEnds[i])
+				return false
+			}
+		}
+		
+		// 모든 시작 날짜(자격증취득일 추가)
+		var dates = [...eduStarts,...carStarts]
+		dates.push(...$j('#certForm')
+							.find('input[name="acquDate"]').get()
+							.filter(input=>input.value.trim()))
+		
+		// 2. 출생일을 제외한 어떤 날짜라도 출생일보다 같거나 이전일때 -> false
+		for(var i = 0; i < dates.length; i++){
+			if(getDateNumber(dates[i]) <= birthNumber){
+				alert(getInputRule(dates[i])['NAME']+' 출생연도 이후로 입력하셔야 합니다.')
+				focusEnd(dates[i])
+				return false
+			}
+		}
+		
+		// 학력, 근무기간끼리 겹치는 기간 있는지 정렬하기 위한 Interval 리스트 
+		eduIntervalList = []
+		carIntervalList = []
+		
+		// 학력기간과 근무기간을 정렬하기 위해 
+		// 날짜를 숫자로 변환 후 Interval 객체에 넣어서 인터벌리스트에 추가
+		for (var i = 0; i<eduStarts.length; i++){
+			eduIntervalList.push(new Interval(
+											getDateNumber(eduStarts[i])
+											,getDateNumber(eduEnds[i])
+											,eduStarts[i]
+											,eduEnds[i])		)
+		}
+		
+		for (var i = 0; i<carStarts.length; i++){
+			carIntervalList.push(new Interval(
+											getDateNumber(carStarts[i])
+											,getDateNumber(carEnds[i])
+											,carStarts[i]
+											,carEnds[i])		)
+		}
+		
+		// 각 인터벌 리스트 시작기간 기준으로 정렬 및 변수명 축약
+		var EDU = eduIntervalList.sort((itv_1, itv_2)=>itv_1.s - itv_2.s)
+		var CAR = carIntervalList.sort((itv_1, itv_2)=>itv_1.s - itv_2.s)
+		
+		
+		// 3. 학력 기간이 학력 기간과 겹칠 때 or 근무 기간이 근무 기간과 겹칠 때 -> false
+		for(var i=0; i<EDU.length-1; i++){
+			// 정렬된 리스트이기 때문에, 뒤의 뒷 원소의 시작기간이 앞 원소의 종료기간보다 작으면 기간이 겹친다.
+			if(EDU[i].e > EDU[i+1].s){
+				var alertMsg = '같은 기간의 재학기간을 중복하여 입력하실 수 없습니다.'
+				alert(alertMsg)					
+				focusEnd(EDU[i+1].sI)
+				return false
+			}
+		}
+		for(var i=0; i<CAR.length-1; i++){
+			// 뒤의 뒷 원소의 시작기간이 앞 원소의 종료기간보다 작으면 기간이 겹친다.
+			if(CAR[i].e > CAR[i+1].s){
+				var alertMsg = '같은 기간의 근무기간을 중복하여 입력하실 수 없습니다.'
+				alert(alertMsg)
+				focusEnd(CAR[i+1].sI)
+				return false
+			}
+		}
+		
+		return true
+	}	
+		
+	// form 또는 .inputRow tr 요소를 받아서 
+	// 자손 name:value 요소들만 뽑아내서 객체화시키는 함수
+	var seriForm= function(form){
+	    var formData = {};
+	    $j(form).find('input[type="text"], select').each(function() {
+		        var name = $j(this).attr('name');
+		        var value = $j(this).val().trim();
+		        formData[name]=value
+		    });
+	    return formData;
+	}
+			
+		
+		
+	// 인풋요소 넣으면 RULE 반환하는 함수
 	var getInputRule = function(input){
-				var sectionName = $j(input).closest('form').attr('class')
+				var sectionName = $j(input).closest('form').attr('id')
 				var inputName = input.name
 				return INPUT_RULE[sectionName][inputName]
-				
 			}
 			
 	// 저장 및 제출버튼 클릭 이벤트 핸들러 함수
 	// 유효성 검사가 완료된 checkedFormData 객체 받아서 제출/저장 분기처리후 서버에제출
 	// checkedFormData가 null 이면 유효성 검사가 안된것이므로 리턴 (alert출력은 getCheckedFormData 함수가처리)
 	$j('#saveSubmitBtnTd').on('click','input[type="button"]',function(e){
+		
 		var checkedFormData = getCheckedFormData()
 		if(!checkedFormData){
 			return
@@ -93,56 +219,107 @@ $j().ready(() => {
 		
 	})	
 	
+	
 	// 폼 유효성 체크 이후 
 	// ajax에 리퀘스트바디에 json으로 넣을 폼 반환하는 함수 
 	var getCheckedFormData = function(){
-		var recruitForms_Unchecked = $j('.recruitForm')
-		var eduForms_Unchecked	=	$j('.eduForm')
-		var carForm_Unchecked 	=	$j('.carForm')
-		var certForm_Unchecked 	=	$j('.certForm')
+		var recruitForm_Unchecked = idFind('recruitForm')
+		var eduForm_Unchecked	=	idFind('eduForm')
+		var carForm_Unchecked 	=	idFind('carForm')
+		var certForm_Unchecked 	=	idFind('certForm')
 		
-		formsToCheck= []
-		formsToCheck.push(...recruitForms_Unchecked.get()
-							,...eduForms_Unchecked.get()
-							,...carForm_Unchecked.get()
-							,...certForm_Unchecked.get())
-							
-		inputCheckResult = inputCheck(formsToCheck)
+		formsToCheck= [recruitForm_Unchecked
+						,eduForm_Unchecked
+						,carForm_Unchecked
+						,certForm_Unchecked]
 		
+		inputCheckResult = formsInputCheck(formsToCheck)
+		
+		//  inputChecker가 널이 아닐경우
+		//   --> 유효성 검사 미통과
 		if(inputCheckResult){
 			alert(inputCheckResult.msg)
 			inputCheckResult.invalidInput.focus()
 			return
 		}
+		// 날짜 유효성 체크 통과 못하면 리턴
+		if(!dateCheck()){
+			return
+		}
 		
-		recruitForm=seriForm(recruitForms_Unchecked.get(0))
+		/// 유효성 검사 완료되었으니 폼요소에서 입력값 뽑아내서 서버단 VO/DTO 오브젝트매핑에 맞게 마샬링
+		recruitForm=seriForm(recruitForm_Unchecked)
+		recruitForm['educationList']=[]
+		recruitForm['careerList']=[]
+		recruitForm['certificateList']=[]
 		
-		var eduForms = eduForms_Unchecked.map((index,eduForm)=>{
-			eduForm=seriForm(eduForm)
-			eduForm["eduSeq"]=index
-			return eduForm
+		$j(eduForm_Unchecked).find('.inputRow').each((index,inputRow)=>{
+			var eduRow = seriForm(inputRow)
+			eduRow["eduSeq"]=index
+			recruitForm['educationList'].push(eduRow)
 		})
-		var carForms = carForm_Unchecked.map((index,carForm)=>{
-			carForm=seriForm(carForm)
-			carForm["carSeq"]=index
-			return carForm
+		$j(carForm_Unchecked).find('.inputRow').each((index,inputRow)=>{
+			var carRow = seriForm(inputRow)
+			carRow["carSeq"]=index
+			recruitForm['careerList'].push(carRow)
 		})
-		var certForms = certForm_Unchecked.map((index,certForm)=>{
-			certForm=seriForm(certForm)
-			certForm["certSeq"]=index
-			return certForm
+		$j(certForm_Unchecked).find('.inputRow').each((index,inputRow)=>{
+			var certRow = seriForm(inputRow)
+			certRow["certSeq"]=index
+			recruitForm['certificateList'].push(certRow)
 		})
-		
-		recruitForm['educationList']=eduForms.get()
-		recruitForm['careerList']=carForms.get()
-		recruitForm['certificateList']=certForms.get()
-
 		return recruitForm
+	}
+
+	
+	// 폼들 받아서 순차적으로 유효성 검사 수행
+	// 문제요소 확인되면 해당 요소와 함께 alert 띄울 메시지 반환
+	// 문제없을시 null 반환
+	function formsInputCheck(formsToCheck){
+		var inputCheckResult = null
+		
+		for(var i = 0; i<formsToCheck.length; i++){
+			
+			// 널 유효성 검사 함수 호출
+			var nullInput = isFormComplete(formsToCheck[i])
+			if(nullInput){
+				var invalidInput = nullInput;
+				var msg = getInputRule(nullInput)['NAME']+' 입력해주세요.'
+				var sectionName = formsToCheck[i].id
+// 				if(INPUT_RULE[sectionName]['isEssential']){
+					
+// 					if(sectionName === 'recruitForm'){
+// 						var addMsg = '지원자 정보의 모든 항목을 입력하셔야 합니다.\n'
+// 					}
+// 					if(sectionName === 'eduForm'){
+// 						var addMsg = '최소 하나 이상의 학력 정보를 빠짐없이 입력하셔야 합니다.\n'
+// 					}
+// 					msg = addMsg + msg
+// 				}
+				inputCheckResult={
+					invalidInput : invalidInput,
+					msg : msg
+				}
+				return inputCheckResult
+			}
+
+			// 정규식 패턴 검사 함수 호출
+			var invalidPatternInput = isFormValid(formsToCheck[i])
+			if(invalidPatternInput){
+				inputCheckResult={
+						invalidInput : invalidPatternInput,
+						msg : getInputRule(invalidPatternInput)['INFO']+'\n형식으로 입력하셔야 합니다.'
+				}
+				return inputCheckResult
+			}
+		}
+		return inputCheckResult
+		
 	}
 
 	// 미입력값 부분의 유효성 체크해주는 함수
 	var isFormComplete = function(form){
-		var isEssential = INPUT_RULE[form.className]['isEssential']
+		var isEssential = INPUT_RULE[form.id]['isEssential']
 		var nullInput = null
 
 		var inputs = $j(form).find('input[type="text"]')
@@ -165,9 +342,9 @@ $j().ready(() => {
 		return nullInput
 		}
 		
-	// 유효값 안맞는 요소 있을시 해당 요소와 메시지로 이루어진 response 객체 반환
+	// 입력패턴 일치 여부 체크 함수
+	// 일치하지 않는 요소 있을시, 첫번째로 찾아진 입력요소와 이에 상응하는 안내메시지로 이루어진 response 객체 반환
  	var isFormValid = function(form){
-		
 		
 		var invalidInput = null
 		
@@ -194,77 +371,7 @@ $j().ready(() => {
 		return invalidInput
 		}
 	
-	// 폼들 받아서 순차적으로 유효성 검사 수행
-	// 문제요소 확인되면 해당 요소와 함께 alert 띄울 메시지 반환
-	// 문제없을시 null 반환
-	function inputCheck(formsToCheck){
-		var inputCheckResult = null
-		
-		
-		for(var i = 0; i<formsToCheck.length; i++){
-			
-			// 널 유효성 검사 함수 호출
-			var nullInput = isFormComplete(formsToCheck[i])
-			if(nullInput){
-				var invalidInput = nullInput;
-				var msg = getInputRule(nullInput)['NAME']+' 입력해주세요.'
-				var sectionName = formsToCheck[i].className
-				if(INPUT_RULE[sectionName]['isEssential']){
-					
-					if(sectionName === 'recruitForm'){
-						var addMsg = '지원자 정보의 모든 항목을 입력하셔야 합니다.\n'
-					}
-					if(sectionName === 'eduForm'){
-						var addMsg = '최소 하나 이상의 학력 정보를 빠짐없이 입력하셔야 합니다.\n'
-					}
-					msg = addMsg + msg
-				}
-				inputCheckResult={
-					invalidInput : invalidInput,
-					msg : msg
-				}
-				return inputCheckResult
-			}
-			
-			// 정규식 패턴 검사 함수 호출
-			var invalidPatternInput = isFormValid(formsToCheck[i])
-			if(invalidPatternInput){
-				inputCheckResult={
-						invalidInput : invalidPatternInput,
-						msg : getInputRule(invalidPatternInput)['INFO']+'\n형식으로 입력하셔야 합니다.'
-				}
-				return inputCheckResult
-			}
-			
-			
-			if($j(formsToCheck[i]).find('input[name="startPeriod"]').length>0){
-				var startPeriodInput = $j(formsToCheck[i]).find('input[name="startPeriod"]')
-				var endPeriodInput = $j(formsToCheck[i]).find('input[name="endPeriod"]')
-				
-				var start = startPeriodInput.val().replace('.','')
-				var end = endPeriodInput.val().replace('.','')
-				
-				var startNumber  = parseInt(start)
-				var endNumber = parseInt(end)
-				
-				if (startNumber > endNumber){
-					inputCheckResult={
-							invalidInput : endPeriodInput.get(0),
-							msg : '종료기간은 시작기간의 이후여야 합니다.'
-					}
-				}
-			}
-				
-		}
-		return inputCheckResult
-		
-	}
-	
-	
-	
-	
-	
-	
+
 	
 	// 텍스트 입력필드에 입력값 입력시 제한된 입력 막는 기능과,
 	// 날짜 필드에 숫자 입력시 '.' 자동으로 추가해주는 기능 
@@ -278,7 +385,6 @@ $j().ready(() => {
 	    if (regExp.test(this.value)) {
 	    	this.value = this.value.replace(regExp, '');
 	    }
-		
 		// 입력필드 타입이 날짜일 경우
 		if(rule.TYPE === 'DATE'){
 			var text = this.value.replaceAll('.','')
@@ -289,32 +395,38 @@ $j().ready(() => {
 			}
 			this.value=text
 		}
+		if(this.name === 'grade'){
+			var text = this.value.replaceAll('.','')
+			if(text.length > 1 ){
+				text  = text.slice(0,1)+'.'+text.slice(1)
+			}
+			this.value=text
+		}
 		
 	})
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
+ 	//학점입력시 소숫점 2자리로 제로 패딩 넣어주는 함수
+	$j('#eduForm').on('blur','input[name="grade"]',function(e){
+		var text = this.value
+		if (text.length == 3){
+			text=text+'0'
+		}
+		this.value= text
+	})
 	
 	
 	// 행추가 버튼 눌렀을 시
 	$j('.addRow').on('click',function(e){
 		var sectionTitle = $j(this).closest('tbody').find('h3').text()
-		var inputRows = $j(this).closest('tbody').children('.inputRow')
+		
+		
+		var inputRows = $j(this).closest('tr').next().find('.inputRow')
+		
 		if( inputRows.length === 5 ){
-			alert('더 이상의 '+sectionTitle+' 정보를 추가하실 수 없습니다.')
+			alert('더 이상 '+sectionTitle+' 정보를 추가하실 수 없습니다.')
 			return
 		}
 		
-		var rowClone = $j(this).closest('tr').next().clone()
+		var rowClone = inputRows.first().clone()
 		
 		// 입력 필드 초기화
 		rowClone.find('input[type="text"]').val('');
@@ -322,16 +434,16 @@ $j().ready(() => {
 	    // 셀렉트 박스 초기 상태로 되돌리기
 	    rowClone.find('select').prop('selectedIndex', 0);
 	    rowClone.find('input[type="checkbox"]').prop('checked',false)
-		$j(this).closest('tbody').append(rowClone)
-	})
+		inputRows.first().parent().append(rowClone)
+	})	
 	
 	// 행삭제 버튼 눌렀을시
 	$j('.removeRow').on('click',function(e){
 		var sectionTitle = $j(this).closest('tbody').find('h3').text()
-		// 체크된 행 배열
-		var totalRows = $j(this).closest('tbody').children('.inputRow')
-		
 		// 전체 행 배열
+		var totalRows = $j(this).closest('tr').next().find('.inputRow')
+		
+		// 체크된 행 배열
 		var checkedRows = totalRows.filter('.checked')
 		// 체크된 행이 없을시
 		if(checkedRows.length === 0){
@@ -373,6 +485,7 @@ $j().ready(() => {
 		return findInput(trArr,isBlank=false)
 	}
 	
+	
 	var findInput = function(trArr,isBlank){
 		trArr = $j(trArr)
 		
@@ -402,19 +515,7 @@ $j().ready(() => {
 	}
 	
 	
-	// 폼 직렬화 함수
-	var seriForm= function(form){
-	    var formDataArray = {};
-	    form=$j(form)
-	    // 폼 내의 모든 입력 요소를 순회하며 이름과 값을 배열에 추가
-	    form.find('input[type="text"], select, textarea').each(function() {
-	        var name = $j(this).attr('name');
-	        var value = $j(this).val().trim();
-	       	formDataArray[name]=value
-	    });
-	    
-	    return formDataArray;
-	}
+
 	// dom 루트에 모든 하위 체크박스 요소 클릭시 해당 테이블에 checked 속성 토글하는 함수	
 	$j(document).on('click','input[type="checkbox"]',function(e){
 		var checked = $j(this).prop('checked')
@@ -440,9 +541,9 @@ $j().ready(() => {
 			<tr>
 				<td >
 					<table id ="formTable" border="1" width="900">
-						<tr class="inputRow">
+						<tr>
 							<td style="border:none;" align="center">
-							<form class="recruitForm">
+							<form id="recruitForm">
 								<table border="1" >
 									<tr>
 										<td align="center" width="90"><b>이름</b>
@@ -554,7 +655,7 @@ $j().ready(() => {
 												${summary.preferredSalary}
 											</td>
 											<td align="center">
-												${summary.preferredLocation}
+												${summary.preferredLocation}<br>
 												${summary.preferredWorkType}
 											</td>
 										</tr>
@@ -577,10 +678,10 @@ $j().ready(() => {
 											<input class="removeRow" type="button" value="삭제">
 										</td>
 									</tr>
-									<c:forEach var="edu" items="${eduList}" >
+									
 									<tr >
 										<td align="center" >
-										<form class="eduForm">
+										<form id="eduForm">
 											<table border="1"  width="780">
 												<thead>
 													<tr>
@@ -604,7 +705,9 @@ $j().ready(() => {
 													</tr>
 												</thead>
 												<tbody>
+												<c:forEach var="edu" items="${eduList}" >
 													<tr class="inputRow">
+													
 														<td align="center">
 															<input type="checkbox"/>
 														</td>
@@ -647,12 +750,13 @@ $j().ready(() => {
 															<input type="text" maxlength="4" name="grade" value="${edu.grade }"/>
 														</td>
 													</tr>
+													</c:forEach>
 												</tbody>
 											</table>
-										</form>
+											</form>
+											
 										</td>
 									</tr>
-								</c:forEach>
 								</table>
 							</td>
 						</tr>
@@ -670,10 +774,9 @@ $j().ready(() => {
 											<input class="removeRow"type="button" value="삭제">
 										</td>
 									</tr>
-									<c:forEach var="car" items="${carList}">
-									<tr class="inputRow">
+									<tr>
 										<td align="center" >
-											<form class="carForm">
+											<form id="carForm">
 											<table  border="1" width="780">
 												<thead>
 													<tr>
@@ -694,7 +797,8 @@ $j().ready(() => {
 													</tr>
 												</thead>
 												<tbody>
-													<tr>
+												<c:forEach var="car" items="${carList}">
+													<tr class="inputRow">
 														<td >
 															<input type="checkbox"/>
 														</td>
@@ -715,12 +819,13 @@ $j().ready(() => {
 															<input name="location" maxlength="30" type="text" value="${car.location }"/>
 														</td>
 													</tr>
+													</c:forEach>
 												</tbody>
 											</table>
 											</form>
 										</td>
 									</tr>
-								</c:forEach>
+								
 								</table>
 							</td>
 						</tr>
@@ -738,10 +843,9 @@ $j().ready(() => {
 											<input class="removeRow"type="button" value="삭제">
 										</td>
 									</tr>
-									<c:forEach var="cert" items="${certList}">
-									<tr class="inputRow">
+									<tr>
 										<td align="center">
-										<form class="certForm">
+										<form id="certForm">
 											<table  width="780" border="1">
 												<thead>
 													<tr>
@@ -759,7 +863,8 @@ $j().ready(() => {
 													</tr>
 												</thead>
 												<tbody>
-													<tr>
+												<c:forEach var="cert" items="${certList}">
+													<tr  class="inputRow">
 														<td >
 															<input type="checkbox"/>
 														</td>
@@ -767,18 +872,18 @@ $j().ready(() => {
 															<input name="qualifiName" maxlength="30" type="text" value="${cert.qualifiName }"/>
 														</td>
 														<td >
-															<input name="acquDate" maxlength="7"  type="text" value="${cert.acquDate }"/>
+															<input name="acquDate" maxlength="7"  type="text" value="${cert.acquDate}"/>
 														</td>
 														<td >
-															<input name="organizeName" maxlength="30" type="text" value="${cert.organizeName }"/>
+															<input name="organizeName" maxlength="30" type="text" value="${cert.organizeName}"/>
 														</td>
 													</tr>
+													</c:forEach>
 												</tbody>
 											</table>
 										</form>
 										</td>
 									</tr>
-									</c:forEach>
 								</table>
 							</td>
 						</tr>

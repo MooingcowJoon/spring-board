@@ -14,7 +14,10 @@
 <script type="text/javascript">
 	var $j = jQuery.noConflict();
 	var idFind =(elementId)=>document.getElementById(elementId)
-
+	var focusEnd = (input)=>{
+		input.focus()
+		input.setSelectionRange(input.value.length, input.value.length);
+	}
 </script>
 <body>
 
