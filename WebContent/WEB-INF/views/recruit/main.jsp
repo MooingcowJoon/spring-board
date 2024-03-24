@@ -50,16 +50,19 @@ $j().ready(() => {
 	}	
 	
 	var getDateNumber = function(input){
+		if(typeof input === 'string'){
+			return parseInt(input.replace(".",''))
+		}
 		return parseInt(input.value.replace(".",''))
 	}
 	
 	// 날짜 유효성 체크 함수
 	/*
 		아래 3가지 체크하여 ture / false 반환
-		1. 날짜 기간의 시작기간이 종료기간 이후일때 -> false
+		1. 날짜 기간의 시작기간이 종료기간과 같거나 이후일때 -> false
 		2. 출생일을 제외한 어떤 날짜라도 출생일보다 같거나 이전일때 -> false
 		3. 학력 기간이 학력 기간과 겹칠 때 or 근무 기간이 근무 기간과 겹칠 때 -> false
-		-->3개 다 통과 시 -> true
+		--> 3개 다 통과 시 -> true
 	*/
 	var dateCheck = function(){
 		// 생년월일을 '월' 까지만 추린 숫자 (ex : 199111)
@@ -72,17 +75,17 @@ $j().ready(() => {
 		var carStarts = $j('#carForm').find('input[name="startPeriod"]').get().filter((input)=>input.value.trim())
 		var carEnds = $j('#carForm').find('input[name="endPeriod"]').get().filter((input)=>input.value.trim())
 		
-		// 1. 날짜 기간의 시작기간이 종료기간 이후일때 -> false
+		// 1. 날짜 기간의 시작기간이 종료기간과 같거나 이후일때 -> false
 		for(var i=0; i<eduStarts.length; i++){
-			if(getDateNumber(eduStarts[i]) > getDateNumber(eduEnds[i])){
-				alert('종료기간을 시작기간 이전으로 입력하실 수 없습니다.')
+			if(getDateNumber(eduStarts[i]) >= getDateNumber(eduEnds[i])){
+				alert('종료기간을 시작기간 이후로 입력해주세요.')
 				focusEnd(eduEnds[i])
 				return false
 			}
 		}
 		for(var i=0; i<carStarts.length; i++){
-			if(getDateNumber(carStarts[i]) > getDateNumber(carEnds[i])){
-				alert('종료기간을 시작기간 이전으로 입력하실 수 없습니다.')
+			if(getDateNumber(carStarts[i]) >= getDateNumber(carEnds[i])){
+				alert('종료기간을 시작기간 이후로 입력해주세요.')
 				focusEnd(carEnds[i])
 				return false
 			}
@@ -141,7 +144,6 @@ $j().ready(() => {
 			}
 		}
 		for(var i=0; i<CAR.length-1; i++){
-			// 뒤의 뒷 원소의 시작기간이 앞 원소의 종료기간보다 작으면 기간이 겹친다.
 			if(CAR[i].e > CAR[i+1].s){
 				var alertMsg = '같은 기간의 근무기간을 중복하여 입력하실 수 없습니다.'
 				alert(alertMsg)
@@ -253,21 +255,32 @@ $j().ready(() => {
 		recruitForm['careerList']=[]
 		recruitForm['certificateList']=[]
 		
+		
 		$j(eduForm_Unchecked).find('.inputRow').each((index,inputRow)=>{
 			var eduRow = seriForm(inputRow)
-			eduRow["eduSeq"]=index
 			recruitForm['educationList'].push(eduRow)
 		})
 		$j(carForm_Unchecked).find('.inputRow').each((index,inputRow)=>{
 			var carRow = seriForm(inputRow)
-			carRow["carSeq"]=index
 			recruitForm['careerList'].push(carRow)
 		})
 		$j(certForm_Unchecked).find('.inputRow').each((index,inputRow)=>{
 			var certRow = seriForm(inputRow)
-			certRow["certSeq"]=index
 			recruitForm['certificateList'].push(certRow)
 		})
+		
+		
+		var rowIndex = 0 
+		recruitForm['educationList'].sort((eduRow1,eduRow2) => getDateNumber(eduRow2.startPeriod)-getDateNumber(eduRow1.startPeriod))
+									.forEach(row=>row.eduSeq=rowIndex++)
+		
+		rowIndex = 0 
+		recruitForm['careerList'].sort((carRow1,carRow2)=> getDateNumber(carRow2.startPeriod)-getDateNumber(carRow1.startPeriod))
+									.forEach(row=>row.carSeq=rowIndex++)
+									
+		rowIndex = 0 
+		recruitForm['certificateList'].sort((certRow1,certRow2)=>	getDateNumber(certRow2.acquDate)-getDateNumber(certRow1.acquDate))
+									.forEach(row=>row.certSeq=rowIndex++)
 		return recruitForm
 	}
 
@@ -405,12 +418,21 @@ $j().ready(() => {
 		
 	})
  	//학점입력시 소숫점 2자리로 제로 패딩 넣어주는 함수
-	$j('#eduForm').on('blur','input[name="grade"]',function(e){
+	$j('#eduForm').on('blur','input[name="grade"],input[name="startPeriod"], input[name="endPeriod"]',function(e){
 		var text = this.value
-		if (text.length == 3){
-			text=text+'0'
+		if(this.name ==="grade"){
+			if (text.length === 3){
+				text=text+'0'
+			}
+			
+		}else{
+			if(text.length === 6 && text.slice(-1) !== '0'){
+				text = text.slice(0,5)+'0'+text.slice(-1)
+			}
 		}
+		
 		this.value= text
+	
 	})
 	
 	
