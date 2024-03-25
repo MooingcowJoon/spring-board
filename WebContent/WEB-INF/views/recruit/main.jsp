@@ -39,6 +39,12 @@ $j().ready(() => {
 				}
 			})
 		})
+		$j('#formTable').find('form:not(:eq(0))').each((index,form)=>{
+			$j(form).find('th:first').remove()
+			$j(form).find('.inputRow').each((index,row)=>$j(row).find('td:first').remove())	
+		})
+		
+		
 	}else{
 	
 	// 날짜인풋 요소 또는 문자열을 받아서 6자리 자연수로 반환하는 함수

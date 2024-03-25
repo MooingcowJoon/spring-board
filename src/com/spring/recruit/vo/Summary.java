@@ -23,7 +23,6 @@ public class Summary {
 			 int level;
 			 int years;
 			 int division;
-			 
 			}
 		 
 		List<School> schools = new ArrayList<>();
@@ -65,7 +64,9 @@ public class Summary {
 		schools.sort(new Comparator<School>() {
 			// 둘 다 대학이상인 경우와 아닌경우로 나눔.
 			// 하나만 대학 이상인 경우 중퇴여도 대학이상이 우위
-			// 둘다 대학인 경우 레벨높은게 재학이면 레벨 순, 레벨높은게 중퇴면 학적 순
+			// 둘다 대학인 경우 레벨높은게 재학이면 레벨 순, 레벨높은게 중퇴면 졸업여부 순
+			// 레벨, 졸업여부 같으면 재학연수 순
+			// 학위취득 여부나 학위 레벨 등은 고려치 않음.
 			public int compare(School o1, School o2) {
 				if(o1.level >=3 && o2.level>=3) {
 					if(o1.level==o2.level && o1.division == o2.division) {
