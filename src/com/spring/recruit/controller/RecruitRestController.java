@@ -57,6 +57,8 @@ public class RecruitRestController {
 							- Integer.parseInt(o1.getAcquDate().replace(".", ""));
 				}
 			});
+			
+			
 			int index = eduList.size()-1;
 			for(EducationVo edu: eduList) {
 				edu.setEduSeq(String.valueOf(index--));

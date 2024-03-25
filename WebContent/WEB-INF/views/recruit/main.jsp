@@ -29,7 +29,7 @@ $j().ready(() => {
 	
 	// 0.제출된 폼인지, 제출안된 폼인지 체크하여 분기처리
 	if('Y' === $j('#saveSubmitBtnTd').data('submit')){
-		$j('input[type="button"]').hide()
+		$j('.saveSubmitBtn').hide()
 		$j('input[type="text"]').each((index,el)=>el.readOnly=true)
 		$j('select').each((index,el)=>{
 			var selectedValue = el.value
@@ -44,7 +44,11 @@ $j().ready(() => {
 			$j(form).find('.inputRow').each((index,row)=>$j(row).find('td:first').remove())	
 		})
 		
-		
+	$j('#logoutBtn').on('click',()=>{
+		if(confirm('정말 로그아웃하시겠습니까?')){
+			location.href="/recruit/login.do"
+		}
+	})	
 	}else{
 	
 	// 날짜인풋 요소 또는 문자열을 받아서 6자리 자연수로 반환하는 함수
@@ -175,11 +179,17 @@ $j().ready(() => {
 				var inputName = input.name
 				return INPUT_RULE[sectionName][inputName]
 			}
-			
+	
+	$j('#logoutBtn').on('click',()=>{
+		if(confirm('로그아웃시 저장되지 않은 정보가 사라집니다.\n정말 로그아웃하시겠습니까?')){
+			location.href="/recruit/login.do"
+		}
+	})
+	
 	// 저장 및 제출버튼 클릭 이벤트 핸들러 함수
 	// 유효성 검사가 완료된 checkedFormData 객체 받아서 제출/저장 분기처리후 서버에제출
 	// checkedFormData가 null 이면 유효성 검사가 안된것이므로 리턴 (alert출력은 getCheckedFormData 함수가처리)
-	$j('#saveSubmitBtnTd').on('click','input[type="button"]',function(e){
+	$j('.saveSubmitBtn').on('click',function(e){
 		
 		var checkedFormData = getCheckedFormData()
 		if(!checkedFormData){
@@ -417,7 +427,7 @@ $j().ready(() => {
 		
 	})
  	//학점입력시 소숫점 2자리로 제로 패딩 넣어주는 함수
-	$j('#eduForm').on('blur','input[name="grade"],input[name="startPeriod"], input[name="endPeriod"]',function(e){
+	$j('#formTable').on('blur','input[name="grade"],input[name="startPeriod"],input[name="acquDate"], input[name="endPeriod"]',function(e){
 		var text = this.value
 		if(this.name ==="grade"){
 			if (text.length === 3){
@@ -912,9 +922,10 @@ $j().ready(() => {
 				</td>
 			</tr>
 			<tr>
-				<td  align="center" id="saveSubmitBtnTd" data-submit="${r.submit}">
-					<input id="saveBtn" type="button" value="저장"/>
-					<input id="submitBtn" type="button" value="제출"/>
+				<td id="saveSubmitBtnTd" align="center" data-submit="${r.submit}">
+					<input class="saveSubmitBtn" id="saveBtn" type="button" value="저장"/>
+					<input class="saveSubmitBtn" id="submitBtn" type="button" value="제출"/>
+					<input id="logoutBtn" type="button" value="로그아웃"/>
 				</td>
 			</tr>
 		</tbody>

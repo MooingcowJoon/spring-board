@@ -19,14 +19,18 @@ public class Summary {
 	public Summary(RecruitVo recruit) {
 		List<EducationVo> eduList = recruit.getEducationList();
 		List<CareerVo> carList = recruit.getCareerList();
-		 class School {
+		 
+		// 최종학력 선택 알고리즘 정렬에 쓰일 School 내부클래스 선언
+		class School {
 			 int level;
 			 int years;
 			 int division;
 			}
 		 
+		// School 리스트 초기화
 		List<School> schools = new ArrayList<>();
 		
+		// 학력사항 엔티티에서 비교할 내용 인트로 환산해서 추출
 		for (EducationVo edu : eduList) {
 			School school = new School();
 			String name = edu.getSchoolName();
@@ -43,10 +47,21 @@ public class Summary {
 			String[] end = edu.getEndPeriod().split("\\.");
 			
 			int y = Integer.parseInt(end[0])-Integer.parseInt(start[0]);
-			int m = Integer.parseInt(end[1])-Integer.parseInt(start[1]);
-			y-=m/12;
+			int sm = Integer.parseInt(start[1]);
+			int em = Integer.parseInt(end[1]);
+			int m=0;
+			if(em>=sm) {
+				m = em-sm +1;
+			}else if(em<sm) {
+				m= (12-sm+1)+ em;
+				y += m/12;
+				m = m%12;
+				y--;
+			}
+			int ySum= y+ m%12;
 			
-			school.years=y;
+			
+			school.years=ySum;
 			
 			if (name.contains("대학원")) {
 				school.level=4;
@@ -61,6 +76,8 @@ public class Summary {
 			}
 			schools.add(school);
 		}
+		
+		// Comparator 익명클래스에 비교로직 구현해서 정렬, 상위 학력이 앞으로감.
 		schools.sort(new Comparator<School>() {
 			// 둘 다 대학이상인 경우와 아닌경우로 나눔.
 			// 하나만 대학 이상인 경우 중퇴여도 대학이상이 우위
@@ -102,42 +119,10 @@ public class Summary {
 				lev="중학교";
 			}else lev = "기타";
 			if(school.level == 3) {
-				this.highestDegree="대학("+school.years+"년)"+div;
+				this.highestDegree="대학("+school.years+"년) "+div;
 			}else this.highestDegree=lev+" "+div;
 			
-/*		
-		for(Entry<String,EducationVo> e : map.entrySet()) {
-			if(e.getValue() != null) {
-				EducationVo edu = e.getValue();
-				
-				
-				this.highestDegree = e.getKey()+" "+edu.getDivision();
-				if(edu.getSchoolName().contains("대학")) {
-					String[] start = edu.getStartPeriod().split("\\.");
-					
-					String[] end = edu.getEndPeriod().split("\\.");
-					
-					int y = Integer.parseInt(end[0])-Integer.parseInt(start[0]);
-					int m = Integer.parseInt(end[1])-Integer.parseInt(start[1]);
-					
-					y-=m/12;
-					if(y>3) {
-						this.highestDegree = e.getKey()+"(4년) "+edu.getDivision();
-					}else if(y==3) {
-						this.highestDegree = e.getKey()+"(3년) "+edu.getDivision();
-					}else if(y==2) {
-						this.highestDegree = e.getKey()+"(2년) "+edu.getDivision();
-					}else {
-						this.highestDegree = e.getKey()+"(기타) "+edu.getDivision();
-					}
-				}
-				
-				
-				break;
-			}
-		}*/
-		int y=0;
-		int m=0;
+		int mSum=0;
 		String carHistory;
 		
 		boolean flag= false;
@@ -152,11 +137,26 @@ public class Summary {
 				break;
 			}
 			String[] end = car.getEndPeriod().split("\\.");
-			y+= Integer.parseInt(end[0])-Integer.parseInt(start[0]);
-			m+= Integer.parseInt(end[1])-Integer.parseInt(start[1]);
+			
+			int y= Integer.parseInt(end[0])-Integer.parseInt(start[0]);
+			int sm = Integer.parseInt(start[1]);
+			int em = Integer.parseInt(end[1]);
+			int m=0;
+			if(em>=sm) {
+				m = em-sm +1;
+			}else if(em<sm) {
+				m= (12-sm+1)+ em;
+				y += m/12;
+				m = m%12;
+				y--;
+			}
+			mSum += y*12+m;
+			
 		}
-		y+=m/12;
-		m=m%12;
+		
+		
+		int y	= mSum/12;
+		int m 	= mSum%12;
 		if(flag) {
 			carHistory="경력사항 없음";
 		}else{
