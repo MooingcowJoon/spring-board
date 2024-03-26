@@ -29,21 +29,41 @@ $j().ready(() => {
 	
 	// 0.제출된 폼인지, 제출안된 폼인지 체크하여 분기처리
 	if('Y' === $j('#saveSubmitBtnTd').data('submit')){
-		$j('.saveSubmitBtn').hide()
-		$j('input[type="text"]').each((index,el)=>el.readOnly=true)
-		$j('select').each((index,el)=>{
-			var selectedValue = el.value
-			$j(el).children().each(function(){
-				if(this.value !== selectedValue){
-					this.remove()
-				}
-			})
-		})
-		$j('#formTable').find('form:not(:eq(0))').each((index,form)=>{
-			$j(form).find('th:first').remove()
-			$j(form).find('.inputRow').each((index,row)=>$j(row).find('td:first').remove())	
-		})
+		$j('input[type="button"]').hide()
+		$j('#logoutBtn').show()
+
 		
+ 	$j('input[type="text"]').each((index,el)=>{
+		var val = $j(el).val()
+		
+		var parent = $j(el).parent().get()
+		elName = el.name
+		if(elName ==="startPeriod"){
+			var endVal = $j(el).siblings("input").val()
+			$j(parent).html(val + " ~ "+endVal)
+			if(val === ''){
+				$j(parent).html('미입력')
+			}
+		}else if(elName !== "endPeriod"){
+			$j(parent).html(val)
+			if(val === ''){
+				$j(parent).html('미입력')
+			}
+			}
+ 		
+		}) 
+	$j('select').each((index,el)=>{
+		var selectedValue = el.value
+		$j(el).parent().html(selectedValue)
+		
+		})
+	$j('#formTable').find('form:not(:eq(0))').each((index,form)=>{
+		$j(form).find('th:first').remove()
+		$j(form).find('.inputRow').each((index,row)=>$j(row).find('td:first').remove())	
+	})
+	$j('td').filter(function(){
+		return $j(this).children('h3').length===0
+	}).attr('align',"center")	
 	$j('#logoutBtn').on('click',()=>{
 		if(confirm('정말 로그아웃하시겠습니까?')){
 			location.href="/recruit/login.do"
@@ -267,6 +287,8 @@ $j().ready(() => {
 		
 		/// 유효성 검사 완료되었으니 폼요소에서 입력값 뽑아내서 서버단 VO/DTO 오브젝트매핑에 맞게 마샬링
 		recruitForm=seriForm(recruitForm_Unchecked)
+/* 		recruitForm['name']=idFind('recruitName').innerText
+		recruitForm['phone']=idFind('recruitPhone').innerText */
 		recruitForm['educationList']=[]
 		recruitForm['careerList']=[]
 		recruitForm['certificateList']=[]
@@ -314,14 +336,13 @@ $j().ready(() => {
 	function formsInputCheck(formsToCheck){
 		var inputCheckResult = null
 		
-		for(var i = 0; i<formsToCheck.length; i++){
-			
-			// 널 유효성 검사 함수 호출
-			var nullInput = isFormComplete(formsToCheck[i])
-			if(nullInput){
+		// 널 유효성 검사 함수 호출
+		var nullInput = isFormComplete()
+		
+		if(nullInput){
 				var invalidInput = nullInput;
 				var msg = getInputRule(nullInput)['NAME']+' 입력해주세요.'
-				var sectionName = formsToCheck[i].id
+// 				var sectionName = formsToCheck[i].id
 // 				if(INPUT_RULE[sectionName]['isEssential']){
 					
 // 					if(sectionName === 'recruitForm'){
@@ -338,6 +359,7 @@ $j().ready(() => {
 				}
 				return inputCheckResult
 			}
+		for(var i = 0; i<formsToCheck.length; i++){
 
 			// 정규식 패턴 검사 함수 호출
 			var invalidPatternInput = isFormValid(formsToCheck[i])
@@ -350,42 +372,95 @@ $j().ready(() => {
 			}
 		}
 		return inputCheckResult
-		
 	}
-
+	
 	// 미입력값 부분의 유효성 체크해주는 함수
 	var isFormComplete = function(form){
-		var isEssential = INPUT_RULE[form.id]['isEssential']
-		var nullInput = null
-
-
-		var flag = true
-		var inputRows = $j(form).find('.inputRow')
-		for (var i=0; i<inputRows.length; i++){
+		
+		
+		var rec = $j('#recruitForm').find('input[type="text"]')
+		
+		for(var i =0; i<rec.length; i++){
+			if(rec[i].value.trim() === ''){
+				return rec[i]
+			}
+		}
+		
+		
+		var edu = $j('#eduForm').find('.inputRow')
+		var eduArr = []
+		var complete = false
+		for(var i = 0; i<edu.length; i++){
+			var inputs = $j(edu[i]).find('input[type="text"]')
 			var hasAnyInputFilled = false
-			var inputs = $j(inputRows[i]).find('input[type="text"]')
-			for(var j=0; j<inputs.length; j++){
+			var nullInput = null
+			for (var j=0; j<inputs.length; j++){
+				
 				if(inputs[j].value.trim() === ''){
-					if (!nullInput){
+					if(!nullInput){
 						nullInput=inputs[j]
 					}
-				}else{
+				}else if (inputs[j].value.trim() !== ''){
 					hasAnyInputFilled = true
 				}
 			}
-			if(!hasAnyInputFilled ){
-				nullInput = null
+			if(!nullInput){
+				complete=true
 			}
-			if(nullInput){
+			eduArr.push(nullInput)
+		}
+		
+		for(var i=0; i<eduArr.length; i++){
+			if(!complete){
+				return eduArr[i]
+			}
+		}
+		
+		
+			
+		var car = $j('#carForm').find('.inputRow')
+		for(var i = 0; i<car.length; i++){
+			var inputs = $j(car[i]).find('input[type="text"]')
+			var hasAnyInputFilled = false
+			var nullInput = null
+			for (var j=0; j<inputs.length; j++){
+				
+				if(inputs[j].value.trim() === ''){
+					if(!nullInput){
+						nullInput=inputs[j]
+					}
+				}else if (inputs[j].value.trim() !== ''){
+					hasAnyInputFilled = true
+				}
+			}
+			if(hasAnyInputFilled && nullInput){
 				return nullInput
-			}else{
-				flag=false
 			}
 		}
-		if(form.id==='eduForm' && flag){
-			return $j(form).find('input[type="text"]').filter(input=>input.value==='').first()
+		
+		var cert = $j('#certForm').find('input[type="text"]')
+		
+		for(var i = 0; i<cert.length; i++){
+			var inputs = $j(car[i]).find('input[type="text"]')
+			var hasAnyInputFilled = false
+			var nullInput = null
+			for (var j=0; j<inputs.length; j++){
+				
+				if(inputs[j].value.trim() === ''){
+					if(!nullInput){
+						nullInput=inputs[j]
+					}
+				}else if (inputs[j].value.trim() !== ''){
+					hasAnyInputFilled = true
+				}
+			}
+			if(hasAnyInputFilled && nullInput){
+				return nullInput
+			}
 		}
-		return nullInput
+		
+		
+		return null
 		}
 		
 	// 입력패턴 일치 여부 체크 함수
@@ -614,8 +689,9 @@ $j().ready(() => {
 									<tr>
 										<td align="center" width="90"><b>이름</b>
 										</td>
-										<td>
-											<input name="name" type="text" readonly value="${r.name}">
+										<td id="recruitName">
+<%-- 											${r.name} --%>
+											<input name="name" mexlength="5" type="text" readonly value="${r.name }"/>
 										</td>
 										<td align="center" width="90"><b>생년월일</b>
 										</td>
@@ -636,8 +712,9 @@ $j().ready(() => {
 										</td>
 										<td align="center"><b>연락처</b>
 										</td>
-										<td>
-											<input name="phone" type="text" readonly value="${r.phone}">
+										<td id="recruitPhone">
+										<input name="phone" mexlength="11" type="text" readonly value="${r.phone }"/>
+										<%-- ${r.phone} --%>
 										</td>
 									</tr>
 									<tr>
