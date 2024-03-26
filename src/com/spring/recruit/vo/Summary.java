@@ -58,10 +58,8 @@ public class Summary {
 				m = m%12;
 				y--;
 			}
-			int ySum= y+ m%12;
 			
-			
-			school.years=ySum;
+			school.years=y;
 			
 			if (name.contains("대학원")) {
 				school.level=4;
@@ -119,7 +117,7 @@ public class Summary {
 				lev="중학교";
 			}else lev = "기타";
 			if(school.level == 3) {
-				this.highestDegree="대학("+school.years+"년) "+div;
+				this.highestDegree=school.years>=2 ? "대학("+school.years+"년) "+div :"대학(기타) "+div;
 			}else this.highestDegree=lev+" "+div;
 			
 		int mSum=0;

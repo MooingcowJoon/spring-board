@@ -35,29 +35,42 @@ public class RecruitRestController {
 			List<EducationVo> eduList = recruitVo.getEducationList();
 			List<CareerVo> carList = recruitVo.getCareerList();
 			List<CertificateVo> certList = recruitVo.getCertificateList();
-			eduList.sort(new Comparator<EducationVo>(){
+			if(!carList.isEmpty()) {
+				carList.sort(new Comparator<CareerVo>(){
+					@Override
+					public int compare(CareerVo o1, CareerVo o2) {
+						return Integer.parseInt(o2.getStartPeriod().replace(".", ""))
+								- Integer.parseInt(o1.getStartPeriod().replace(".", ""));
+					}
+				});
+			}else if(carList.isEmpty()) {
+				carList.add(new CareerVo());
+			}
+			
+			
+			if(!eduList.isEmpty()) {
+				eduList.sort(new Comparator<EducationVo>(){
 					@Override
 					public int compare(EducationVo o1, EducationVo o2) {
 						return Integer.parseInt(o2.getStartPeriod().replace(".", ""))
 								- Integer.parseInt(o1.getStartPeriod().replace(".", ""));
 					}
-			});
-			carList.sort(new Comparator<CareerVo>(){
-				@Override
-				public int compare(CareerVo o1, CareerVo o2) {
-					return Integer.parseInt(o2.getStartPeriod().replace(".", ""))
-							- Integer.parseInt(o1.getStartPeriod().replace(".", ""));
-				}
-			});
+				});
+			}else if(eduList.isEmpty()) {
+				eduList.add(new EducationVo());
+			}
 			
-			certList.sort(new Comparator<CertificateVo>(){
-				@Override
-				public int compare(CertificateVo o1, CertificateVo o2) {
-					return Integer.parseInt(o2.getAcquDate().replace(".", ""))
-							- Integer.parseInt(o1.getAcquDate().replace(".", ""));
-				}
-			});
-			
+			if(!certList.isEmpty()) {
+				certList.sort(new Comparator<CertificateVo>(){
+					@Override
+					public int compare(CertificateVo o1, CertificateVo o2) {
+						return Integer.parseInt(o2.getAcquDate().replace(".", ""))
+								- Integer.parseInt(o1.getAcquDate().replace(".", ""));
+					}
+				});
+			}else if(certList.isEmpty()) {
+				certList.add(new CertificateVo());
+			}
 			
 			int index = eduList.size()-1;
 			for(EducationVo edu: eduList) {

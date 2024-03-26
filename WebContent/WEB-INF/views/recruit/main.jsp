@@ -216,12 +216,19 @@ $j().ready(() => {
 			data			:	JSON.stringify(checkedFormData),
 			contentType		:	"application/json",
 			success			:	function(res){
-				if(isSubmit){
-					alert('입력정보를 제출하였습니다.')
-					location.reload()
-				}else{
-				alert('입력정보가 저장되었습니다.')
+				if(res.result === 'success'){
+					if(isSubmit){
+						alert('입력정보를 제출하였습니다.')
+						location.reload()
+					}else{
+					alert('입력정보가 저장되었습니다.')
+					}
+					return
 				}
+				if(res.result === 'error'){
+					alert('에러가 발생하였습니다.')
+				}
+			
 			},
 			error			:	function(res){
 				console.log(res)
@@ -266,16 +273,23 @@ $j().ready(() => {
 		
 		
 		$j(eduForm_Unchecked).find('.inputRow').each((index,inputRow)=>{
+			if($j(inputRow).find('input[type="text"]:first').val()!==''){
+				
 			var eduRow = seriForm(inputRow)
 			recruitForm['educationList'].push(eduRow)
+			}
 		})
 		$j(carForm_Unchecked).find('.inputRow').each((index,inputRow)=>{
+			if($j(inputRow).find('input[type="text"]:first').val()!==''){
 			var carRow = seriForm(inputRow)
 			recruitForm['careerList'].push(carRow)
+			}
 		})
 		$j(certForm_Unchecked).find('.inputRow').each((index,inputRow)=>{
+			if($j(inputRow).find('input[type="text"]:first').val()!==''){
 			var certRow = seriForm(inputRow)
 			recruitForm['certificateList'].push(certRow)
+			}
 		})
 		
 		
@@ -344,23 +358,33 @@ $j().ready(() => {
 		var isEssential = INPUT_RULE[form.id]['isEssential']
 		var nullInput = null
 
-		var inputs = $j(form).find('input[type="text"]')
-		
-		var hasAnyInputFilled = false
-		
-		for(var i=0; i<inputs.length; i++){
-			if(inputs[i].value.trim() === ''){
-				if (!nullInput){
-					nullInput=inputs[i]
+
+		var flag = true
+		var inputRows = $j(form).find('.inputRow')
+		for (var i=0; i<inputRows.length; i++){
+			var hasAnyInputFilled = false
+			var inputs = $j(inputRows[i]).find('input[type="text"]')
+			for(var j=0; j<inputs.length; j++){
+				if(inputs[j].value.trim() === ''){
+					if (!nullInput){
+						nullInput=inputs[j]
+					}
+				}else{
+					hasAnyInputFilled = true
 				}
+			}
+			if(!hasAnyInputFilled ){
+				nullInput = null
+			}
+			if(nullInput){
+				return nullInput
 			}else{
-				hasAnyInputFilled = true
+				flag=false
 			}
 		}
-		if(!isEssential && !hasAnyInputFilled ){
-			nullInput = null
+		if(form.id==='eduForm' && flag){
+			return $j(form).find('input[type="text"]').filter(input=>input.value==='').first()
 		}
-		
 		return nullInput
 		}
 		
@@ -379,10 +403,6 @@ $j().ready(() => {
 				continue
 			}
 			var inputRule = getInputRule(input)
-			if(inputRule['TYPE'] === 'DATE'){
-				
-			}
-			
 			var regEx = inputRule['SUBMIT']
 			
 			if(!regEx.test(input.value)){
@@ -458,7 +478,7 @@ $j().ready(() => {
 		}
 		
 		var rowClone = inputRows.first().clone()
-		
+				
 		// 입력 필드 초기화
 		rowClone.find('input[type="text"]').val('');
     	rowClone.removeClass().addClass('inputRow')
@@ -481,17 +501,29 @@ $j().ready(() => {
 			alert('선택된 '+sectionTitle+' 정보가 없습니다.')
 			return
 		}
-		
+		var rowClone =null
 		// 체크된 행 개수가 전체 행 개수와 같을 경우 삭제 안됨
 		if(checkedRows.length === totalRows.length){
+			if($j(this).closest('tbody').find('form:first').attr('id') === 'eduForm'){
 			alert('더 이상 삭제하실 수 없습니다.')
 			return
+			}
+			rowClone = totalRows.first().clone()
+			// 입력 필드 초기화
+			rowClone.find('input[type="text"]').val('');
+	    	rowClone.removeClass().addClass('inputRow')
+		    // 셀렉트 박스 초기 상태로 되돌리기
+		    rowClone.find('select').prop('selectedIndex', 0);
+		    rowClone.find('input[type="checkbox"]').prop('checked',false)
 		}
 		
 		var writingInput = findWritingInput(checkedRows)
 		
 		if(writingInput === null){
 			checkedRows.remove()
+			if(rowClone){
+				$j(this).closest('tbody').find('form:first').find('tbody:first').append(rowClone)
+			}
 			return
 		}
 		
@@ -500,6 +532,9 @@ $j().ready(() => {
 			
 			if(deleteConfirm){
 				checkedRows.remove()
+				if(rowClone){
+					$j(this).closest('tbody').find('form:first').find('tbody:first').append(rowClone)
+				}
 				return
 			}
 		}
