@@ -55,7 +55,6 @@ public class RecruitController {
 		}else if(recruitVo != null) {
 			model.addAttribute("summary",new Summary(recruitVo));
 		}
-		System.out.println(CommonUtil.toJson(recruitVo));
 		model.addAttribute("r",recruitVo);
 		model.addAttribute("eduList",recruitVo.getEducationList());
 		model.addAttribute("carList",recruitVo.getCareerList());

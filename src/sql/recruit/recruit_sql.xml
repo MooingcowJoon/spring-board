@@ -225,8 +225,7 @@
     WHERE
         R.SEQ = (
             SELECT COALESCE(
-                (SELECT SEQ FROM RECRUIT WHERE NAME = #{name} AND PHONE = #{phone}),
-               ''
+                (SELECT SEQ FROM RECRUIT WHERE NAME = #{name} AND PHONE = #{phone}),''
             ) FROM DUAL
         )
 </select>

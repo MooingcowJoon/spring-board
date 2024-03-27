@@ -31,7 +31,6 @@ public class RecruitRestController {
 	public Map<String,String> submit(Locale locale, @RequestBody RecruitVo recruitVo) throws Exception{
 		Map<String,String> map = new HashMap<>();
 		try {
-			map.put("code", "redirect");
 			List<EducationVo> eduList = recruitVo.getEducationList();
 			List<CareerVo> carList = recruitVo.getCareerList();
 			List<CertificateVo> certList = recruitVo.getCertificateList();
