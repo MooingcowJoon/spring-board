@@ -366,7 +366,7 @@ $j().ready(() => {
 	}
 	
  	// 미입력값 부분의 유효성 체크해주는 함수
-	var isFormComplete = function(form){
+	var isFormComplete = function(){
 		var recruitInputs = $j('#recruitForm').find('input[type="text"]')
 		
 		for(var i =0; i<recruitInputs.length; i++){
@@ -384,7 +384,6 @@ $j().ready(() => {
 			var hasAnyInputFilled = false
 			var nullInput = null
 			for (var j=0; j<inputs.length; j++){
-				
 				if(inputs[j].value.trim() === ''){
 					if(!nullInput){
 						nullInput=inputs[j]
@@ -511,7 +510,6 @@ $j().ready(() => {
 		 
 		// 유효성규칙에서 정규표현식 패턴 확보
 		var regExp = rule.INPUT
-		flag = false
 		if (regExp.test(this.value)) {
 	    	this.value = this.value.replace(regExp, '');
 	    	this.setSelectionRange(ss-1, ss-1);

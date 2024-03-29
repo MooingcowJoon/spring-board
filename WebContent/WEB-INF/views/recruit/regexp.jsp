@@ -7,6 +7,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 <script>
+	var validate = function(input, ){
+			
+	}
 	var INPUT_RULE = 
 	{
 		recruitForm:

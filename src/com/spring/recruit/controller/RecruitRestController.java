@@ -105,7 +105,7 @@ public class RecruitRestController {
 		Map<String,String> map = new HashMap<>();
 		try {
 			map.put("code", "redirect");
-			map.put("redirectUrl","/recruit/main.do?name="+param.get("name")+"&phone="+param.get("phone"));
+			map.put("redirectUrl","/recruit/main.do?userName="+param.get("userName")+"&userPhone="+param.get("userPhone"));
 			map.put("result", "success");
 		}catch(Exception e) {
 			map.put("result", "error");
