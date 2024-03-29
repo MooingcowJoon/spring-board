@@ -8,7 +8,6 @@
 </head>
 <script>
 	var getRegEx = function(patterns,min,max){
-		var flag = min === undefined ? true : false
 		var pattern = ''
 		var map={
 			ko	: 	"ㄱ-ㅎㅏ-ㅣ",
@@ -19,39 +18,39 @@
 			sp	:	"\\s\\-_.,'\""
 		}
 		patterns.forEach(key=>pattern+=map[key])
-		if(flag){
-			return new RegExp('[^'+pattern+']','g')
+		var isInputPattern = min === undefined ? true : false
+		if(!isInputPattern){
+			return new RegExp('^['+pattern.replace('ㄱ-ㅎㅏ-ㅣ','')+']{'+min+','+max+'}$')
 		} 
-		return new RegExp('^['+pattern+']{'+min+','+max+'}','g')
+		return new RegExp('[^'+pattern+']','g')
 	}
 	
 	
 	class Rule{
-		constructor(label, patterns,min, max,custom){
-			this.val		=	''
-			this.label 		=	label
-			this.patterns 	= 	patterns.split(',')
-			this.input		=	getRegEx(this.patterns)
-			this.min 		=	min
-			this.max		= 	max
-			this.submit		=	getRegEx(this.patterns,min,max)
-			this.custom 	=	custom
+		constructor(label, patterns,min, max,info,submitPattern){
+			this.value				=	''
+			this.label 				=	label
+			this.inputPattern		=	getRegEx(patterns.split(','))
+			this.min 				=	min
+			this.max				= 	max
+			this.submitPattern		=	submitPattern ? submitPattern : getRegEx(patterns.split(','),min,max)
+			this.info 				=	info
 		}
 	}
 	
 	var getBasicRules = function(){
 		return  {
-			userName	:	new Rule('이름을','ko,KO',2,5),
-			userPhone	:	new Rule('휴대폰번호를','num',10,11),
-			period		:	new Rule('여행기간을','num',1,2),
-			expend		:	new Rule('여행경비를','num',5,9),
+			userName	:	new Rule('이름을','ko,KO',2,5,'[ 2~5자의 완성형 한글 ]'),
+			userPhone	:	new Rule('휴대폰번호를','num',10,11,'[ 10~11자의 숫자 ]'),
+			period		:	new Rule('여행기간을','num',1,2,'[ 1~2자리 숫자 ]'),
+			expend		:	new Rule('여행경비를','num',5,9,'[ 10,000 ~ 100,000,000 사이의 숫자 ]')
 		}
 	}
 
 	var inputEraser = function(e,Rules){
 		var el = e.target
 		var rule = Rules[el.name]
-		var regEx = rule.input
+		var regEx = rule.inputPattern
 		var cursorStart = $j(el)[0].selectionStart-1;
 		
 		if(regEx.test(el.value)){
@@ -59,30 +58,35 @@
 			el.setSelectionRange(cursorStart, cursorStart)
 		}
 		if(el.value.length > rule.max){
-			el.value = rule.val
+			el.value = rule.value
 			el.setSelectionRange(cursorStart, cursorStart)
 		}
-		rule.val = el.value
+		rule.value = el.value
 	}
 	
 	
-	var formsValidationHandler = function($forms,g_rules){
-		var data = {}
+	var formsValidationHandler = function(){
+		var $forms = $j('form')
+		var rules = getBasicRules()
 		for (var i =0; i<$forms.length; i++){
-			var res = formValidator($forms.get(i),g_rules,data)
+			var res = formValidator($forms.get(i),rules)
 			if(!res.isValid){
-				var el = res.nullInput
-				alert(g_rules[el.name].label+' 입력해주세요.')
-				el.focus()
 				return {isValid : false}
 			}
 		}
-		return res
+		return {isValid : true, data : data}
 	}
-	var formValidator = function(form, rules,data){
-		var $form = $j(form)
-		var arr = $form.serializeArray()
+	var formValidator = function(form,rules){
+		var rows = $form.find('.inputRow')
+		if(rows.length === 0){
+			rows = $form
+		}
 		
+		for (var i=0; i<rows.length; i++)
+		var inputs = rows.find('input[type="text"]').map
+				
+		
+		var arr = $form.serializeArray()
 		var row_count = Math.max($form.find('.inputRow').length,1)
 		var col_count= arr.length / row_count 
 		
@@ -108,11 +112,25 @@
 		}
 		for(var i=0; i<resArr.length; i++){
 			if (!complete && resArr[i]){
-				return {isValid:false,nullInput : $form.find('input[name="'+resArr[i]+'"]').get(i),data:data}
+				var el = $form.find('input[name="'+resArr[i]+'"]').get(i)
+				alert(rules[el.name].label + " 입력해주세요.")
+				el.focus()
+				return {isValid:false}
 			}
 		}
 		
-		return {isValid:true,data:data}
+		
+		for(var i=0; i<rows.length; i++){
+			var res = validChecker(rows[i],rules)
+			if(!res.isValid){
+				var el = $form.find('input[name="'+res.name+'"]').get(i)
+				alert(rules[el.name].info + " 형태로 입력해주세요.")
+				el.focus()
+				return {isValid:false}
+			}
+		}
+		
+		return {isValid:true, data: data}
 	}
 	var nullChecker = function(arr){
 		var nullName
@@ -130,6 +148,19 @@
 		}
 		return {nullName : nullName, hasAnyFilled:hasAnyFilled,formData:formData}
 	}
+	var validChecker = function(arr,rules){
+		for(var i = 0; i<arr.length; i++){
+			var name = arr[i].name
+			var val = arr[i].value
+			console.log(arr[i])
+			if(!rules[name].submitPattern.test(val)){
+				return {isValid: false, i : i, name : name}
+			}
+		}
+		return {isValid : true}
+	}
+	
+	
 	
 	var valueFormatHandler = function(elType,elClass){
 		var selector = elType+'.'+elClass
@@ -141,6 +172,7 @@
 		$j(document).on('blur',selector,e=>e.target.value=e.target.value.replace(/\B(?=(\d{3})+(?!\d))/g, ','))
 		$j(document).on('focus mousedown',selector,e=>e.target.value=e.target.value.replaceAll(',',''))
 	}
+	
 	
 </script>
 <body >

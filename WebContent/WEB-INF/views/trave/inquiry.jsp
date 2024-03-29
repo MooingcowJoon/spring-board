@@ -16,12 +16,15 @@ $j().ready(() => {
 	
  	var submit = function(){
 		var $forms = $j('form')
-		var	formResult = formsValidationHandler($forms,g_rules)
+		var	formResult = formsValidationHandler()
 		if(!formResult.isValid){
 			return
 		}
 		var data = formResult.data
+		data.userName 	= idFind('userName').innerText
+		data.userPhone	= idFind('userPhone').innerText
 		console.log(data)
+		
 		$j.ajax({
 			type			: "POST",
 			url				: 	"/api/trave/inquiry/submit.do",
@@ -53,20 +56,18 @@ $j().ready(() => {
 			<tr>
 				<td>
 					<form>
-					<input type="hidden" name="userName" value="${userName }"/>
-					<input type="hidden" name="userPhone" value="${userPhone }"/>
 					<table id ="formTable" border="1">
 						<tr >
 							<td align="center" width="100">
 								<b>고객명</b>
 							</td >
-							<td>${userName }</td>
+							<td id = "userName">${userName }</td>
 						</tr>
 						<tr>
 							<td align="center" >
 								<b>휴대폰번호</b>
 							</td >
-							<td>${userPhone }</td>
+							<td id="userPhone">${userPhone }</td>
 						</tr>
 						<tr>
 							<td align="center" >
