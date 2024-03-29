@@ -13,13 +13,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.spring.board.HomeController;
 import com.spring.board.service.CommonCodeService;
+import com.spring.trave.service.TraveService;
+import com.spring.trave.vo.ClientVo;
 
 @Controller
 public class TraveController {
 	@Autowired
-	CommonCodeService commonCodeService;
+	private CommonCodeService commonCodeService;
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
+	@Autowired
+	private TraveService traveService;
+	@RequestMapping(value = "/trave/view.do", method = RequestMethod.GET)
+	public String view(Locale locale,Model model
+			,@RequestParam String seq) throws Exception{
+		model.addAttribute("c",traveService.getClientBySeq(seq));
+		return "trave/view";
+	}
 	@RequestMapping(value = "/trave/inquiry.do", method = RequestMethod.GET)
 	public String inquiry(Locale locale,Model model
 										,@RequestParam String userName

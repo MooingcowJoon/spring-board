@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="trave">
 	<resultMap type="com.spring.trave.vo.ClientVo" id="clientMap">
-		<result property="seq" column="SEQ"></result>
+		<id property="seq" column="SEQ"></id>
 		<result property="userName" column="USER_NAME"></result>
 		<result property="userPhone" column="USER_PHONE"></result>
 		<result property="traveCity" column="TRAVE_CITY"></result>
@@ -12,7 +12,7 @@
 		<collection property="traveList" resultMap="traveMap"></collection>
 	</resultMap>
 	<resultMap type="com.spring.trave.vo.TraveVo" id="traveMap">
-		<result property="traveSeq" column="TRAVE_SEQ"></result>
+		<id property="traveSeq" column="TRAVE_SEQ"></id>
 		<result property="seq" column="SEQ"></result>
 		<result property="traveDay" column="TRAVE_DAY"></result>
 		<result property="traveTime" column="TRAVE_TIME"></result>
@@ -98,7 +98,7 @@
 	END;
 	</insert>
 	
-	<select id="selectClientList" parameterType="com.spring.trave.vo.ClientVo" resultMap="clientMap">
+	<select id="selectClientList" parameterType="String" resultMap="clientMap">
     SELECT
         C.SEQ,
         C.USER_NAME,
@@ -124,5 +124,9 @@
         CLIENT_INFO C
     LEFT JOIN
         TRAVE_INFO T ON C.SEQ = T.SEQ
+    <if test="_parameter != null">
+        WHERE
+            C.SEQ = #{_parameter}
+    </if>    
 	</select>
 </mapper>

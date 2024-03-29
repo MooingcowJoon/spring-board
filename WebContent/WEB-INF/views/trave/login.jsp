@@ -20,12 +20,11 @@ $j(() => {
 	 	})
 	 	
 	var submit = function(){
-		var $forms = $j('form')
-		var	formResult = formsValidationHandler()
-		if(!formResult.isValid){
+		var	data = getValidFormData($j('form'))
+		if(!formResult){
 			return
 		}
-		var queryParam = $j.param(formResult.data)
+		var queryParam = $j.param(data)
 		location.href="/trave/inquiry.do?"+queryParam
 	}
 	$j('#submitBtn').on('click',submit)
@@ -34,7 +33,7 @@ $j(() => {
 
 </script>
 <body>
-	<form id="loginForm"> 
+	<form> 
 		<table align="center">
 			<tbody>
 				<tr>

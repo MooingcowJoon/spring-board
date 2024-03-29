@@ -15,25 +15,22 @@ $j().ready(() => {
 	valueFormatHandler('input','price')
 	
  	var submit = function(){
-		var $forms = $j('form')
-		var	formResult = formsValidationHandler()
-		if(!formResult.isValid){
+		var	formData = getValidFormData($j('form'))
+		if(!formData){
 			return
 		}
-		var data = formResult.data
-		data.userName 	= idFind('userName').innerText
-		data.userPhone	= idFind('userPhone').innerText
-		console.log(data)
-		
+		formData.userName 	= idFind('userName').innerText
+		formData.userPhone	= idFind('userPhone').innerText
+		console.log(formData)
 		$j.ajax({
 			type			: "POST",
 			url				: 	"/api/trave/inquiry/submit.do",
-			data			:	JSON.stringify(data),
+			data			:	JSON.stringify(formData),
 			contentType		:	"application/json",
 			success			:	function(res){
 				if(res.result === 'success'){
 					alert('신청되었습니다.')
-					console.log(res.redirectUrl)
+					location.href = res.redirectUrl
 					return
 				}
 				if(res.result === 'error'){

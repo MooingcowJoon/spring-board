@@ -38,7 +38,7 @@ public class TraveRestController {
 		logger.info(clientVo.toString());
 			map.put("code", "redirect");
 			traveService.insertClient(clientVo);
-			map.put("redirectUrl","/trave/view?seq="+clientVo.getSeq());
+			map.put("redirectUrl","/trave/view.do?seq="+clientVo.getSeq());
 			map.put("result", "success");
 		}catch(Exception e) {
 			map.put("result", "error");

@@ -21,8 +21,8 @@ public class TraveDaoImpl implements TraveDao {
 	}
 	
 	@Override
-	public List<ClientVo> selectClientList() {
-		return sqlSession.selectList("trave.selectClientList");
+	public List<ClientVo> selectClientList(String seq) {
+		return sqlSession.selectList("trave.selectClientList",seq);
 	}
 	@Override
 	public int insertOrUpdateTrave(ClientVo clientVo) {

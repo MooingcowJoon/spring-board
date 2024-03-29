@@ -67,100 +67,61 @@
 	
 	var formsValidationHandler = function(){
 		var $forms = $j('form')
-		var rules = getBasicRules()
 		for (var i =0; i<$forms.length; i++){
-			var res = formValidator($forms.get(i),rules)
-			if(!res.isValid){
-				return {isValid : false}
+			if(!formValidator($forms.get(i))){
+				return null 
 			}
 		}
-		return {isValid : true, data : data}
+		return getFormData($forms)
 	}
-	var formValidator = function(form,rules){
-		var rows = $form.find('.inputRow')
+	var formValidator = function(form){
+		var $form = $j(form)
+		var rules = getBasicRules()
+		var rows = $form.find('.inputRow').get()
 		if(rows.length === 0){
 			rows = $form
-		}
-		
-		for (var i=0; i<rows.length; i++)
-		var inputs = rows.find('input[type="text"]').map
-				
-		
-		var arr = $form.serializeArray()
-		var row_count = Math.max($form.find('.inputRow').length,1)
-		var col_count= arr.length / row_count 
-		
-		var rows = []
-		
-		for (var i=0; i<row_count; i+=col_count){
-			rows.push(arr.slice(i,i+col_count))
-		}
-		var complete=false
-		var resArr = []
-		
-		var isMaster = $form.find('.inputRow').length === 0
-		var formId = $form.attr('id')
-		
-		!isMaster && (data[formId]=[])
-		for (var i =0; i<rows.length; i++){
-			var res = nullChecker(rows[i])
-			if(!res.nullName){
-				complete= true
 			}
-			resArr.push(res.nullName)
-			isMaster ? (data = {...data, ...res.formData}) : data[formId].push(res.formData)
-		}
-		for(var i=0; i<resArr.length; i++){
-			if (!complete && resArr[i]){
-				var el = $form.find('input[name="'+resArr[i]+'"]').get(i)
-				alert(rules[el.name].label + " 입력해주세요.")
-				el.focus()
-				return {isValid:false}
+		
+		for (var i=0; i<rows.length; i++){
+			var inputs = $j(rows[i]).find('input[type="text"]').get()
+			for (var j=0; j<inputs.length; j++){
+				var el = inputs[j]
+				var rule = rules[el.name]
+				var val = el.value.trim()
+				if(el.className === 'price'){
+					val=val.replaceAll(',','')
+				}
+				if( val === ''){
+					alert(rule.label + " 입력해주세요.")
+					el.focus()
+					return false
+					}
+				if(!rule.submitPattern.test(val)){
+					alert(rule.info + " 형태로 입력해주세요.")
+					el.focus()
+					return false
+					}
+				}
 			}
+		return true
 		}
-		
-		
-		for(var i=0; i<rows.length; i++){
-			var res = validChecker(rows[i],rules)
-			if(!res.isValid){
-				var el = $form.find('input[name="'+res.name+'"]').get(i)
-				alert(rules[el.name].info + " 형태로 입력해주세요.")
-				el.focus()
-				return {isValid:false}
+
+	var getValidFormData = function(forms){
+		var data = {}
+		for(var i = 0; i<forms.length; i++){
+			var $form = $j(forms.get(i))
+			var formId = $form.attr('id')
+			var formData = {}
+			$form.serializeArray().forEach(e => formData[e.name]=e.value)
+			if(formId){
+				data[formId]=formData
+			}
+			if(!formId){
+				data={...data,...formData}
 			}
 		}
-		
-		return {isValid:true, data: data}
+		return data
 	}
-	var nullChecker = function(arr){
-		var nullName
-		var hasAnyFilled
-		var formData = {}
-		for(var i =0; i<arr.length; i++){
-			var val = arr[i].value.trim()
-			formData[arr[i].name]=val
-			if(val === '' && !nullName){
-				nullName = arr[i].name
-			}
-			if (val !== ''){
-				hasAnyFilled = true	
-			}
-		}
-		return {nullName : nullName, hasAnyFilled:hasAnyFilled,formData:formData}
-	}
-	var validChecker = function(arr,rules){
-		for(var i = 0; i<arr.length; i++){
-			var name = arr[i].name
-			var val = arr[i].value
-			console.log(arr[i])
-			if(!rules[name].submitPattern.test(val)){
-				return {isValid: false, i : i, name : name}
-			}
-		}
-		return {isValid : true}
-	}
-	
-	
 	
 	var valueFormatHandler = function(elType,elClass){
 		var selector = elType+'.'+elClass
