@@ -142,8 +142,6 @@
 		$j(document).on('focus mousedown',selector,e=>e.target.value=e.target.value.replaceAll(',',''))
 	}
 	
-	
-	
 </script>
 <body >
 </body>

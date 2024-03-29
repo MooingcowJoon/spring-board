@@ -21,16 +21,31 @@ $j().ready(() => {
 			return
 		}
 		var data = formResult.data
-		data[name]='멍멍'
-		data[phone]=
-		console.log(formResult.data)
-		return
-		location.href="/trave/inquiry.do?"+queryParam
+		console.log(data)
+		$j.ajax({
+			type			: "POST",
+			url				: 	"/api/trave/inquiry/submit.do",
+			data			:	JSON.stringify(data),
+			contentType		:	"application/json",
+			success			:	function(res){
+				if(res.result === 'success'){
+					alert('신청되었습니다.')
+					console.log(res.redirectUrl)
+					return
+				}
+				if(res.result === 'error'){
+					alert('에러가 발생하였습니다.')
+				}
+			
+			},
+			error			:	function(res){
+				console.log(res)
+			}
+		})
+		
 		}
 	$j('#submitBtn').on('click',submit)
-	
 })
-
 </script>
 <body>
 	<table align="center">
@@ -38,18 +53,20 @@ $j().ready(() => {
 			<tr>
 				<td>
 					<form>
+					<input type="hidden" name="userName" value="${userName }"/>
+					<input type="hidden" name="userPhone" value="${userPhone }"/>
 					<table id ="formTable" border="1">
 						<tr >
 							<td align="center" width="100">
 								<b>고객명</b>
 							</td >
-							<td>${name }</td>
+							<td>${userName }</td>
 						</tr>
 						<tr>
 							<td align="center" >
 								<b>휴대폰번호</b>
 							</td >
-							<td>${phone }</td>
+							<td>${userPhone }</td>
 						</tr>
 						<tr>
 							<td align="center" >
@@ -84,7 +101,7 @@ $j().ready(() => {
 								<b>여행지</b>
 							</td >
 							<td>
-								<select name="travCity">
+								<select name="traveCity">
 									<option value="서울">서울</option>
 									<option value="경기도">경기도</option>
 									<option value="부산">부산</option>

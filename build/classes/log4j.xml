@@ -20,7 +20,9 @@
 	<logger name="com.spring.board">
 		<level value="info" />
 	</logger>
-
+	<logger name="com.spring.trave">
+		<level value="debug" />
+	</logger>
 	<!-- Query Loggers -->
     <logger name="jdbc.sqlonly" additivity="false">  
         <level value="INFO"/>  

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="trave">
+	<resultMap type="com.spring.trave.vo.ClientVo" id="clientMap">
+		<result property="seq" column="SEQ"></result>
+		<result property="userName" column="USER_NAME"></result>
+		<result property="userPhone" column="USER_PHONE"></result>
+		<result property="traveCity" column="TRAVE_CITY"></result>
+		<result property="period" column="PERIOD"></result>
+		<result property="expend" column="EXPEND"></result>
+		<result property="transport" column="TRANSPORT"></result>
+		<collection property="traveList" resultMap="traveMap"></collection>
+	</resultMap>
+	<resultMap type="com.spring.trave.vo.TraveVo" id="traveMap">
+		<result property="traveSeq" column="TRAVE_SEQ"></result>
+		<result property="seq" column="SEQ"></result>
+		<result property="traveDay" column="TRAVE_DAY"></result>
+		<result property="traveTime" column="TRAVE_TIME"></result>
+		<result property="traveCity" column="TRAVE_CITY"></result>
+		<result property="traveCounty" column="TRAVE_COUNTY"></result>
+		<result property="traveLoc" column="TRAVE_LOC"></result>
+		<result property="traveTrans" column="TRAVE_TRANS"></result>
+		<result property="transTime" column="TRANS_TIME"></result>
+		<result property="useTime" column="USE_TIME"></result>
+		<result property="useExpend" column="USE_EXPEND"></result>
+		<result property="traveDetail" column="TRAVE_DETAIL"></result>
+		<result property="request" column="REQUEST"></result>
+	</resultMap>
+	
+	
+	<insert id="insertClient" parameterType="com.spring.trave.vo.ClientVo">
+		<selectKey keyProperty="seq" resultType="String" order="BEFORE">
+			SELECT COALESCE(TO_CHAR(MAX(TO_NUMBER(SEQ)+1)),'1') FROM CLIENT_INFO
+		</selectKey>
+		INSERT 
+			INTO 
+		CLIENT_INFO
+			(SEQ, USER_NAME, USER_PHONE, TRAVE_CITY, PERIOD, EXPEND, TRANSPORT)
+		VALUES
+			(
+			#{seq},
+			 #{userName}, #{userPhone}, #{traveCity}, #{period}, #{expend}, #{transport}
+			 )
+	</insert>
+	<insert id="insertOrUpdateClient" parameterType="com.spring.trave.vo.ClientVo">	
+	BEGIN
+	    MERGE INTO
+    			CLIENT_INFO C
+	    	USING DUAL ON(
+	    			C.SEQ = #{seq}	
+	    		)    					
+  		WHEN	NOT MATCHED THEN
+  				INSERT
+  					(SEQ, USER_NAME, USER_PHONE, TRAVE_CITY, PERIOD, EXPEND, TRANSPORT)
+ 				VALUES
+ 					(#{seq}, #{userName}, #{userPhone}, #{traveCity}, #{period}, #{expend}, #{transport});
+	    
+ 	    DELETE 
+	    	FROM
+	    		TRAVE_INFO
+    		WHERE
+    			SEQ = #{seq};
+   		
+		INSERT ALL INTO
+		TRAVE_INFO
+				(
+				TRAVE_SEQ,
+				SEQ,
+				TRAVE_DAY,
+				TRAVE_TIME,
+				TRAVE_CITY,
+				TRAVE_COUNTY,
+				TRAVE_LOC,
+				TRAVE_TRANS,
+				TRANS_TIME,
+				USE_TIME,
+				USE_EXPEND,
+				TRAVE_DETAIL,
+				REQUEST
+				)
+  				<foreach collection="traveList" item="trave" separator="UNION ALL" open="" close=";">
+        		SELECT 
+	        		#{trave.traveSeq} AS TRAVE_SEQ,
+	        		#{seq} AS SEQ,
+	        		#{trave.traveDay} AS TRAVE_DAY,
+	        		#{trave.traveTime} AS TRAVE_TIME,
+	        		#{trave.traveCity} AS TRAVE_CITY,
+	        		#{trave.traveCounty} AS TRAVE_COUNTY,
+	        		#{trave.traveLoc} AS TRAVE_LOC,
+	        		#{trave.traveTrans} AS TRAVE_TRANS,
+	        		#{trave.traveTime} AS TRANS_TIME,
+	        		#{trave.useTime} AS USE_TIME,
+	        		#{trave.useExpend} AS USE_EXPEND,
+	        		#{trave.traveDetail} AS TRAVE_DETAIL,
+	        		#{trave.request} AS REQUEST,
+        		FROM 
+        			DUAL</foreach>
+	END;
+	</insert>
+	
+	<select id="selectClientList" parameterType="com.spring.trave.vo.ClientVo" resultMap="clientMap">
+    SELECT
+        C.SEQ,
+        C.USER_NAME,
+        C.USER_PHONE,
+        C.TRAVE_CITY,
+        C.PERIOD,
+        C.EXPEND,
+        C.TRANSPORT,
+        T.TRAVE_SEQ,
+		T.SEQ,
+		T.TRAVE_DAY,
+		T.TRAVE_TIME,
+		T.TRAVE_CITY,
+		T.TRAVE_COUNTY,
+		T.TRAVE_LOC,
+		T.TRAVE_TRANS,
+		T.TRANS_TIME,
+		T.USE_TIME,
+		T.USE_EXPEND,
+		T.TRAVE_DETAIL,
+		T.REQUEST
+    FROM
+        CLIENT_INFO C
+    LEFT JOIN
+        TRAVE_INFO T ON C.SEQ = T.SEQ
+	</select>
+</mapper>

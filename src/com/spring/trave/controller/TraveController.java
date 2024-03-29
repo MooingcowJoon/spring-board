@@ -24,8 +24,8 @@ public class TraveController {
 	public String inquiry(Locale locale,Model model
 										,@RequestParam String userName
 										,@RequestParam String userPhone) throws Exception{
-		model.addAttribute("name", userName);
-		model.addAttribute("phone", userPhone);
+		model.addAttribute("userName", userName);
+		model.addAttribute("userPhone", userPhone);
 		return "trave/inquiry";
 	}
 	@RequestMapping(value = "/trave/login.do", method = RequestMethod.GET)
