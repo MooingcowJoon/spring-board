@@ -1,5 +1,6 @@
 package com.spring.trave.controller;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -24,12 +25,23 @@ public class TraveController {
 
 	@Autowired
 	private TraveService traveService;
+	
+	
+	
+	@RequestMapping(value = "/trave/manage.do", method = RequestMethod.GET)
+	public String manage(Locale locale,Model model) throws Exception{
+		List<ClientVo> clientList = traveService.getClientList();
+		
+		model.addAttribute("clientList",clientList);
+		return "trave/manage";
+	}
 	@RequestMapping(value = "/trave/view.do", method = RequestMethod.GET)
 	public String view(Locale locale,Model model
 			,@RequestParam String seq) throws Exception{
 		model.addAttribute("c",traveService.getClientBySeq(seq));
 		return "trave/view";
 	}
+	
 	@RequestMapping(value = "/trave/inquiry.do", method = RequestMethod.GET)
 	public String inquiry(Locale locale,Model model
 										,@RequestParam String userName

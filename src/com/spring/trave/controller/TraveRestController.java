@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spring.board.HomeController;
 import com.spring.board.service.CommonCodeService;
+import com.spring.common.CommonUtil;
 import com.spring.trave.service.TraveService;
 import com.spring.trave.vo.ClientVo;
 
@@ -30,6 +31,23 @@ public class TraveRestController {
 	TraveService traveService;
 	
 	
+	
+	
+	@RequestMapping(value= "/api/trave/manage/fetchClient.do",method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String,String> fetchClient(Locale locale,@RequestParam String seq) throws Exception{
+		Map<String,String> map = new HashMap<>();
+		try {
+			ClientVo c = traveService.getClientBySeq(seq);
+			map.put("result", "success");
+			map.put("data", CommonUtil.toJson(c));
+		}catch(Exception e) {
+			map.put("result", "error");
+			map.put("code", "serverError");
+			map.put("msg", "서버 장애가 발생하였습니다.");
+		}
+		return map;
+	}
 	@RequestMapping(value= "/api/trave/inquiry/submit.do",method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,String> submitInquiry(Locale locale,@RequestBody ClientVo clientVo) throws Exception{

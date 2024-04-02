@@ -98,7 +98,20 @@
 	END;
 	</insert>
 	
-	<select id="selectClientList" parameterType="String" resultMap="clientMap">
+	<select id="selectClientList" resultMap="clientMap">
+	SELECT
+        SEQ,
+        USER_NAME,
+        USER_PHONE,
+        TRAVE_CITY,
+        PERIOD,
+        EXPEND,
+        TRANSPORT
+    FROM
+        CLIENT_INFO
+	</select>
+	<select id="selectClientBySeq" parameterType="String" resultMap="clientMap">
+ 
     SELECT
         C.SEQ,
         C.USER_NAME,
@@ -123,10 +136,9 @@
     FROM
         CLIENT_INFO C
     LEFT JOIN
-        TRAVE_INFO T ON C.SEQ = T.SEQ
-    <if test="_parameter != null">
-        WHERE
-            C.SEQ = #{_parameter}
-    </if>    
+        TRAVE_INFO T ON C.SEQ = T.SEQ        
+    WHERE
+    	C.SEQ = #{param}
 	</select>
+	
 </mapper>

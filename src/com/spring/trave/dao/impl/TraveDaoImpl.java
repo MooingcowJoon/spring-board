@@ -19,10 +19,13 @@ public class TraveDaoImpl implements TraveDao {
 	public int insertClient(ClientVo clientVo) {
 		return sqlSession.insert("trave.insertClient",clientVo);
 	}
-	
 	@Override
-	public List<ClientVo> selectClientList(String seq) {
-		return sqlSession.selectList("trave.selectClientList",seq);
+	public ClientVo selectClientBySeq(String seq) {
+		return sqlSession.selectOne("selectClientBySeq", seq);
+	}
+	@Override
+	public List<ClientVo> selectClientList() {
+		return sqlSession.selectList("trave.selectClientList");
 	}
 	@Override
 	public int insertOrUpdateTrave(ClientVo clientVo) {

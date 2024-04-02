@@ -44,7 +44,7 @@ text-align:center;
 							<td align="center" >
 								<b>이동수단</b>
 							</td >
-							<td>${c.transport }</td>
+							<td>${c.transport}</td>
 						</tr>
 						<tr>
 							<td align="center" >
@@ -104,7 +104,6 @@ text-align:center;
 								</td>
 								<td>
 									<input name="traveTime" type="text" value="오후 12:00 🕓"/>
-								</td>
 								<td>
 									<select name="traveCity" >
 										<option value="서울">서울</option>

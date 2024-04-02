@@ -25,7 +25,6 @@
 		return new RegExp('[^'+pattern+']','g')
 	}
 	
-	
 	class Rule{
 		constructor(label, patterns,min, max,info,submitPattern){
 			this.value				=	''
@@ -65,7 +64,7 @@
 	}
 	
 	
-	var formsValidationHandler = function(){
+	var getValidFormData = function(){
 		var $forms = $j('form')
 		for (var i =0; i<$forms.length; i++){
 			if(!formValidator($forms.get(i))){
@@ -106,7 +105,7 @@
 		return true
 		}
 
-	var getValidFormData = function(forms){
+	var getFormData = function(forms){
 		var data = {}
 		for(var i = 0; i<forms.length; i++){
 			var $form = $j(forms.get(i))
@@ -133,7 +132,6 @@
 		$j(document).on('blur',selector,e=>e.target.value=e.target.value.replace(/\B(?=(\d{3})+(?!\d))/g, ','))
 		$j(document).on('focus mousedown',selector,e=>e.target.value=e.target.value.replaceAll(',',''))
 	}
-	
 	
 </script>
 <body >

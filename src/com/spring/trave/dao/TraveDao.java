@@ -7,6 +7,7 @@ import com.spring.trave.vo.ClientVo;
 public interface TraveDao {
 
 	public int insertClient(ClientVo clientVo);
-	public List<ClientVo> selectClientList(String seq);
+	public List<ClientVo> selectClientList();
+	public ClientVo selectClientBySeq(String seq);
 	public int insertOrUpdateTrave(ClientVo clientVo);
 }

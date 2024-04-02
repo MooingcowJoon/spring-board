@@ -21,7 +21,7 @@ $j(() => {
 	 	
 	var submit = function(){
 		var	data = getValidFormData($j('form'))
-		if(!formResult){
+		if(!data){
 			return
 		}
 		var queryParam = $j.param(data)

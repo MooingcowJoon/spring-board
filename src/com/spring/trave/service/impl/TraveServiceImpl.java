@@ -22,12 +22,12 @@ public class TraveServiceImpl implements TraveService{
 	
 	@Override
 	public List<ClientVo> getClientList() {
-		return traveDao.selectClientList(null);
+		return traveDao.selectClientList();
 	}
 	
 	@Override
 	public ClientVo getClientBySeq(String seq) {
-		return traveDao.selectClientList(seq).get(0);
+		return traveDao.selectClientBySeq(seq);
 	}
 	
 	@Override
