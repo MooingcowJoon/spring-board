@@ -14,7 +14,8 @@ th{text-align:center;}
 tr.clientRow:hover,
 tr.clientRow.selected,
 button.dateBtn:hover,
-button.dateBtn.selected{
+button.dateBtn.selected,
+tr.traveRow.checked{
 background-color:skyblue;
 }
 
@@ -30,7 +31,9 @@ cursor:pointer;
 $j(()=>{
 	var g_selectedRow
 	var g_selectedDate
+	var g_time=null
 	var g_isShiftDown=false
+	var g_r=-1
 	class Time{
 		constructor(el){
 			if(el===null){
@@ -49,13 +52,20 @@ $j(()=>{
 		setI(c){
 			var tmp = [0,0,0,1,1,1,3,3,3,0,0,0,0]
 			this.i=tmp[c]
+			$j(this.el).attr('r',this.i)
 			return
 		}
 		setRange(step=0){
 			var el = this.el
 			el.setSelectionRange(0,0)
-			this.val=el.value
 			var range = [[0,2],[3,5],[6,8]]
+			if(g_r >= 0){
+				el.setSelectionRange(range[g_r][0],range[g_r][1])
+				this.i=Math.max(g_r*2-1,0)
+				$j(el).attr('r',g_r)
+				g_r=-1
+				return
+			}
 			var i = this.i
 			var tmp = [0,1,1,2,2]
 			var r =tmp[i]+step
@@ -83,12 +93,11 @@ $j(()=>{
 			var el = this.el
 			var arr = this.arr
 			if(i===0){
-				if(val === 1){
-					arr[0]='오전'
+				val = val === 1? '오전' : '오후'
+				if(val === arr[0]){
+					return
 				}
-				if( val===2){
-					arr[0]='오후'
-				}
+				arr[0]=val
 				this.formatVal()
 				return
 			}
@@ -105,7 +114,6 @@ $j(()=>{
 				this.formatVal()
 				return
 			}
-			
 			if(i===2){
 				if(arr[2]===1 && val > 2){
 					return
@@ -113,48 +121,93 @@ $j(()=>{
 				arr[1]=arr[2]
 			}
 			if(i===3){
-				if(val>5){
-					return
+				arr[3]=0
+				arr[4]=val
+				this.i=4
+				this.formatVal()
+				return
+			}
+			if(i===4){
+				if(arr[4]>5){
+					arr[4]=0
+				}else if(arr[4]<=5){
+					arr[3]=arr[4]
+					arr[4]=val
 				}
-				arr[4]=0
+					this.i=3
+				this.formatVal()
+				return
+				
 			}
 			arr[i]=val
 			i=i+step
+			if(i>4){
+				i=3
+			}
 			if(step==-1 && i === 0){
 				i=1
 			}
 			this.i=i
 			this.formatVal()
 		}
+		check(){
+			var top = 60
+			var 
+			if(arr[0]==='오전'){
+				
+			}
+		}
 		formatVal(){
 			var el = this.el
 			var arr= this.arr
+			var i = this.i
+			
+			var x = arr[i]*10+arr[i+1]
+			if(i===3){
+				x= x<0 ? 59 : (x>59 ? 0 : x)
+			}else if(i===1){
+				var top= 12
+				var toggle = '오전'
+				if(arr[0]==='오전'){
+					top=11
+					toggle='오후'
+				}
+				if(x>top || x<0){
+					arr[0]=toggle
+					x=x>top? 0 : top
+				}
+			}		
+				arr[i]=Math.floor(x/10)
+				arr[i+1]=x%10
+					
+					
 			el.value = arr[0]+" "+arr[1]+arr[2]+":"+arr[3]+arr[4]+' 🕓'
 			this.val=el.value
 			this.setRange()
+			console.log(arr)
 		}
-		
 		typeValue(e){
-			if(this.el===null){
+			if(this.el===null || !e.key){
 				return
 			}
 			var val = e.key
 			var i = this.i
 			var el = this.el
 			var arr = this.arr
-			if(!e.key){
-				return
-			}
 			if(val === 'Tab' ){
-				g_time.setRange(e.shiftKey ? -1 : 1)
+				this.setRange(e.shiftKey ? -1 : 1)
 				return
 			}
 			else if(val=== 'ArrowRight' || val === 'ArrowLeft'){
-				g_time.setRange(val === 'ArrowRight' ? 1 : -1)
+				var val = val === 'ArrowRight' ? 1 : -1
+				if( (i===0 && val<0) || (i>=3 && val>0)){
+					return
+				}
+				this.setRange(val)
 				return
 			}
 			else if(val === 'ArrowUp' || val==='ArrowDown'){
-				g_time.updown(val=== 'ArrowUp' ? 1 : -1)
+				this.updown(val=== 'ArrowUp' ? 1 : -1)
 			}
 			else if(val==='Backspace'){
 				if(i===0){
@@ -190,17 +243,17 @@ $j(()=>{
 			var arr = this.arr
 			var i = this.i
 			if(i===0){
-				arr[0]=val===-1 ? '오전' : '오후'
-// 				arr[0]= arr[0]==='오전' ? '오후':'오전'
+				var val = val === -1 ? '오전' : '오후'
+				if(val===arr[0])return
+				if(val==='오전'){
+				}
+				arr[0]=val
 				this.formatVal()
 				return
 			}
-			
-			
 			this.i= i<=2 ? 1 : 3
 			i=this.i
 			if(g_isShiftDown && i ===3){
-				console.log('sp')
 				if(val>0){
 					arr[4]=0
 					arr[3]=(arr[3]+1)%6
@@ -212,16 +265,21 @@ $j(()=>{
 				this.formatVal()
 				return
 			}
-			var top = i === 1 ? 12 : 59
-			var x = arr[i]*10 + arr[i+1]+val
-			x = x< 0? top : (x>top ? 0 : x)
-			arr[i]=Math.floor(x/10)
-			arr[i+1]=x%10
-			console.log(arr)
+			arr[i+1]+=val
 			this.formatVal()
 		}
 	}
-	var g_time=null
+	
+	
+	
+	
+	
+	
+	var removeRow = ()=>{
+		
+	}
+	
+	$j('#traveList').on('click','input[type="checkbox"]',e=>$j(e.target).closest('tr').toggleClass('checked'))
 	
 	$j('#addRowBtn').click(e=>cloneRow(g_selectedDate.index()))
 	
@@ -232,19 +290,18 @@ $j(()=>{
  			g_time= new Time(e.target)
 		},
  		'focus':e=>{
- 			if(g_time===null){
+ 			if(g_time===null ){
  				g_time = new Time(e.target)
  				g_time.setRange()
  				return
  			}
 		},
 		'click': e=>{
-			g_time.el=e.target
 			g_time.setI(e.target.selectionStart)
 			g_time.setRange()
 		}
 		,'keydown':e=>{
-			var f = ['F5']
+			var f = ['F5','F12']
 		if(!f.includes(e.key)){
 		e.preventDefault()
 		}
@@ -260,19 +317,34 @@ $j(()=>{
 	    allowedKeys.includes(e.key) && g_time.typeValue(e)
 	    return
 		}
-		,'keyup':e=>{if(e.key==='Shift')g_isShiftDown=false}
-		,'blur':e=>g_time=null
-		,'input':e=>g_time.formatVal()
+		,'keyup':e=>{
+			if(e.key==='Shift'){
+				g_isShiftDown=false
+			}
+			}
+		,'blur':e=>{
+			if(g_time&& e.target === g_time.el){
+			$j(e.target).attr('r',0)
+			g_time=null
+			}
+		}
+		,'input':e=>{
+			if(e.target.value !== g_time.val){
+				alert('방향키, 숫자, 백스페이스 및 마우스 휠과 탭키로 조정해주세요.\n(쉬프트 클릭시 10분 단위 조정)')
+				g_time.formatVal()
+				g_r=parseInt($j(e.target).attr('r'))
+			}
+		}
 	
 	}
 	,'input[name="traveTime"]')
-	$j(window).on({'wheel':e=>{
+	document.addEventListener('wheel',function(e){
 		if(g_time !== null){
-			g_time.updown(e.originalEvent.deltaY<0 ? 1 : -1)
+			e.preventDefault()
+			g_time.updown(e.deltaY<0 ? 1 : -1)
 			return
 		}
-	}
-	})
+	},{passive: false })
 	var cloneRow = (index,trave)=>{
 		var clone = $j('.traveRow:first').clone().appendTo($j('#traveList tbody').eq(index))
 		clone.find('input').val('')
