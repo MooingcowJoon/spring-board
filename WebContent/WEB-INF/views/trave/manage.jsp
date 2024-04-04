@@ -33,10 +33,16 @@ $j(()=>{
 
 	class Time{
 		constructor(el){
-			this.arr=['오후',1,2,0,0]
+			if(el===null){
+				this.arr=['오후',1,2,0,0]
+				this.el=el
+				this.i=0
+			}else{
+			var text = el.value
+			this.arr=[text.slice(0,2),parseInt(text[3]),parseInt(text[4]),parseInt(text[6]),parseInt(text[7])]
 			this.el=el
-			this.val=""
-			this.i=0
+			this.i=parseInt($j(el).attr('r'))
+			}
 		}
 		setI(c){
 			var tmp = [0,0,0,1,1,1,3,3,3,0,0,0,0]
@@ -53,10 +59,12 @@ $j(()=>{
 			var r =tmp[i]+step
 			if(r<0){
 				$j(el).parent().prev().children(':last').focus()
+				$j(el).attr('r',0)
 				return
 			}
 			if(r>2 || i>4){
-				this.i= 3
+				this.i= 0
+				$j(el).attr('r',0)
 				$j(el).parent().next().children('[name]:first').focus()
 				return
 			}
@@ -64,12 +72,12 @@ $j(()=>{
 				var tmp = [0,1,3]
 				this.i = tmp[r]
 			}
+			$j(el).attr('r',r)
 			el.setSelectionRange(range[r][0],range[r][1])
 		}
 		insertVal(val,step=1){
 			val=parseInt(val)
 			var i = this.i
-			console.log("i = "+i)
 			var el = this.el
 			var arr = this.arr
 			if(i===0){
@@ -79,7 +87,9 @@ $j(()=>{
 				if( val===2){
 					arr[0]='오후'
 				}
-			}else{
+				this.formatVal()
+				return
+			}
 			if(i === 1){
 				if(val>1){
 					arr[1]=0
@@ -99,23 +109,18 @@ $j(()=>{
 					return
 				}
 				arr[1]=arr[2]
-				arr[2]=val
 			}
 			if(i===3){
-				arr[3]=arr[4]>5? 0 : arr[4]
-				arr[4]=val
+				arr[4]=0
 			}
-			if(i===4){
-				arr[3]=arr[4]
-				arr[4]=val
-			}
+			arr[i]=val
 			i=i+step
 			if(step==-1 && i === 0){
 				i=1
 			}
 			this.i=i
 			this.formatVal()
-		}}
+		}
 		formatVal(){
 			var el = this.el
 			var arr= this.arr
@@ -124,11 +129,29 @@ $j(()=>{
 			this.setRange()
 		}
 		
-		typeValue(val){
+		typeValue(e){
+			if(this.el===null){
+				return
+			}
+			var val = e.key
 			var i = this.i
 			var el = this.el
 			var arr = this.arr
-			if(val==='Backspace'){
+			if(!e.key){
+				return
+			}
+			if(val === 'Tab' ){
+				g_time.setRange(e.shiftKey ? -1 : 1)
+				return
+			}
+			else if(val=== 'ArrowRight' || val === 'ArrowLeft'){
+				g_time.setRange(val === 'ArrowRight' ? 1 : -1)
+				return
+			}
+			else if(val === 'ArrowUp' || val==='ArrowDown'){
+				g_time.updown(val=== 'ArrowUp' ? 1 : -1)
+			}
+			else if(val==='Backspace'){
 				if(i===0){
 					return
 				}
@@ -154,135 +177,82 @@ $j(()=>{
 				this.formatVal()
 				return
 			}
+			if(e.keyCode >=48 && e.keyCode <=57){
 			this.insertVal(val)
+			}
 		}
-		upDown(val){
+		updown(val){
 			var arr = this.arr
 			var i = this.i
 			if(i===0){
-				arr[0]=val>0?'오후':'오전'
+				arr[0]=val===-1 ? '오전' : '오후'
+// 				arr[0]= arr[0]==='오전' ? '오후':'오전'
 				this.formatVal()
 				return
 			}
-			i= i<=2 ? 1 : 3
-			var x = arr[i]*10+arr[i+1]
 			
-					
+			this.i= i<=2 ? 1 : 3
+			i=this.i
+			var top = i === 1 ? 12 : 59
+			var x = arr[i]*10 + arr[i+1]+val
+			x = x< 0? top : (x>top ? 0 : x)
+			arr[i]=Math.floor(x/10)
+			arr[i+1]=x%10
+			console.log(arr)
+			this.formatVal()
 		}
 	}
-	var g_time=new Time(null)
+	var g_time=null
 	
 	$j('#addRowBtn').click(e=>cloneRow(g_selectedDate.index()))
-	
-	
-// 	var timeSegmentHelper = e=>{
-// 		var index = getTimeSegmentIndex(e)
-// 		e.target.setSelectionRange(0,0)
-// 		setTimeSegmentPos(e.target,index)
-// 	}
-// 	var setTimeSegmentPos = (el,index)=>{
-// 		if(index===3){
-// 			$j(el).blur()
-// 			$j(el).parent().next().children('select:first').focus()
-// 			return
-// 		}
-// 		var range = [[0,2],[3,5],[6,8]]
-// 		selectedTime={el = e.target, range = [range[index][0], range[index][1]]}
-// 	}
-	
-// 	var getTimeSegmentIndex = e=>{
-// 		var cursorAt= $j(e.target)[0].selectionStart
-// 		var el = e.target
-// 		var index = 0
-// 		if(cursorAt >5 && cursorAt <= 8){
-// 			index= 2
-// 		}else if(cursorAt > 2 && cursorAt <=5){
-// 			index =1
-// 		}
-// 		return index
-// 	}
 	
 	$j(document).on({
 		'mouseenter':e=>e.target.mouseenter=true,
 		'mouseleave':e=>e.target.mouseenter=false,
 		'mousedown':e=>{
-			if(g_time.el === null){
- 				g_time.el=e.target
- 			}
+ 			g_time= new Time(e.target)
 		},
  		'focus':e=>{
- 			if(g_time.el === null){
- 				g_time.el=e.target
+ 			if(g_time===null){
+ 				g_time = new Time(e.target)
  				g_time.setRange()
+ 				return
  			}
-			return
 		},
 		'click': e=>{
 			g_time.el=e.target
-			console.log(e.target.selectionStart)
 			g_time.setI(e.target.selectionStart)
 			g_time.setRange()
 		}
 		,'keydown':e=>{
+			var f = ['F5']
+		if(!f.includes(e.key)){
 		e.preventDefault()
+		}
 	    var allowedKeys = [
 	        "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight",
 	        "Tab", "Shift", "Enter","Backspace",
 	        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" 
 	    ]
-		if(e.key === 'Tab'){
-			var step=1
-			if(e.shiftKey){
-				step=-1
-			}
-			g_time.setRange(step)
-			return
+	    allowedKeys.includes(e.key) && g_time.typeValue(e)
+	    return
 		}
-		if(e.key==='ArrowUp' || e.key==='ArrowDown'){
-			g_time.typeValue()
-		}
-		if(e.key === 'ArrowLeft' || e.key==='ArrowRight'){
-			var step = e.key==='ArrowLeft' ? -1 : 1
-			if (g_time.i+step <0 || g_time.i+step>2 ){
-				return
-			}
-			g_time.setRange(step)
-			return
-		}
-		if(e.keyCode>=48 && e.keyCode<=57 || e.key==='Backspace'){
-			g_time.typeValue(e.key)
-		}
-		}
-// 		e.preventDefault()
+		,'blur':e=>g_time=null
 	
-// 		}else{
-// 			e.preventDefault()
-// 			var cs = $j(el)[0].selectionStart
-// 			var ce = $j(el)[0].selectionEnd
-// 			selectedTime.setFields(e.target,[cs+1,ce])
-// 			selectedTime.setValue(e.key)
-			
-// /* 			el.value=el.value.slice(0,cs)+e.key+el.value.slice(cs+1)
-// 			var cs = cs+1
-// 			var arr = [1,2,5]
-// 			if(arr.includes(cs) || cs>=8){
-// 				setTimeSegmentPos(el,index+1)
-// 			}else{
-// 				el.setSelectionRange(cs,ce)
-// 			} */
-// 			return
-			
-// 		}
-// 		}
-		,'blur':e=>g_time.el=null
 	}
 	,'input[name="traveTime"]')
-	
+	$j(window).on('wheel',e=>{
+		if(g_time !== null){
+			g_time.updown(e.originalEvent.deltaY<0 ? 1 : -1)
+			return
+		}
+	})
 	var cloneRow = (index,trave)=>{
 		var clone = $j('.traveRow:first').clone().appendTo($j('#traveList tbody').eq(index))
 		clone.find('input').val('')
 		clone.find('input[type="checkbox"]').prop('checked',false)
-		clone.find('input:eq(1)').val("오전 00:00 🕓")
+		clone.find('input:eq(1)').val("오후 12:00 🕓")
+		clone.find('input:eq(1)').attr('r','0')
 	} 
 	
 	var initPage = ()=>selectRow($j('.clientRow:first'))
@@ -386,7 +356,7 @@ $j(()=>{
 									<input type="checkbox"/>
 								</td>
 								<td>
-									<input name="traveTime" type="text" value="오후 12:00 🕓"/>
+									<input name="traveTime" type="text" value="오후 12:00 🕓" r='0'/>
 								<td><span>서울</span>
 								<!-- 	<select name="traveCity" >
 										<option value="서울">서울</option>
