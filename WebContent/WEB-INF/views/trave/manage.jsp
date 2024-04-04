@@ -30,18 +30,20 @@ cursor:pointer;
 $j(()=>{
 	var g_selectedRow
 	var g_selectedDate
-
+	var g_isSpacebarDown=false
 	class Time{
 		constructor(el){
 			if(el===null){
 				this.arr=['오후',1,2,0,0]
 				this.el=el
 				this.i=0
+				this.val=""
 			}else{
 			var text = el.value
 			this.arr=[text.slice(0,2),parseInt(text[3]),parseInt(text[4]),parseInt(text[6]),parseInt(text[7])]
 			this.el=el
 			this.i=parseInt($j(el).attr('r'))
+			this.val=text
 			}
 		}
 		setI(c){
@@ -111,6 +113,9 @@ $j(()=>{
 				arr[1]=arr[2]
 			}
 			if(i===3){
+				if(val>5){
+					return
+				}
 				arr[4]=0
 			}
 			arr[i]=val
@@ -191,8 +196,22 @@ $j(()=>{
 				return
 			}
 			
+			
 			this.i= i<=2 ? 1 : 3
 			i=this.i
+			if(g_isSpacebarDown && i ===3){
+				console.log('sp')
+				if(val>0){
+					arr[4]=0
+					arr[3]=(arr[3]+1)%6
+				}else if(arr[4]>0){
+					arr[4]=0
+				}else if(arr[4]===0){
+					arr[3]=arr[3]>0? arr[3]-1 : 5
+				}
+				this.formatVal()
+				return
+			}
 			var top = i === 1 ? 12 : 59
 			var x = arr[i]*10 + arr[i+1]+val
 			x = x< 0? top : (x>top ? 0 : x)
@@ -229,6 +248,10 @@ $j(()=>{
 		if(!f.includes(e.key)){
 		e.preventDefault()
 		}
+		if(e.key===' '){
+			g_isSpacebarDown=true
+			return
+		}
 	    var allowedKeys = [
 	        "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight",
 	        "Tab", "Shift", "Enter","Backspace",
@@ -237,15 +260,18 @@ $j(()=>{
 	    allowedKeys.includes(e.key) && g_time.typeValue(e)
 	    return
 		}
+		,'keyup':e=>{if(e.key===' ')g_isSpacebarDown=false}
 		,'blur':e=>g_time=null
+		,'input':e=>g_time.formatVal()
 	
 	}
 	,'input[name="traveTime"]')
-	$j(window).on('wheel',e=>{
+	$j(window).on({'wheel':e=>{
 		if(g_time !== null){
 			g_time.updown(e.originalEvent.deltaY<0 ? 1 : -1)
 			return
 		}
+	}
 	})
 	var cloneRow = (index,trave)=>{
 		var clone = $j('.traveRow:first').clone().appendTo($j('#traveList tbody').eq(index))
