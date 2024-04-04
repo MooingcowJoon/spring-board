@@ -30,7 +30,7 @@ cursor:pointer;
 $j(()=>{
 	var g_selectedRow
 	var g_selectedDate
-	var g_isSpacebarDown=false
+	var g_isShiftDown=false
 	class Time{
 		constructor(el){
 			if(el===null){
@@ -199,7 +199,7 @@ $j(()=>{
 			
 			this.i= i<=2 ? 1 : 3
 			i=this.i
-			if(g_isSpacebarDown && i ===3){
+			if(g_isShiftDown && i ===3){
 				console.log('sp')
 				if(val>0){
 					arr[4]=0
@@ -248,8 +248,8 @@ $j(()=>{
 		if(!f.includes(e.key)){
 		e.preventDefault()
 		}
-		if(e.key===' '){
-			g_isSpacebarDown=true
+		if(e.key==='Shift'){
+			g_isShiftDown=true
 			return
 		}
 	    var allowedKeys = [
@@ -260,7 +260,7 @@ $j(()=>{
 	    allowedKeys.includes(e.key) && g_time.typeValue(e)
 	    return
 		}
-		,'keyup':e=>{if(e.key===' ')g_isSpacebarDown=false}
+		,'keyup':e=>{if(e.key==='Shift')g_isShiftDown=false}
 		,'blur':e=>g_time=null
 		,'input':e=>g_time.formatVal()
 	
