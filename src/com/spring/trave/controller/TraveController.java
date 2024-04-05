@@ -28,6 +28,13 @@ public class TraveController {
 	
 	
 	
+	@RequestMapping(value = "/trave/practice.do", method = RequestMethod.GET)
+	public String practice(Locale locale,Model model) throws Exception{
+		List<ClientVo> clientList = traveService.getClientList();
+		
+		model.addAttribute("clientList",clientList);
+		return "trave/practice";
+	}
 	@RequestMapping(value = "/trave/manage.do", method = RequestMethod.GET)
 	public String manage(Locale locale,Model model) throws Exception{
 		List<ClientVo> clientList = traveService.getClientList();
