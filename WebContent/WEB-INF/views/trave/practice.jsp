@@ -41,18 +41,25 @@ $j(()=>{
 		}
 		formatVal(){
 			const time=this.time
-			const h = time.h <10 ? '0'+time.h : time.h
-			const m = time.m <10 ? '0'+time.m : time.m
-			time.el.value =time.ap+' '+h+':'+m+' 🕓'
+			const isAm = time.ap==='오전'
+			let h = time.h
+			if(h===12 || h===0){
+				h= isAm ? 0 : 12
+			}
+			
+			const H = h <10 ? '0'+h : h
+			const M = time.m <10 ? '0'+time.m : time.m
+			time.el.value =time.ap+' '+H+':'+M+' 🕓'
+			time.el.dataset.val=time.ap+':'+H+':'+M
 		}
 		focus(){
 			this.time.el.setSelectionRange(0,0)
-			this.cursorIndex = 0
 			this.time.el.setSelectionRange(this.selection[0],this.selection[1])
 			return this.stateIndex
 		}
 		next = ()=>this.stateIndex+1
 		prev = ()=>this.stateIndex-1
+		
 	}
 	
 	// *Concrete State* : 각 구체 상태들의 모든 기능을 구현하는 클래스 
@@ -66,45 +73,86 @@ $j(()=>{
 				case 2:
 					time.ap='오후'
 					break
-				default:
-					this.formatVal()
 			}
 			return this.stateIndex
 		}
+		
+		updown(isUp){
+			const target = isUp ? '오후' : '오전'
+			if(this.time.ap !==target){
+				this.time.ap= target
+				return this.stateIndex
+			}
+		}
+
 	}
 	class HourState extends State{
 		type(val){
 			const next = this.next()
 			const cur = this.stateIndex
-			
 			const time = this.time
 			let nextIndex = next
 			let nextCursor = 0
+			console.log(this.cursorIndex)
 			if(this.cursorIndex === 0){
 				time.h = val
-				if(val===1) {
+				if(val<2) {
 					nextCursor=1
 					nextIndex=cur
 				}
 			}else if(this.cursorIndex === 1){
 				const h = time.h * 10 + val
-				console.log(h)
+				console.log('h = '+h)
 				const isAm = time.ap==='오전'
 				if(h>12){
 					time.h = 0
 					nextIndex = cur
-				}else if(h===12 || h === 0 ){
-					time.h = isAm ? 0 : 12
-				}else if (h>0 && h<12){
-					time.h = h
+				}else if(h<=12){
+					time.h= h
 				}
 			}
 			this.cursorIndex=nextCursor
-			this.formatVal()
+			console.log(nextCursor+" => "+this.cursorIndex)
 			return nextIndex 
+		}
+		updown(isUp){
+			const add = isUp? 1 : -1
+			const time = this.time
+			const h = time.h + add
+			if(h === 12 || h===0){
+				const isUp = time.ap==='오전'
+				this.prev().updown(isUp)
+			}
+			return this.stateIndex
 		}
 	}
 	class MinState extends State{
+		type(val){
+			const time = this.time
+			if(this.cursorIndex === 0){
+				time.m = val
+				this.cursorIndex=1
+			}else if(this.cursorIndex === 1){
+				const m = time.m * 10 + val
+				if(m>59){
+					time.m = 0
+				}else if(m<=59){
+					time.m = m
+				}
+				this.cursorIndex=0
+			}
+			return this.stateIndex 
+		}
+		updown(isUp){
+			const add = isUp? 1 : -1
+			const time = this.time
+			const m = time.m + add
+			if(h === 60 || h===0){
+				const isUp = time.ap==='오전'
+				this.prev().updown(isUp)
+			}
+			return this.stateIndex
+		}
 	}
 	
 	//*Context* : 시간 입력 요소 동작 제어 클래스
@@ -123,7 +171,11 @@ $j(()=>{
 			this.state=states[stateIndex]
 		}
 		execute = nextStateIndex => {
+			if(!nextStateIndex){
+				return
+			}
 			this.state=this.states[nextStateIndex]
+			this.state.formatVal()
 			this.state.focus()
 		}
 		click(e){
@@ -142,17 +194,19 @@ $j(()=>{
 		keydown(val){
 			const states = this.states
 			const state = this.state
+			console.log(state)
 			const execute = this.execute
 			const intVal = parseInt(val)
 			if(!isNaN(intVal)){
 				switch(intVal){
 					case 100:
-						execute(state.up())
+						execute(state.updown(true))
 						break
 					case -100:
-						execute(state.down())
+						execute(state.updown(false))
 						break
 					default:
+						console.log('디폴트')
 						execute(state.type(intVal))
 				}
 				return
@@ -162,10 +216,10 @@ $j(()=>{
 					g_isShiftDown=true
 					break
 				case 'ArrowUp':
-					execute(state.up(val))
+					execute(state.updown(true))
 					break
 				case 'ArrowDown':
-					execute(state.down(val))
+					execute(state.updown(false))
 					break
 				case 'Tab':
 					const tabIndex = g_isShiftDown? state.prev() : state.next()
@@ -183,11 +237,10 @@ $j(()=>{
 				}
 		}
 	}
-	let g_time
+	let g_time=null
 	
 	$j(document).on(
 		{	
-			
 			'mousedown':e=>g_time=new Time(e.target)
 			,'focus':e=>{
 				if(g_time===null){

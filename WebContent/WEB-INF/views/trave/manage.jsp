@@ -150,13 +150,6 @@ $j(()=>{
 			this.i=i
 			this.formatVal()
 		}
-		check(){
-			var top = 60
-			var 
-			if(arr[0]==='오전'){
-				
-			}
-		}
 		formatVal(){
 			var el = this.el
 			var arr= this.arr
