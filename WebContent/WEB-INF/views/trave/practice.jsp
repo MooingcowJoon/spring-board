@@ -46,7 +46,6 @@ $j(()=>{
 			if(h===12 || h===0){
 				h= isAm ? 0 : 12
 			}
-			
 			const H = h <10 ? '0'+h : h
 			const M = time.m <10 ? '0'+time.m : time.m
 			time.el.value =time.ap+' '+H+':'+M+' 🕓'
@@ -119,9 +118,11 @@ $j(()=>{
 			const add = isUp? 1 : -1
 			const time = this.time
 			const h = time.h + add
-			if(h === 12 || h===0){
+			time.h = h
+			if(h === 12 || h===-1){
 				const isUp = time.ap==='오전'
-				this.prev().updown(isUp)
+					time.h = h=== 12? 0 : 11
+				time.states[this.prev()].updown(isUp)
 			}
 			return this.stateIndex
 		}
@@ -147,9 +148,11 @@ $j(()=>{
 			const add = isUp? 1 : -1
 			const time = this.time
 			const m = time.m + add
-			if(h === 60 || h===0){
-				const isUp = time.ap==='오전'
-				this.prev().updown(isUp)
+			time.m= m
+			if(m === 60 || m===-1){
+				const isUp = m === 60
+				time.m= isUp? 0 : 59
+				time.states[this.prev()].updown(isUp)
 			}
 			return this.stateIndex
 		}
