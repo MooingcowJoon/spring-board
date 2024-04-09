@@ -119,9 +119,9 @@ $j(()=>{
 			const time = this.time
 			const h = time.h + add
 			time.h = h
-			if(h === 12 || h===-1){
+			if(h >= 12 || h<0){
 				const isUp = time.ap==='오전'
-					time.h = h=== 12? 0 : 11
+				time.h = h>= 12? 0 : 11
 				time.states[this.prev()].updown(isUp)
 			}
 			return this.stateIndex
@@ -145,11 +145,17 @@ $j(()=>{
 			return this.stateIndex 
 		}
 		updown(isUp){
-			const add = isUp? 1 : -1
 			const time = this.time
-			const m = time.m + add
-			time.m= m
-			if(m === 60 || m===-1){
+			let add = isUp? 1 : -1
+			let m = time.m
+			if(g_isShiftDown){
+				add = 10-m%
+				m = isUp? 
+			}else{
+				m+=add
+			}
+			time.m=m
+			if(m >= 60 ||m<0){
 				const isUp = m === 60
 				time.m= isUp? 0 : 59
 				time.states[this.prev()].updown(isUp)
@@ -174,7 +180,7 @@ $j(()=>{
 			this.state=states[stateIndex]
 		}
 		execute = nextStateIndex => {
-			if(!nextStateIndex){
+			if(nextStateIndex=== undefined){
 				return
 			}
 			this.state=this.states[nextStateIndex]
