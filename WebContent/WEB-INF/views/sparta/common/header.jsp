@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="/res/sparta/js/common_js.jsp"%>  
+<%@include file="/res/js/sparta/common/common_js.jsp"%>  
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="/res/sparta/css/css.css">
+<link rel="stylesheet" href="/res/css/sparta/common.css">
 <title>스파르타코딩클럽 - 코딩, 5주만에 왕초보 탈출!</title>
 </head>
 <body>
