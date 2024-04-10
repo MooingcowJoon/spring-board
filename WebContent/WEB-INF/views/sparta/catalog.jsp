@@ -76,7 +76,7 @@
 									</div>
 								</div>
 							</div>
-						</div>
+						</div>  
 						<div class="css-4xk843">
 							<div class="catalog-product-list">
 							<!-- 강의상품 요소 리스트 시작 -->
