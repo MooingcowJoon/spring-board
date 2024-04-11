@@ -861,7 +861,7 @@ ul{margin-block-start:0;margin-block-end:0;-webkit-padding-start:0;padding-inlin
 
 
 
-/* 전체강의목록(catalog) css */
+/* 전체강의목록(product/list) css */
 /*! CSS Used from: https://spartacodingclub.kr/_next/static/css/a68d89039227ee7e.css */
 dl,h4{-webkit-margin-start:unset;margin-inline-start:unset;-webkit-margin-end:unset;margin-inline-end:unset;-webkit-margin-before:unset;margin-block-start:unset;-webkit-margin-after:unset;margin-block-end:unset;}
 dd{-webkit-margin-start:unset;margin-inline-start:unset;}
@@ -1113,18 +1113,18 @@ ul{margin-block-start:0;margin-block-end:0;-webkit-padding-start:0;padding-inlin
 @media (min-width: 820px){
 .catalog-product-list{gap:40px 24px;max-width:1152px;}
 }
-.css-1jylheg{display:flex;flex-direction:column;min-width:270px;gap:16px;cursor:pointer;position:relative;}
+.product-list-item{display:flex;flex-direction:column;min-width:270px;gap:16px;cursor:pointer;position:relative;}
 @media (min-width: 320px) and (max-width: 767px){
-.css-1jylheg{min-width:159px;gap:10px;}
+.product-list-item{min-width:159px;gap:10px;}
 }
 @media (min-width: 768px) and (max-width: 819px){
-.css-1jylheg{min-width:159px;gap:15px;}
+.product-list-item{min-width:159px;gap:15px;}
 }
 @media (min-width: 820px) and (max-width: 1023px){
-.css-1jylheg{min-width:159px;gap:20px;}
+.product-list-item{min-width:159px;gap:20px;}
 }
 @media (min-width: 1200px){
-.css-1jylheg{gap:20px;max-width:270px;}
+.product-list-item{gap:20px;max-width:270px;}
 }
 .css-1fgk266{position:relative;width:100%;aspect-ratio:275 / 175;border-radius:12px;overflow:hidden;}
 @media (min-width: 320px) and (max-width: 767px){
@@ -1204,27 +1204,18 @@ ul{margin-block-start:0;margin-block-end:0;-webkit-padding-start:0;padding-inlin
 .css-1xkaiyq{bottom:0px;right:0px;border-radius:8px;width:100%;height:100%;background-image:url("https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/package/package_web_app_bg.png");background-repeat:no-repeat;background-size:cover;}
 
 /* catalog/검색 관련 */
-/*! CSS Used from: https://spartacodingclub.kr/_next/static/css/a68d89039227ee7e.css */
-img{image-rendering:-moz-crisp-edges;image-rendering:-o-crisp-edges;image-rendering:-webkit-optimize-contrast;-ms-interpolation-mode:nearest-neighbor;}
-*{line-height:1.5;box-sizing:border-box;letter-spacing:normal;}
-input{border:none;background:none;outline:none;-webkit-appearance:none;-moz-appearance:none;appearance:none;}
-button{background:unset;border:unset;padding:unset;}
-/*! CSS Used from: Embedded */
-*{margin:0;line-height:1.5;}
-button{-webkit-text-decoration:none;text-decoration:none;cursor:pointer;}
-/*! CSS Used from: Embedded */
-.css-1jylheg{display:flex;flex-direction:column;min-width:270px;gap:16px;cursor:pointer;position:relative;}
+.product-list-item{display:flex;flex-direction:column;min-width:270px;gap:16px;cursor:pointer;position:relative;}
 @media (min-width: 320px) and (max-width: 767px){
-.css-1jylheg{min-width:159px;gap:10px;}
+.product-list-item{min-width:159px;gap:10px;}
 }
 @media (min-width: 768px) and (max-width: 819px){
-.css-1jylheg{min-width:159px;gap:15px;}
+.product-list-item{min-width:159px;gap:15px;}
 }
 @media (min-width: 820px) and (max-width: 1023px){
-.css-1jylheg{min-width:159px;gap:20px;}
+.product-list-item{min-width:159px;gap:20px;}
 }
 @media (min-width: 1200px){
-.css-1jylheg{gap:20px;max-width:270px;}
+.product-list-item{gap:20px;max-width:270px;}
 }
 .css-1fgk266{position:relative;width:100%;aspect-ratio:275 / 175;border-radius:12px;overflow:hidden;}
 @media (min-width: 320px) and (max-width: 767px){

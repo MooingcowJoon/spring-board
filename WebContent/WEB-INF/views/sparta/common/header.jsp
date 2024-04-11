@@ -14,7 +14,7 @@
 				<div class="css-1butcu">
 					<div class="header-logo">
 						<img
-							src="../static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/icons/logo-active.png"
+							src="/res/static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/icons/logo-active.png"
 							alt="스파르타코딩클럽 로고" class="css-huvhzc">
 					</div>
 					<div id="headerCatalogBtn" class="header-menu-btn">전체 강의</div>

@@ -3,6 +3,8 @@
 <script type="text/javascript">
 $j(()=>{
 	
+	$j('.catalog-product-list').on('click','.product-list-item',e=>location.href="/sparta/product/"+$j(e.target).closest('.product-list-item').data('pno')+'/view.do')
+	
 	const sortCatalogProducts = $filter=>{
 		const orderBy = $filter.data('order-by')
 		const isDesc = orderBy === 'isFree' ? true : $filter.data('order-direction') === 'desc'
@@ -11,6 +13,7 @@ $j(()=>{
 			a = $j(a)
 			b = $j(b)
 			let comp
+			let priceComp = a.data('price')-b.data('price')
 			let pnoComp = a.data('pno')-b.data('pno')
 			if(isDesc){
 				const tmp = a.data(orderBy)
@@ -23,7 +26,7 @@ $j(()=>{
 				comp= a-b
 			}
 			if (comp === 0){
-				comp = pnoComp
+				comp = priceComp !== 0 ? priceComp : pnoComp
 			}
 			
 			return comp

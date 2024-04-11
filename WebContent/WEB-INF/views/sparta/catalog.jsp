@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@include file="common/header.jsp"%>
-<%@include file="/res/js/sparta/catalog_js.jsp"%>
+<%@include file="/res/js/sparta/product/list_js.jsp"%>
 <div id="main">
 	<div class="css-1hnxdb7">
 		<div id="categoryTab" class="css-p22c6q">
@@ -80,129 +80,12 @@
 						<div class="css-4xk843">
 							<div class="catalog-product-list">
 							<!-- 강의상품 요소 리스트 시작 -->
-								<div data-pno="1" data-sales-count="300" data-price="50000" data-is-free="Y" data-create-date="20230205" class="css-1jylheg">
-									<div class="css-1fgk266">
-										<img
-											src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/coding101.png"
-											class="css-19wdngt">
-									</div>
-									<div class="css-1s0hhm2">
-										<div class="css-1blrgae">
-											<b class="css-1gvvhuc">직장인 필수 코딩 용어 해설</b>
-											<p class="css-nc8pqs">일하면서 꼭 필요한 코딩용어를 1시간만에 끝낼 수 있습니다.</p>
-										</div>
-										<div class="css-1nwej3g">
-											<div class="css-7q2n07">
-												<p class="css-g5r6vh">무료</p>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div data-pno="2"  data-sales-count="250"  data-price="30000" data-is-free="Y" data-create-date="20230207"  class="css-1jylheg">
-									<div class="css-1fgk266">
-										<img
-											src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/chatgpt.png"
-											class="css-19wdngt">
-									</div>
-									<div class="css-1s0hhm2">
-										<div class="css-1blrgae">
-											<b class="css-1gvvhuc">chatGPT로 10분 만에 웹사이트 만들기</b>
-											<p class="css-nc8pqs">chatGPT를 나만의 코딩 비서로 활용해 웹사이트를
-												만들어보세요.</p>
-										</div>
-										<div class="css-1nwej3g">
-											<div class="css-7q2n07">
-												<p class="css-g5r6vh">무료</p>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div data-pno="3" data-sales-count="200"  data-price="9900" data-is-free="Y" data-create-date="20230305"  class="css-1jylheg">
-									<div class="css-1fgk266">
-										<img
-											src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/developer101.png"
-											class="css-19wdngt">
-									</div>
-									<div class="css-1s0hhm2">
-										<div class="css-1blrgae">
-											<b class="css-1gvvhuc">개발자 취업 준비의 모든 것</b>
-											<p class="css-nc8pqs">개발자 취업 시장을 살펴보고, 취업 로드맵을 그립니다.</p>
-										</div>
-										<div class="css-1nwej3g">
-											<div class="css-7q2n07">
-												<p class="css-g5r6vh">무료</p>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div data-pno="4" data-sales-count="150"  data-price="390000" data-is-free="N" data-create-date="20240302"  class="css-1jylheg">
-									<div class="css-1fgk266">
-										<img
-											src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/web_basic.png"
-											class="css-19wdngt">
-									</div>
-									<div class="css-1s0hhm2">
-										<div class="css-1blrgae">
-											<b class="css-1gvvhuc">[왕초보] 웹개발 종합반</b>
-											<p class="css-nc8pqs">약 4만 명이 인증한 시그니처 강의로 쉽고 재미있게 웹개발에
-												입문하세요.</p>
-										</div>
-										<div class="css-1nwej3g">
-											<div class="css-7q2n07">
-												<p class="css-zmgixm">22%</p>
-												<p class="css-1snc3x8">390,000원</p>
-											</div>
-											<div class="css-q7g3jq">
-												<svg xmlns="http://www.w3.org/2000/svg" width="20"
-													height="20" viewBox="0 0 20 20" fill="none">
-													<path
-														d="M15.3029 10.8348C14.681 9.3395 13.1604 7.86461 11.0988 6.95173C9.03709 6.03885 6.92273 5.90507 5.39787 6.44897L4.37663 5.99678L3.42681 8.1419C2.489 10.2599 4.40319 13.1606 7.70267 14.6216C11.0022 16.0826 14.4365 15.5501 15.3743 13.4321L16.3242 11.287L15.3029 10.8348Z"
-														fill="#FF9040"></path>
-													<path
-														d="M8.65218 12.4764C11.9514 13.9372 15.3861 13.4047 16.3239 11.2869C17.2616 9.1691 15.3472 6.26804 12.048 4.8072C8.74876 3.34636 5.31404 3.87892 4.37632 5.99671C3.43859 8.1145 5.35296 11.0156 8.65218 12.4764Z"
-														fill="#FFC226"></path></svg>
-												<p class="css-csh694">국비지원 시 49,000원</p>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div data-pno="5" data-sales-count="100"  data-price="89000" data-is-free="N" data-create-date="20230505"  class="css-1jylheg">
-									<div class="css-1fgk266">
-										<img
-											src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/free_myprofile.png"
-											class="css-19wdngt">
-									</div>
-									<div class="css-1s0hhm2">
-										<div class="css-1blrgae">
-											<b class="css-1gvvhuc">나만의 프로필 링크 만들기</b>
-											<p class="css-nc8pqs">포트폴리오와 이력서를 담은 페이지를 직접 만들어보세요.</p>
-										</div>
-										<div class="css-1nwej3g">
-											<div class="css-7q2n07">
-												<p class="css-1snc3x8">89,000원</p>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div data-pno="6" data-sales-count="50"  data-price="9900" data-is-free="Y" data-create-date="20230605"  class="css-1jylheg">
-									<div class="css-1fgk266">
-										<img
-											src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/ai_report_automation.png"
-											class="css-19wdngt">
-									</div>
-									<div class="css-1s0hhm2">
-										<div class="css-1blrgae">
-											<b class="css-1gvvhuc">AI로 10분만에 보고서 만들기</b>
-											<p class="css-nc8pqs">아이디어 한 줄과 AI로 기획서부터 PPT까지 10분만에
-												만들어보세요!</p>
-										</div>
-										<div class="css-1nwej3g">
-											<div class="css-7q2n07">
-												<p class="css-g5r6vh">무료</p>
-											</div>
-										</div>
-									</div>
-								</div>
+								<div data-pno="1" data-sales-count="250" data-price="150000" data-is-free="Y" data-create-date="20240404" class="css-1jylheg"><div class="css-1fgk266"><img src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/dev_turnover.png" class="css-19wdngt"></div><div class="css-1s0hhm2"><div class="css-1blrgae"><b class="css-1gvvhuc">2024년 웹 개발자 이직의 모든 것</b><p class="css-nc8pqs">국내 빅테크 3사를 거친 시니어로서, 뽑히는 노하우를 알려드려요.</p></div><div class="css-1nwej3g"><div class="css-7q2n07"><p class="css-g5r6vh">무료</p></div></div></div></div>
+								<div data-pno="2"  data-sales-count="300"  data-price="150000" data-is-free="Y" data-create-date="20240303" class="css-1jylheg"><div class="css-1fgk266"><img src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/dev_strategy.png" class="css-19wdngt"></div><div class="css-1s0hhm2"><div class="css-1blrgae"><b class="css-1gvvhuc">2024년 실패 없는 개발자 취업 전략</b><p class="css-nc8pqs">6개월만에 N사 개발자로 취업 시킨 전문가가 말하는 최신 취업 전략</p></div><div class="css-1nwej3g"><div class="css-7q2n07"><p class="css-g5r6vh">무료</p></div></div></div></div>
+								<div data-pno="3"  data-sales-count="150"  data-price="300000" data-is-free="N" data-create-date="20240202" class="css-1jylheg"><div class="css-1fgk266"><img src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/uxui_ai.png" class="css-19wdngt"></div><div class="css-1s0hhm2"><div class="css-1blrgae"><b class="css-1gvvhuc">디자이너를 위한 인공지능 A to Z</b><p class="css-nc8pqs">AI로 쉽고 빠르게 원하는 디자인을 만들어보세요!</p></div><div class="css-1nwej3g"><div class="css-7q2n07"><p class="css-1snc3x8">300,000원</p></div></div></div></div>
+								<div data-pno="4"  data-sales-count="100"  data-price="450000" data-is-free="N" data-create-date="20231212" class="css-1jylheg"><div class="css-1fgk266"><img src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/cicd.png" class="css-19wdngt"></div><div class="css-1s0hhm2"><div class="css-1blrgae"><b class="css-1gvvhuc">Docker 기반 CI/CD 파이프라인 구축하기</b><p class="css-nc8pqs">개발, 배포 파이프라인에 대한 경험이 없는 분들을 위한 강의입니다.</p></div><div class="css-1nwej3g"><div class="css-7q2n07"><p class="css-zmgixm">10%</p><p class="css-1snc3x8">450,000원</p></div></div></div></div>
+								<div data-pno="5"  data-sales-count="50"  data-price="450000" data-is-free="Y" data-create-date="20231111"class="css-1jylheg"><div class="css-1fgk266"><img src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/cs.png" class="css-19wdngt"></div><div class="css-1s0hhm2"><div class="css-1blrgae"><b class="css-1gvvhuc">실무에 바로 쓰이는 컴퓨터 공학 기초</b><p class="css-nc8pqs">비전공자를 위한 컴퓨터 공학 기초 강의입니다.</p></div><div class="css-1nwej3g"><div class="css-7q2n07"><p class="css-zmgixm">10%</p><p class="css-1snc3x8">450,000원</p></div></div></div></div>
+								<div data-pno="6"  data-sales-count="100"  data-price="450000" data-is-free="N" data-create-date="20241010"class="css-1jylheg"><div class="css-1fgk266"><img src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/catalog/cards/v2/aws_cloud.png" class="css-19wdngt"></div><div class="css-1s0hhm2"><div class="css-1blrgae"><b class="css-1gvvhuc">클라우드가 처음이어도 쉽게 배우는 AWS A to Z</b><p class="css-nc8pqs">AWS 기초를 중심으로 Solution Architect에 대해 배웁니다</p></div><div class="css-1nwej3g"><div class="css-7q2n07"><p class="css-1snc3x8">300,000원</p></div></div></div></div>
 							</div>
 						</div>
 					</div>

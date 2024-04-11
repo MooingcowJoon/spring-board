@@ -23,7 +23,7 @@
 $j(()=>{
 	/* 최상단 메뉴 관련 기능  */
 	$j('#headerDiv').on('click','.header-logo',()=>location.href='/sparta/index.do')
-	$j('#headerDiv').on('click','#headerCatalogBtn',()=>location.href='/sparta/catalog.do')
+	$j('#headerDiv').on('click','#headerCatalogBtn',()=>location.href='/sparta/product/list.do')
 	
 	
 	

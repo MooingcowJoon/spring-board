@@ -4,11 +4,24 @@ import java.util.Locale;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class SpartaController {
+	@RequestMapping(value="/sparta/product/{pno}/view.do",method = RequestMethod.GET)
+	public String productView(Locale locale,@PathVariable String pno,Model model) {
+		return "sparta/product/view/"+pno;
+	}
+	@RequestMapping(value="/sparta/product/list.do",method = RequestMethod.GET)
+	public String productList(Locale locale,Model model) {
+		return "sparta/product/list";
+	}
+	
+	
+	
+	
 	@RequestMapping(value="/sparta/common.do",method = RequestMethod.GET)
 	public String common(Locale locale,Model model) {
 		return "sparta/common/common";
