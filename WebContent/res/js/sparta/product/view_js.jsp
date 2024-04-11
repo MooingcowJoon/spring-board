@@ -36,7 +36,7 @@ $j(()=>{
 		const index = $j(e.target).index()
 		isScrolling=true
 	  	$j('[data-index='+index+']').get(0).scrollIntoView({ behavior: 'smooth', block: 'start' });
-		setTimeout(()=> isScrolling = false,1500)
+		setTimeout(()=> isScrolling = false,1000)
 		
 	})
 	

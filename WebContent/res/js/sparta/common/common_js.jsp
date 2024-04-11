@@ -8,7 +8,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title></title>
+<title>스파르타코딩클럽 클론</title>
 </head>
 <script src="/res/js/jquery-1.10.2.js"></script>
 <script type="text/javascript">
@@ -23,7 +23,7 @@
 $j(()=>{
 	/* 최상단 메뉴 관련 기능  */
 	$j('#headerDiv').on('click','.header-logo',()=>location.href='/sparta/index.do')
-	$j('#headerDiv').on('click','#headerCatalogBtn',()=>location.href='/sparta/product/list.do')
+	$j('#headerDiv').on('click','#listMenu',()=>location.href='/sparta/product/list.do')
 	
 	
 	
