@@ -24,6 +24,7 @@ $j(()=>{
 	/* 최상단 메뉴 관련 기능  */
 	$j('#headerDiv').on('click','.header-logo',()=>location.href='/sparta/index.do')
 	$j('#headerDiv').on('click','#listMenu',()=>location.href='/sparta/product/list.do')
+	$j('#headerDiv').on('click','#boardMenu',()=>location.href='/sparta/board/free/list.do')
 	const joinPage = $j('#joinPage').clone().css('display','flex')
 	$j('#joinPage').remove()
 	

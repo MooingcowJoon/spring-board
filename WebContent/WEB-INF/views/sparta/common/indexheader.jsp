@@ -40,7 +40,7 @@
 						부트캠프
 						<div class="css-17uj2d3">국비</div>
 					</div>
-					<div class="header-menu-btn">커뮤니티</div>
+					<div id="boardMenu"class="header-menu-btn">커뮤니티</div>
 					<div class="header-menu-btn">블로그</div>
 					<div class="header-menu-btn">이벤트</div>
 				</div>

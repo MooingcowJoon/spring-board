@@ -10,6 +10,29 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class SpartaController {
+	@RequestMapping(value="/sparta/board/qna/view.do",method = RequestMethod.GET)
+	public String boardQnaView(Locale locale,Model model) {
+		return "sparta/board/qna/view";
+	}
+	@RequestMapping(value="/sparta/board/free/view.do",method = RequestMethod.GET)
+	public String boardFreeView(Locale locale,Model model) {
+		return "sparta/board/free/view";
+	}
+	
+	@RequestMapping(value="/sparta/board/qna/list.do",method = RequestMethod.GET)
+	public String boardQnaList(Locale locale,Model model) {
+		return "sparta/board/qna/list";
+	}
+	
+	@RequestMapping(value="/sparta/board/free/list.do",method = RequestMethod.GET)
+	public String boardFreeList(Locale locale,Model model) {
+		return "sparta/board/free/list";
+	}
+	
+	@RequestMapping(value="/sparta/product/{pno}/enroll.do",method = RequestMethod.GET)
+	public String productEnroll(Locale locale,@PathVariable String pno,Model model) {
+		return "sparta/product/enroll";
+	}
 	@RequestMapping(value="/sparta/product/{pno}/view.do",method = RequestMethod.GET)
 	public String productView(Locale locale,@PathVariable String pno,Model model) {
 		return "sparta/product/view/"+pno;

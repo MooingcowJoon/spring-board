@@ -2,6 +2,8 @@
     pageEncoding="UTF-8"%>
 <script>
 $j(()=>{
+	
+	$j('#enrollBtn').click(e=>location.href='enroll.do')
 	let isScrolling = false
 	$j(window).on('scroll', function() {
 		if(!isScrolling){
@@ -39,7 +41,5 @@ $j(()=>{
 		setTimeout(()=> isScrolling = false,1000)
 		
 	})
-	
-	
 })
 </script>

@@ -17,7 +17,7 @@
 						<span>무료</span>
 					</div>
 				</div>
-				<button class="css-1av293u">수강 신청하기</button>
+				<button id="enrollBtn" class="css-1av293u">수강 신청하기</button>
 			</div>
 			<div class="css-1fn8fw2">
 				<section class="css-1immkjm">
