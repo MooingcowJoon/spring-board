@@ -27,14 +27,49 @@ $j(()=>{
 	$j('#headerDiv').on('click','#boardMenu',()=>location.href='/sparta/board/free/list.do')
 	const joinPage = $j('#joinPage').clone().css('display','flex')
 	$j('#joinPage').remove()
-	
 	const g_modal = idFind('modal')
 	
 	$j(g_modal).on('click','.backBtn',()=>$j(g_modal).children(':last').remove())
 	$j(g_modal).on('click','.closeBtn',()=>setModal())
 	$j(g_modal).on('click','.modal-join',()=>setModal(joinPage))
+	$j(g_modal).on('click','.css-10oczdc button',e=>{
+		$j(e.target).attr('class','css-1salghp').siblings().attr('class','css-rc3otg')
+	})
+	const checkAll = flag=>{
+		let html
+		if (flag){
+			html=`<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3.33331" y="3.33331" width="13.3333" height="13.3333" rx="2" fill="#141617" stroke="#141617" stroke-width="1.75"></rect><path d="M6.8327 10.2727L8.91604 12.1667L13.4994 8" stroke="#FFFFFF" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"></path></svg>전체 약관 동의`
+		}else{
+			html = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3.33331" y="3.33331" width="13.3333" height="13.3333" rx="2" stroke="#9DA7AE" stroke-width="1.75"></rect></svg>전체 약관 동의`
+		}
+		$j('.css-27eumk:first').html(html)
+	}
 	
-								
+	$j(g_modal).on('click','.css-27eumk',e=>{
+		const el = $j(e.target).closest('button')
+		let flag = el.find('path').length===0
+		let stroke = flag ? '#141617' : '#B4BFC6'
+		checkAll(flag)
+		$j('.css-1jf7ho2:first').children().each(function(){
+			$j(this).find('path:first').attr('stroke',stroke)
+		})
+	})
+	$j(g_modal).on('click','.css-1jf7ho2',e=>{
+		const el = $j(e.target).closest('button')
+		const path = el.find('path:first')
+		if(path.attr('stroke')==='#141617'){
+			path.attr('stroke','#B4BFC6')
+		}else{
+			path.attr('stroke','#141617')
+		}
+		
+		const checked = $j('.css-1jf7ho2:first').children().filter(function(){
+			return $j(this).find('path:first').attr('stroke')==='#141617'
+		})
+		console.log(checked.length)
+		checkAll(checked.length === 4)
+	})
+							
 	$j(loginDiv).click(()=>{setModal(`<div class="modal-login"><div class="css-4oebd2"><div class="css-1n1k95p"><div class="css-myjkxi"><svg class="closeBtn" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.16663 4.16669L15.8333 15.8334" stroke="#3A3E41" stroke-width="1.75" stroke-linecap="round"></path><path d="M15.8334 4.16669L4.16671 15.8334" stroke="#3A3E41" stroke-width="1.75" stroke-linecap="round"></path></svg></div></div><div class="css-1xpr18p"><div class="css-kcgo1q"><div class="css-gxukgu"><span>대한민국을 코딩의 땅으로</span><br>스파르타코딩클럽</div><div direction="vertical" size="12" class="css-j86f64"></div><div class="css-1hal8c">쉽고 재밌는 코딩 입문 강의부터
 			IT 역량 탄탄하게 갖추는 부트캠프까지!</div><div direction="vertical" size="40" class="css-ygt1wz"></div><button color="#141617" class="css-18wq8ro"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.00043 2.16699C4.80722 2.16699 1.4082 4.7989 1.4082 8.04735C1.4082 10.161 2.84752 12.0135 5.00935 13.0499C4.85022 13.63 4.43449 15.1538 4.35134 15.4796C4.24812 15.8841 4.50187 15.8785 4.66959 15.7703C4.80005 15.6846 6.74972 14.3855 7.59123 13.8252C8.04854 13.8912 8.51875 13.9263 9.00043 13.9263C13.1937 13.9263 16.5927 11.2944 16.5927 8.04735C16.5927 4.8003 13.1937 2.16699 9.00043 2.16699Z" fill="#141617"></path></svg> 카카오로 3초만에 시작하기</button><div direction="vertical" size="16" class="css-10vhklm"></div><button color="#141617" class="css-fqtlj">이메일로 시작하기</button><div direction="vertical" size="32" class="css-h23ofx"></div>
 			<span color="#81898F"  class="modal-join" style="text-decoration: underline;">회원가입</span>

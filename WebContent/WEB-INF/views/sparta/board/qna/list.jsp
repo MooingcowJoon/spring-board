@@ -31,7 +31,7 @@
 							<div class="css-1mpmq0i">
 								<div class="css-18vdxik">학습 질문</div>
 								<div class="css-sltocz">
-									<img src="/assets/icons/ic_question.svg" alt="Question Icon"
+									<img src="/res/img/ic_question.svg" alt="Question Icon"
 										class="css-1ysoy1z">
 									<div class="css-1vc0o0f">
 										<div class="css-q3uxca">

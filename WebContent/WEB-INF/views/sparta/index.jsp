@@ -152,90 +152,90 @@ setInterval(function(){
 					src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/home/v4/hero_img.png"
 					class="css-1i3379r">
 			</section>
-			<section class="css-1rb6wua">
-				<div class="css-snrszc">
-					<div class="css-b7x03b"
-						style="transform: translate3d(-5455px, 0px, 0px);">
-						<div class="css-195brfl">
-							<div class="css-1k0s4zo">
-								<div class="css-cyyhg6">
-									<div class="css-4fo6xu">
-										개발자 교육을 넘어<br>취업까지 책임지는, 항해99
-									</div>
-									<div class="css-198h3ji">2023 새해 맞이 얼리버드 할인 중(~1/16)</div>
-								</div>
-								<img
-									src="https://static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_hanghae.png"
-									class="css-1kk62ig">
-							</div>
-						</div>
-						<div class="css-1mftlg1">
-							<div class="css-ndhw6c">
-								<div class="css-cyyhg6">
-									<div class="css-4fo6xu">
-										지금 SQL 수강 신청 시<br>자격증 대비반 무료 참여 기회!
-									</div>
-									<div class="css-198h3ji">실무 SQL부터 자격증까지 한 번에</div>
-								</div>
-								<img
-									src="https://static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_sql.png"
-									class="css-1kk62ig">
-							</div>
-						</div>
-						<div class="css-1enrjq2">
-							<div class="css-5g9hl1">
-								<div class="css-cyyhg6">
-									<div class="css-4fo6xu">
-										친구랑 버킷리스트 만들고<br>푸짐한 상품까지 받아가세요!
-									</div>
-									<div class="css-198h3ji">월간코딩 한정, 친구추천 이벤트 진행 중</div>
-								</div>
-								<img
-									src="https://static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_rcmdsfree.png"
-									class="css-1kk62ig">
-							</div>
-						</div>
-						<div class="css-1mol2qt">
-							<div class="css-a61y41">
-								<div class="css-cyyhg6">
-									<div class="css-4fo6xu">
-										"헉 큰일났다"<br>큰일난 사람들의 큰일낸 이야기
-									</div>
-									<div class="css-198h3ji">실제 수강생들의 이야기와 목소리를 담았습니다.</div>
-								</div>
-								<img
-									src="https://static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_big_thing.png"
-									class="css-1kk62ig">
-							</div>
-						</div>
-					</div>
-					<div class="css-17ixjhm">
-						<div class="css-17cp7ro">
-							<svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-								<path
-									d="M9.86468 4.53033C10.1576 4.23744 10.1576 3.76256 9.86468 3.46967C9.57179 3.17678 9.09691 3.17678 8.80402 3.46967L9.86468 4.53033ZM5.33435 8L4.80402 7.46967C4.51113 7.76256 4.51113 8.23744 4.80402 8.53033L5.33435 8ZM8.80402 12.5303C9.09691 12.8232 9.57179 12.8232 9.86468 12.5303C10.1576 12.2374 10.1576 11.7626 9.86468 11.4697L8.80402 12.5303ZM8.80402 3.46967L4.80402 7.46967L5.86468 8.53033L9.86468 4.53033L8.80402 3.46967ZM4.80402 8.53033L8.80402 12.5303L9.86468 11.4697L5.86468 7.46967L4.80402 8.53033Z"
-									fill="rgba(255, 255, 255, 0.2)"></path></svg>
-						</div>
-						<div class="css-bav8ek">
-							<p class="css-1fwjbu3">1</p>
-							<p class="css-1mve0np">/</p>
-							<p class="css-1mve0np">
-								<!-- -->
-								4
-							</p>
-						</div>
-						<div class="css-17cp7ro">
-							<svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-								<path
-									d="M6.13532 11.4697C5.84243 11.7626 5.84243 12.2374 6.13532 12.5303C6.42821 12.8232 6.90309 12.8232 7.19598 12.5303L6.13532 11.4697ZM10.6656 8L11.196 8.53033C11.4889 8.23744 11.4889 7.76256 11.196 7.46967L10.6656 8ZM7.19598 3.46967C6.90309 3.17678 6.42821 3.17678 6.13532 3.46967C5.84243 3.76256 5.84243 4.23744 6.13532 4.53033L7.19598 3.46967ZM7.19598 12.5303L11.196 8.53033L10.1353 7.46967L6.13532 11.4697L7.19598 12.5303ZM11.196 7.46967L7.19598 3.46967L6.13532 4.53033L10.1353 8.53033L11.196 7.46967Z"
-									fill="#FFFFFF"></path></svg>
-						</div>
-					</div>
-				</div>
-			</section>
-				<section class="css-3fq7y5">
+<!-- 			<section class="css-1rb6wua"> -->
+<!-- 				<div class="css-snrszc"> -->
+<!-- 					<div class="css-b7x03b" -->
+<!-- 						style="transform: translate3d(-5455px, 0px, 0px);"> -->
+<!-- 						<div class="css-195brfl"> -->
+<!-- 							<div class="css-1k0s4zo"> -->
+<!-- 								<div class="css-cyyhg6"> -->
+<!-- 									<div class="css-4fo6xu"> -->
+<!-- 										개발자 교육을 넘어<br>취업까지 책임지는, 항해99 -->
+<!-- 									</div> -->
+<!-- 									<div class="css-198h3ji">2023 새해 맞이 얼리버드 할인 중(~1/16)</div> -->
+<!-- 								</div> -->
+<!-- 								<img -->
+<!-- 									src="https://static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_hanghae.png" -->
+<!-- 									class="css-1kk62ig"> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 						<div class="css-1mftlg1"> -->
+<!-- 							<div class="css-ndhw6c"> -->
+<!-- 								<div class="css-cyyhg6"> -->
+<!-- 									<div class="css-4fo6xu"> -->
+<!-- 										지금 SQL 수강 신청 시<br>자격증 대비반 무료 참여 기회! -->
+<!-- 									</div> -->
+<!-- 									<div class="css-198h3ji">실무 SQL부터 자격증까지 한 번에</div> -->
+<!-- 								</div> -->
+<!-- 								<img -->
+<!-- 									src="https://static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_sql.png" -->
+<!-- 									class="css-1kk62ig"> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 						<div class="css-1enrjq2"> -->
+<!-- 							<div class="css-5g9hl1"> -->
+<!-- 								<div class="css-cyyhg6"> -->
+<!-- 									<div class="css-4fo6xu"> -->
+<!-- 										친구랑 버킷리스트 만들고<br>푸짐한 상품까지 받아가세요! -->
+<!-- 									</div> -->
+<!-- 									<div class="css-198h3ji">월간코딩 한정, 친구추천 이벤트 진행 중</div> -->
+<!-- 								</div> -->
+<!-- 								<img -->
+<!-- 									src="https://static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_rcmdsfree.png" -->
+<!-- 									class="css-1kk62ig"> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 						<div class="css-1mol2qt"> -->
+<!-- 							<div class="css-a61y41"> -->
+<!-- 								<div class="css-cyyhg6"> -->
+<!-- 									<div class="css-4fo6xu"> -->
+<!-- 										"헉 큰일났다"<br>큰일난 사람들의 큰일낸 이야기 -->
+<!-- 									</div> -->
+<!-- 									<div class="css-198h3ji">실제 수강생들의 이야기와 목소리를 담았습니다.</div> -->
+<!-- 								</div> -->
+<!-- 								<img -->
+<!-- 									src="https://static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_big_thing.png" -->
+<!-- 									class="css-1kk62ig"> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+<!-- 					<div class="css-17ixjhm"> -->
+<!-- 						<div class="css-17cp7ro"> -->
+<!-- 							<svg width="16" height="16" viewBox="0 0 16 16" fill="none" -->
+<!-- 								xmlns="http://www.w3.org/2000/svg"> -->
+<!-- 								<path -->
+<!-- 									d="M9.86468 4.53033C10.1576 4.23744 10.1576 3.76256 9.86468 3.46967C9.57179 3.17678 9.09691 3.17678 8.80402 3.46967L9.86468 4.53033ZM5.33435 8L4.80402 7.46967C4.51113 7.76256 4.51113 8.23744 4.80402 8.53033L5.33435 8ZM8.80402 12.5303C9.09691 12.8232 9.57179 12.8232 9.86468 12.5303C10.1576 12.2374 10.1576 11.7626 9.86468 11.4697L8.80402 12.5303ZM8.80402 3.46967L4.80402 7.46967L5.86468 8.53033L9.86468 4.53033L8.80402 3.46967ZM4.80402 8.53033L8.80402 12.5303L9.86468 11.4697L5.86468 7.46967L4.80402 8.53033Z" -->
+<!-- 									fill="rgba(255, 255, 255, 0.2)"></path></svg> -->
+<!-- 						</div> -->
+<!-- 						<div class="css-bav8ek"> -->
+<!-- 							<p class="css-1fwjbu3">1</p> -->
+<!-- 							<p class="css-1mve0np">/</p> -->
+<!-- 							<p class="css-1mve0np"> -->
+<!-- 								 -->
+<!-- 								4 -->
+<!-- 							</p> -->
+<!-- 						</div> -->
+<!-- 						<div class="css-17cp7ro"> -->
+<!-- 							<svg width="16" height="16" viewBox="0 0 16 16" fill="none" -->
+<!-- 								xmlns="http://www.w3.org/2000/svg"> -->
+<!-- 								<path -->
+<!-- 									d="M6.13532 11.4697C5.84243 11.7626 5.84243 12.2374 6.13532 12.5303C6.42821 12.8232 6.90309 12.8232 7.19598 12.5303L6.13532 11.4697ZM10.6656 8L11.196 8.53033C11.4889 8.23744 11.4889 7.76256 11.196 7.46967L10.6656 8ZM7.19598 3.46967C6.90309 3.17678 6.42821 3.17678 6.13532 3.46967C5.84243 3.76256 5.84243 4.23744 6.13532 4.53033L7.19598 3.46967ZM7.19598 12.5303L11.196 8.53033L10.1353 7.46967L6.13532 11.4697L7.19598 12.5303ZM11.196 7.46967L7.19598 3.46967L6.13532 4.53033L10.1353 8.53033L11.196 7.46967Z" -->
+<!-- 									fill="#FFFFFF"></path></svg> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</section> -->
+		<section class="css-3fq7y5">
 		<div class="css-1pv30y5">
 			<h2 class="css-hhcb1">처음이라면 무료로 시작해보세요</h2>
 			<h2 class="css-lag1gs">따라만 하면 1시간만에 결과물 완성!</h2>

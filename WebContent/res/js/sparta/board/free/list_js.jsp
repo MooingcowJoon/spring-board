@@ -2,6 +2,22 @@
     pageEncoding="UTF-8"%>
 <script>
 $j(()=>{
+	
+	$j('#search').on('input',e=>{
+		const val = e.target.value
+		$j('#boardList').children().each(function(){
+			if(val===''){
+				$j(this).show()
+			}
+			if(!$j(this).find('.css-cp47oo:first').text().includes(val) 
+					 &&!$j(this).find('.css-14bssip:first').text().includes(val) ){
+				$j(this).hide()
+			}else{
+				$j(this).show()
+			}
+		})
+	})
+	
 	const boardListSort = orderBy => {
 		const list = $j("#boardList").children()
 		const sortedElArr = list.sort((a,b)=>{

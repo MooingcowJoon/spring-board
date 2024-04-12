@@ -2,24 +2,6 @@
     pageEncoding="UTF-8"%>
 <script>
 $j(()=>{
-	function parseDate(dateStr) {
-	    // 날짜 형식에 맞게 문자열 파싱
-	    const dateParts = dateStr.split(' ');
-	    const year = parseInt(dateParts[0].slice(0, 4));
-	    const month = parseInt(dateParts[1].slice(0, -1)) - 1; // 월은 0부터 시작하므로 1을 빼줌
-	    const day = parseInt(dateParts[2].slice(0, -1));
-	    const timeParts = dateParts[3].split(':');
-	    let hour = parseInt(timeParts[0]);
-	    const minute = parseInt(timeParts[1]);
-
-	    // 오후인 경우 시간 조정
-	    if (dateParts[4] === '오후') {
-	        hour += 12;
-	    }
-
-	    // Date 객체 생성
-	    return new Date(year, month, day, hour, minute);
-	}
 
 	$j('#toListBtn').click(e=>location.href="list.do")
 	$j('#boardList').on('click','.css-k59gj9',e=>{
@@ -31,14 +13,28 @@ $j(()=>{
 	
 	$j('#navTab').children().click(e=>location.href='/sparta/board/'+$j(e.target).data('link')+'/list.do')
 	
-	
-	
-	
-	
+	$j('#main').on('click','#categoryBtn',e=>{
+		const el = $j('#categoryList')
+		el.toggle()
+		
+	})
+	$j('#main').on('click','#categoryList li',e=>{
+		const text = $j(e.target).removeClass().addClass('css-16uk8or').text()
+			$j(e.target).siblings().removeClass().addClass('css-nyb6vk')
+			.parent().toggle().parent().children(':first').html(text+`<img src="/res/img/arrow_down.svg" class="css-1bhrqo4">`).attr('class','css-1w5123m')
+		
+	})
 	
 	$j('#writeFree').click(e=>$j('#main').prepend(`
-			<div class="css-wonqq0"><div class="css-agejl7"><div class="css-r8q25b">자유게시판 작성하기</div><div class="css-1iyoj2o"><div class="css-1odc90o"><div class="css-1t5srfe"><button class="css-pfhqzm">카테고리 선택<img src="/assets/icons/Q_Qeditor-select-arrow-down.svg" class="css-1bhrqo4"></button></div><div class="css-1iqxhyo"><textarea rows="1" placeholder="제목을 입력해주세요" class="css-16kqrm" style="overflow: hidden; resize: none;"></textarea></div></div></div><div class="css-17wj0zk"><div class=""><div class="quill "><div class="ql-container ql-snow"><div class="ql-editor ql-blank" data-gramm="false" contenteditable="true" data-placeholder="내용을 입력하세요.
-
+			<div id="writePopup" class="css-wonqq0"><div class="css-agejl7"><div class="css-r8q25b">자유게시판 작성하기</div><div class="css-1iyoj2o"><div class="css-1odc90o">
+			<div class="css-1t5srfe">
+			<button id="categoryBtn" class="css-pfhqzm">카테고리 선택
+			<img src="/res/img/arrow_down.svg" class="css-1bhrqo4"></button>
+			<ul id="categoryList" style="display:none" class="css-l2t941"><li data-expired="false" class="css-nyb6vk">수강 인증</li><li data-expired="false" class="css-nyb6vk">사는 이야기</li><li data-expired="false" class="css-nyb6vk">같이 해요</li><li data-expired="false" class="css-nyb6vk">궁금해요</li></ul>
+			</div>
+	
+	<div class="css-1iqxhyo"><textarea rows="1" placeholder="제목을 입력해주세요" class="css-16kqrm" style="overflow: hidden; resize: none;"></textarea></div></div></div><div class="css-17wj0zk"><div class=""><div class="quill "><div class="ql-container ql-snow"><div class="ql-editor ql-blank" data-gramm="false" contenteditable="true" data-placeholder="내용을 입력하세요.
+				
 			 • 게시판 특성에 맞지 않는 내용 작성을 자제해주세요! (홍보성, 정치적, 분란성 글 및 댓글)
 			 • 위반 시 별도의 통보 없이 활동 정지, 글 이동 및 삭제될 수 있습니다."><p><br></p></div><div class="ql-clipboard" contenteditable="true" tabindex="-1"></div><div class="ql-tooltip ql-hidden"><a class="ql-preview" rel="noopener noreferrer" target="_blank" href="about:blank"></a><input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL"><a class="ql-action"></a><a class="ql-remove"></a></div></div></div></div><div id="toolbar" class="ql-toolbar ql-snow"><span class="ql-formats"><button content="코드 블록" class="ql-code-block css-1qhzcav" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
 			    <path d="M4.381 13.95a.875.875 0 1 0 1.238-1.237L4.38 13.951zM1.667 10l-.62-.619a.875.875 0 0 0 .001 1.237L1.667 10zm3.952-2.715A.875.875 0 1 0 4.38 6.047L5.62 7.284zm0 5.43L2.285 9.38l-1.237 1.237 3.333 3.334 1.238-1.238zm-3.334-2.097L5.62 7.284 4.38 6.047 1.048 9.38l1.237 1.237zM15.619 6.05a.875.875 0 1 0-1.238 1.237l1.238-1.238zM18.333 10l.62.619a.875.875 0 0 0 0-1.237l-.62.618zm-3.952 2.715a.875.875 0 0 0 1.238 1.237l-1.238-1.237zm0-5.43 3.334 3.334 1.237-1.237-3.333-3.334-1.238 1.238zm3.334 2.097-3.334 3.333 1.238 1.237 3.333-3.333-1.237-1.237z" fill="#505254"></path>

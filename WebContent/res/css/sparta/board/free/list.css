@@ -633,3 +633,44 @@ a,button{-webkit-text-decoration:none;text-decoration:none;cursor:pointer;}
 @font-face{font-display:swap;font-family:Pretendard;font-weight:700;font-style:normal;src:local("Pretendard Bold"), url("https://static.spartacodingclub.kr/static/fonts/Pretendard/Pretendard-Bold.subset.woff2") format("woff2"), url("https://static.spartacodingclub.kr/static/fonts/Pretendard/Pretendard-Bold.subset.woff") format("woff"), url("https://static.spartacodingclub.kr/static/fonts/Pretendard/Pretendard-Bold.otf");}
 @font-face{font-display:swap;font-family:Pretendard;font-weight:800;font-style:normal;src:url("https://static.spartacodingclub.kr/static/fonts/Pretendard/Pretendard-ExtraBold.subset.woff2") format("woff2"), url("https://static.spartacodingclub.kr/static/fonts/Pretendard/Pretendard-ExtraBold.subset.woff") format("woff"), url("https://static.spartacodingclub.kr/static/fonts/Pretendard/Pretendard-ExtraBold.otf");}
 @font-face{font-display:swap;font-family:Pretendard;font-weight:900;font-style:normal;src:url("https://static.spartacodingclub.kr/static/fonts/Pretendard/Pretendard-Black.subset.woff2") format("woff2"), url("https://static.spartacodingclub.kr/static/fonts/Pretendard/Pretendard-Black.subset.woff") format("woff"), url("https://static.spartacodingclub.kr/static/fonts/Pretendard/Pretendard-Black.otf");}
+
+
+
+
+
+
+/* 글쓰기 팝업창 관련 css */
+/*! CSS Used from: https://spartacodingclub.kr/_next/static/css/a68d89039227ee7e.css */
+img{image-rendering:-moz-crisp-edges;image-rendering:-o-crisp-edges;image-rendering:-webkit-optimize-contrast;-ms-interpolation-mode:nearest-neighbor;}
+li{display:inherit;}
+*{line-height:1.5;box-sizing:border-box;letter-spacing:normal;}
+/*! CSS Used from: Embedded */
+*{margin:0;line-height:1.5;}
+ul{margin-block-start:0;margin-block-end:0;-webkit-padding-start:0;padding-inline-start:0;}
+/*! CSS Used from: Embedded */
+.css-l2t941{position:absolute;top:63px;padding:8px;border-radius:12px;overflow:hidden;border:1px solid rgb(234, 235, 237);box-shadow:rgba(0, 0, 0, 0.08) 0px 8px 20px 0px;z-index:30;left:0px;width:100%;background:rgb(255, 255, 255);color:black;list-style-type:none;transition:all 0.3s ease-in 0s;}
+.css-nyb6vk{padding:14.5px 20px;height:50px;flex-direction:row;gap:10px;transition:all 0.1s ease 0s;display:flex;border-radius:8px;font-weight:500;color:rgb(80, 82, 84);background-color:rgb(255, 255, 255);cursor:pointer;}
+.css-nyb6vk:hover{background-color:rgb(255, 241, 244);background-size:100px 100%;}
+.css-nyb6vk:last-of-type{border-bottom:0px none;}
+.css-nyb6vk::-webkit-scrollbar{width:6px;}
+.css-nyb6vk::-webkit-scrollbar-track{background:transparent;}
+.css-nyb6vk::-webkit-scrollbar-thumb{background:rgb(48, 48, 48);border-radius:45px;}
+.css-nyb6vk::-webkit-scrollbar-thumb:hover{background:rgb(48, 48, 48);}
+.css-16uk8or{padding:14.5px 20px;height:50px;flex-direction:row;gap:10px;transition:all 0.1s ease 0s;display:flex;border-radius:8px;font-weight:700;color:rgb(232, 52, 78);background-color:rgb(255, 255, 255);cursor:pointer;}
+.css-16uk8or:hover{background-color:rgb(255, 241, 244);background-size:100px 100%;}
+.css-16uk8or::-webkit-scrollbar{width:6px;}
+.css-16uk8or::-webkit-scrollbar-track{background:transparent;}
+.css-16uk8or::-webkit-scrollbar-thumb{background:rgb(48, 48, 48);border-radius:45px;}
+.css-16uk8or::-webkit-scrollbar-thumb:hover{background:rgb(48, 48, 48);}
+
+/*! CSS Used from: https://spartacodingclub.kr/_next/static/css/a68d89039227ee7e.css */
+img{image-rendering:-moz-crisp-edges;image-rendering:-o-crisp-edges;image-rendering:-webkit-optimize-contrast;-ms-interpolation-mode:nearest-neighbor;}
+*{line-height:1.5;box-sizing:border-box;letter-spacing:normal;}
+button{background:unset;border:unset;padding:unset;}
+/*! CSS Used from: Embedded */
+*{margin:0;line-height:1.5;}
+button{-webkit-text-decoration:none;text-decoration:none;cursor:pointer;}
+/*! CSS Used from: Embedded */
+.css-1bhrqo4{transform:none;transition-duration:0.5s;}
+.css-1w5123m{font-family:Pretendard;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:justify;justify-content:space-between;width:100%;height:inherit;color:rgb(0, 0, 0);border:0px none;outline:none 0px;padding-left:20px;padding-right:20px;background:transparent;cursor:pointer;}
+/*! CSS Used fontfaces */

@@ -42,7 +42,7 @@
 									<path
 										d="M13.1187 11.8813C12.777 11.5396 12.223 11.5396 11.8813 11.8813C11.5396 12.223 11.5396 12.777 11.8813 13.1187L13.1187 11.8813ZM16.8813 18.1187C17.223 18.4604 17.777 18.4604 18.1187 18.1187C18.4604 17.777 18.4604 17.223 18.1187 16.8813L16.8813 18.1187ZM11.8813 13.1187L16.8813 18.1187L18.1187 16.8813L13.1187 11.8813L11.8813 13.1187Z"
 										fill="#e8344e"></path></svg>
-								<input placeholder="" type="search" class="css-1n5z2jo" value="">
+								<input id="search" placeholder="" type="search" class="css-1n5z2jo" value="">
 								<div class="css-t6548q">검색어를 입력해주세요.</div>
 							</div>
 						</div>
@@ -127,16 +127,7 @@
 									</div>
 									<div class="css-99cwur">
 										<div class="css-1fhge30">
-											<div class="css-aw18wm">
-												<span
-													style="box-sizing: border-box; display: block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; inset: 0px;"><img
-													src="/_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F0.png&amp;w=3840&amp;q=75"
-													decoding="async" data-nimg="fill"
-													style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
-													sizes="100vw"
-													srcset="/_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F0.png&amp;w=640&amp;q=75 640w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F0.png&amp;w=750&amp;q=75 750w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F0.png&amp;w=828&amp;q=75 828w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F0.png&amp;w=1080&amp;q=75 1080w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F0.png&amp;w=1200&amp;q=75 1200w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F0.png&amp;w=1920&amp;q=75 1920w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F0.png&amp;w=2048&amp;q=75 2048w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F0.png&amp;w=3840&amp;q=75 3840w"></span>
-											</div>
-											<div class="css-5zcuov">
+																				<div class="css-5zcuov">
 												<div class="css-1sika4i">이*식</div>
 												<div class="css-1tify6w">
 													<svg width="2" height="2" viewBox="0 0 2 2" fill="none"
@@ -261,15 +252,7 @@
 									</div>
 									<div class="css-99cwur">
 										<div class="css-1fhge30">
-											<div class="css-aw18wm">
-												<span
-													style="box-sizing: border-box; display: block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; inset: 0px;"><img
-													src="/_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=3840&amp;q=75"
-													decoding="async" data-nimg="fill"
-													style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
-													sizes="100vw"
-													srcset="/_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=640&amp;q=75 640w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=750&amp;q=75 750w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=828&amp;q=75 828w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=1080&amp;q=75 1080w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=1200&amp;q=75 1200w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=1920&amp;q=75 1920w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=2048&amp;q=75 2048w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=3840&amp;q=75 3840w"></span>
-											</div>
+											
 											<div class="css-5zcuov">
 												<div class="css-1sika4i">이*영</div>
 												<div class="css-1tify6w">
@@ -372,15 +355,7 @@
 									</div>
 									<div class="css-99cwur">
 										<div class="css-1fhge30">
-											<div class="css-aw18wm">
-												<span
-													style="box-sizing: border-box; display: block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; inset: 0px;"><img
-													src="/_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=3840&amp;q=75"
-													decoding="async" data-nimg="fill"
-													style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
-													sizes="100vw"
-													srcset="/_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=640&amp;q=75 640w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=750&amp;q=75 750w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=828&amp;q=75 828w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=1080&amp;q=75 1080w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=1200&amp;q=75 1200w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=1920&amp;q=75 1920w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=2048&amp;q=75 2048w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=3840&amp;q=75 3840w"></span>
-											</div>
+											
 											<div class="css-5zcuov">
 												<div class="css-1sika4i">김*석</div>
 												<div class="css-1tify6w">
@@ -481,15 +456,7 @@
 									</div>
 									<div class="css-99cwur">
 										<div class="css-1fhge30">
-											<div class="css-aw18wm">
-												<span
-													style="box-sizing: border-box; display: block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; inset: 0px;"><img
-													src="/_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F6.png&amp;w=3840&amp;q=75"
-													decoding="async" data-nimg="fill"
-													style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
-													sizes="100vw"
-													srcset="/_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F6.png&amp;w=640&amp;q=75 640w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F6.png&amp;w=750&amp;q=75 750w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F6.png&amp;w=828&amp;q=75 828w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F6.png&amp;w=1080&amp;q=75 1080w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F6.png&amp;w=1200&amp;q=75 1200w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F6.png&amp;w=1920&amp;q=75 1920w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F6.png&amp;w=2048&amp;q=75 2048w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F6.png&amp;w=3840&amp;q=75 3840w"></span>
-											</div>
+											
 											<div class="css-5zcuov">
 												<div class="css-1sika4i">한*철</div>
 												<div class="css-1tify6w">
@@ -590,15 +557,7 @@
 									</div>
 									<div class="css-99cwur">
 										<div class="css-1fhge30">
-											<div class="css-aw18wm">
-												<span
-													style="box-sizing: border-box; display: block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; inset: 0px;"><img
-													src="/_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=3840&amp;q=75"
-													decoding="async" data-nimg="fill"
-													style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
-													sizes="100vw"
-													srcset="/_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=640&amp;q=75 640w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=750&amp;q=75 750w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=828&amp;q=75 828w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=1080&amp;q=75 1080w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=1200&amp;q=75 1200w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=1920&amp;q=75 1920w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=2048&amp;q=75 2048w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F34.png&amp;w=3840&amp;q=75 3840w"></span>
-											</div>
+											
 											<div class="css-5zcuov">
 												<div class="css-1sika4i">송*철</div>
 												<div class="css-1tify6w">
@@ -718,14 +677,7 @@
 									</div>
 									<div class="css-99cwur">
 										<div class="css-1fhge30">
-											<div class="css-aw18wm">
-												<span
-													style="box-sizing: border-box; display: block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; inset: 0px;"><img
-													src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-													decoding="async" data-nimg="fill"
-													style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;">
-												<noscript></noscript></span>
-											</div>
+										
 											<div class="css-5zcuov">
 												<div class="css-1sika4i">김*식</div>
 												<div class="css-1tify6w">
@@ -825,14 +777,7 @@
 									</div>
 									<div class="css-99cwur">
 										<div class="css-1fhge30">
-											<div class="css-aw18wm">
-												<span
-													style="box-sizing: border-box; display: block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; inset: 0px;"><img
-													src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-													decoding="async" data-nimg="fill"
-													style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;">
-												<noscript></noscript></span>
-											</div>
+											
 											<div class="css-5zcuov">
 												<div class="css-1sika4i">강*연</div>
 												<div class="css-1tify6w">
@@ -931,14 +876,7 @@
 									</div>
 									<div class="css-99cwur">
 										<div class="css-1fhge30">
-											<div class="css-aw18wm">
-												<span
-													style="box-sizing: border-box; display: block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; inset: 0px;"><img
-													src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-													decoding="async" data-nimg="fill"
-													style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;">
-												<noscript></noscript></span>
-											</div>
+											
 											<div class="css-5zcuov">
 												<div class="css-1sika4i">이*솔</div>
 												<div class="css-1tify6w">
@@ -1042,15 +980,7 @@
 									</div>
 									<div class="css-99cwur">
 										<div class="css-1fhge30">
-											<div class="css-aw18wm">
-												<span
-													style="box-sizing: border-box; display: block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; inset: 0px;"><img
-													src="/_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=3840&amp;q=75"
-													decoding="async" data-nimg="fill"
-													style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
-													sizes="100vw"
-													srcset="/_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=640&amp;q=75 640w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=750&amp;q=75 750w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=828&amp;q=75 828w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=1080&amp;q=75 1080w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=1200&amp;q=75 1200w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=1920&amp;q=75 1920w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=2048&amp;q=75 2048w, /_next/image?url=https%3A%2F%2Fstatic.spartacodingclub.kr%2FTeamSparta-Inc%2Fscc-frontend%2Fassets%2Fimages%2Fprofile%2F20.png&amp;w=3840&amp;q=75 3840w"></span>
-											</div>
+											
 											<div class="css-5zcuov">
 												<div class="css-1sika4i">윤*화</div>
 												<div class="css-1tify6w">
@@ -1149,14 +1079,7 @@
 									</div>
 									<div class="css-99cwur">
 										<div class="css-1fhge30">
-											<div class="css-aw18wm">
-												<span
-													style="box-sizing: border-box; display: block; overflow: hidden; width: initial; height: initial; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; inset: 0px;"><img
-													src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-													decoding="async" data-nimg="fill"
-													style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;">
-												<noscript></noscript></span>
-											</div>
+										
 											<div class="css-5zcuov">
 												<div class="css-1sika4i">강*연</div>
 												<div class="css-1tify6w">
@@ -1241,10 +1164,6 @@
 						</div>
 						<div class="css-dfkeu1">
 							<div class="css-1bstfuq">
-								<div class="css-1q2lbmy">
-									<img src="/assets/icons/ic_loading_black.png"
-										class="css-1g4ythc">
-								</div>
 							</div>
 						</div>
 					</div>
