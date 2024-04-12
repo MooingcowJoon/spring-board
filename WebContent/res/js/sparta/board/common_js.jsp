@@ -2,6 +2,25 @@
     pageEncoding="UTF-8"%>
 <script>
 $j(()=>{
+	function parseDate(dateStr) {
+	    // 날짜 형식에 맞게 문자열 파싱
+	    const dateParts = dateStr.split(' ');
+	    const year = parseInt(dateParts[0].slice(0, 4));
+	    const month = parseInt(dateParts[1].slice(0, -1)) - 1; // 월은 0부터 시작하므로 1을 빼줌
+	    const day = parseInt(dateParts[2].slice(0, -1));
+	    const timeParts = dateParts[3].split(':');
+	    let hour = parseInt(timeParts[0]);
+	    const minute = parseInt(timeParts[1]);
+
+	    // 오후인 경우 시간 조정
+	    if (dateParts[4] === '오후') {
+	        hour += 12;
+	    }
+
+	    // Date 객체 생성
+	    return new Date(year, month, day, hour, minute);
+	}
+
 	$j('#toListBtn').click(e=>location.href="list.do")
 	$j('#boardList').on('click','.css-k59gj9',e=>{
 		location.href="view.do"

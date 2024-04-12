@@ -4,7 +4,8 @@
 <style>
 <%@include file="/res/css/sparta/board/free/list.css"%>
 </style>
-<%@include file="/res/js/sparta/board/list_js.jsp"%>
+<%@include file="/res/js/sparta/board/common_js.jsp"%>
+<%@include file="/res/js/sparta/board/free/list_js.jsp"%>
 <div id="main">
 	<div class="css-1hnxdb7">
 		<div class="css-mbwamd">
