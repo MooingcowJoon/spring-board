@@ -1,6 +1,51 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@include file="common/indexheader.jsp"%>
+<style>
+/*! CSS Used from: https://spartacodingclub.kr/_next/static/css/a68d89039227ee7e.css */
+h1{-webkit-margin-start:unset;margin-inline-start:unset;-webkit-margin-end:unset;margin-inline-end:unset;-webkit-margin-before:unset;margin-block-start:unset;-webkit-margin-after:unset;margin-block-end:unset;}
+*{line-height:1.5;box-sizing:border-box;letter-spacing:normal;}
+/*! CSS Used from: Embedded */
+*{margin:0;line-height:1.5;}
+h1{font-size:2.4rem;}
+@media (min-width: 1024px){
+h1{font-size:4rem;}
+}
+.css-16wypob{font-family:Pretendard;font-style:normal;font-weight:700;font-size:20px;line-height:28px;color:rgb(20, 22, 23);}
+@media (min-width: 820px){
+.css-16wypob{font-family:Pretendard;font-style:normal;font-weight:700;font-size:40px;line-height:56px;color:rgb(20, 22, 23);}
+}
+/*! CSS Used from: https://spartacodingclub.kr/_next/static/css/a68d89039227ee7e.css */
+h1{-webkit-margin-start:unset;margin-inline-start:unset;-webkit-margin-end:unset;margin-inline-end:unset;-webkit-margin-before:unset;margin-block-start:unset;-webkit-margin-after:unset;margin-block-end:unset;}
+*{line-height:1.5;box-sizing:border-box;letter-spacing:normal;}
+/*! CSS Used from: Embedded */
+*{margin:0;line-height:1.5;}
+h1{font-size:2.4rem;}
+@media (min-width: 1024px){
+h1{font-size:4rem;}
+}
+/*! CSS Used from: Embedded */
+.css-16wypob{font-family:Pretendard;font-style:normal;font-weight:700;font-size:20px;line-height:28px;color:rgb(20, 22, 23);}
+@media (min-width: 820px){
+.css-16wypob{font-family:Pretendard;font-style:normal;font-weight:700;font-size:40px;line-height:56px;color:rgb(20, 22, 23);}
+}
+.css-1cvbm22{display:flex;flex-direction:column;position:relative;height:56px;transform:translateY(-200%);transition:transform 0.3s ease-in-out 0s;}
+/*! CSS Used fontfaces */
+.css-1aokzse{display:flex;flex-direction:column;position:relative;height:56px;transform:translateY(0%);transition:transform 0.3s ease-in-out 0s;}
+
+</style>
+<script>
+$j(()=>{
+	
+setInterval(function(){
+	const  el = $j(titleBanner)
+	const index = parseInt(el.data('index'))
+	el.data('index',(index+1)%el.children().length)
+	el.css('transform','translateY(-'+(index*100)+'%)')
+},2000)
+})
+
+</script>
 <div id="main">
 	<div class="css-16z0wya">
 		<div class="css-ppdf1p">
@@ -13,8 +58,8 @@
 						<div class="css-1slt03f">
 							<div class="css-1bku0gi">
 								<div class="css-1dr1vfe">
-									<div height="56" class="css-tp2tac">
-										<div height="56" class="css-1cvbm22">
+									<div height="56" class="css-tp2tac" data-index="0">
+										<div id="titleBanner" data-index="0" height="56" class="css-1cvbm22">
 											<h1 class="css-16wypob">반복되는 업무가 지겨운 지원이도</h1>
 											<h1 class="css-16wypob">내 아이디어로 돈 벌고 싶은 정현이도</h1>
 											<h1 class="css-16wypob">개발자 없이 앱 만들고 싶은 소영이도</h1>
@@ -104,7 +149,7 @@
 					</div>
 				</div>
 				<img
-					src="/static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/home/v4/hero_img.png"
+					src="https://static.spartacodingclub.kr/TeamSparta-Inc/scc-frontend/assets/images/home/v4/hero_img.png"
 					class="css-1i3379r">
 			</section>
 			<section class="css-1rb6wua">
@@ -120,7 +165,7 @@
 									<div class="css-198h3ji">2023 새해 맞이 얼리버드 할인 중(~1/16)</div>
 								</div>
 								<img
-									src="/static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_hanghae.png"
+									src="https://static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_hanghae.png"
 									class="css-1kk62ig">
 							</div>
 						</div>
@@ -133,7 +178,7 @@
 									<div class="css-198h3ji">실무 SQL부터 자격증까지 한 번에</div>
 								</div>
 								<img
-									src="/static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_sql.png"
+									src="https://static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_sql.png"
 									class="css-1kk62ig">
 							</div>
 						</div>
@@ -146,7 +191,7 @@
 									<div class="css-198h3ji">월간코딩 한정, 친구추천 이벤트 진행 중</div>
 								</div>
 								<img
-									src="/static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_rcmdsfree.png"
+									src="https://static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_rcmdsfree.png"
 									class="css-1kk62ig">
 							</div>
 						</div>
@@ -159,33 +204,7 @@
 									<div class="css-198h3ji">실제 수강생들의 이야기와 목소리를 담았습니다.</div>
 								</div>
 								<img
-									src="/static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_big_thing.png"
-									class="css-1kk62ig">
-							</div>
-						</div>
-						<div class="css-195brfl">
-							<div class="css-1k0s4zo">
-								<div class="css-cyyhg6">
-									<div class="css-4fo6xu">
-										개발자 교육을 넘어<br>취업까지 책임지는, 항해99
-									</div>
-									<div class="css-198h3ji">2023 새해 맞이 얼리버드 할인 중(~1/16)</div>
-								</div>
-								<img
-									src="/static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_hanghae.png"
-									class="css-1kk62ig">
-							</div>
-						</div>
-						<div class="css-1mftlg1">
-							<div class="css-ndhw6c">
-								<div class="css-cyyhg6">
-									<div class="css-4fo6xu">
-										지금 SQL 수강 신청 시<br>자격증 대비반 무료 참여 기회!
-									</div>
-									<div class="css-198h3ji">실무 SQL부터 자격증까지 한 번에</div>
-								</div>
-								<img
-									src="/static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_sql.png"
+									src="https://static.spartacodingclub.kr/assets/images/home/carousel/carousel_item_web_big_thing.png"
 									class="css-1kk62ig">
 							</div>
 						</div>
