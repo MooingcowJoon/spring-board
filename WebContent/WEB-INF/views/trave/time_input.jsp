@@ -14,8 +14,7 @@ th{text-align:center;}
 tr.clientRow:hover,
 tr.clientRow.selected,
 button.dateBtn:hover,
-button.dateBtn.selected,
-tr.traveRow.checked{
+button.dateBtn.selected{
 background-color:skyblue;
 }
 
@@ -26,11 +25,9 @@ cursor:pointer;
 
 </style>
 <title>여행 일정 관리</title>
-</head>
 <script>
+
 $j(()=>{
-	var g_selectedRow
-	var g_selectedDate
 	let g_isShiftDown=false
 	// *State* : 상태들의 공통 기능을 정의하는 추상 클래스.
 	// 00:00~ 12:59 까지 입력가능.
@@ -97,6 +94,7 @@ $j(()=>{
 			const time = this.time
 			let nextIndex = next
 			let nextCursor = 0
+			console.log(this.cursorIndex)
 			if(this.cursorIndex === 0){
 				time.h = val
 				if(val<2) {
@@ -268,7 +266,7 @@ $j(()=>{
 				e.preventDefault()
 			}
 			,'keydown': e => {
-			var allowed = ['Shift','F5','Ctrl','c','v','F12']
+			var allowed = ['Shift','F5','Ctrl','c','v']
 			!allowed.includes(e.key) && e.preventDefault()
 			g_time.keydown(e.key)	
 			}
@@ -278,6 +276,7 @@ $j(()=>{
 			}
 			,'blur':e=>{
 				if(g_time&& e.target === g_time.el){
+					$j(e.target).attr('r',0)
 					g_time=null
 				}
 			}
@@ -311,229 +310,18 @@ $j(()=>{
 		return
 	}},{passive: false })
 	
-	
-	
-	
-	
-	
-	var removeRow = ()=>{
-		
-	}
-	
-	$j('#traveList').on('click','input[type="checkbox"]',e=>$j(e.target).closest('tr').toggleClass('checked'))
-	
-	$j('#addRowBtn').click(e=>cloneRow(g_selectedDate.index()))
-
-	var cloneRow = (index,trave)=>{
-		var clone = $j('.traveRow:first').clone().appendTo($j('#traveList tbody').eq(index))
-		clone.find('input').val('')
-		clone.find('input[type="checkbox"]').prop('checked',false)
-		clone.find('input:eq(1)').val("오후 12:00 🕓")
-								.attr('data-val','오후:12:00')
-	} 
-	
-	var initPage = ()=>selectRow($j('.clientRow:first'))
-	$j('.clientRow').click(e=>selectRow($j(e.target).parent()))
-	$j('#dateBtnTd').on('click','button',e=>selectDate($j(e.target)))
-	var selectRow = $row => {
-		g_selectedRow && g_selectedRow.toggleClass('selected')
-		var seq = (g_selectedRow= $row.toggleClass('selected')).attr('id')
-		fetchClient(seq)
-		selectDate($j('.dateBtn:first'))
-	}
-	var selectDate = $btn => {
-		g_selectedDate && g_selectedDate.toggleClass('selected')
-		var index = (g_selectedDate = $btn.toggleClass('selected')).index()
-		$j('#traveList').find('tbody').hide().eq(index).show()
-	}
-	
-	var fetchClient = function(seq){
-		fetch("/api/trave/manage/fetchClient.do?seq="+seq)
-		.then(res=>res.json())
-		.then(json=>{
-			console.log(json.result)
-			updateTable(json.data)
-		})
-		.catch(error=>console.error('Error :',error))
-	}
-	
-	
-	var updateTable= function(data){
-	}
-	initPage()
-	
-	
 })
+
 </script>
-<body>
-	<table align="center" >
-		<tbody>
-			<tr>
-				<td align="center">
-					<table align="center" id ="clientTable" border="1">
-						<thead>
-							<tr>
-								<th>고객명</th>
-								<th>휴대폰번호</th>
-								<th>여행지</th>
-								<th>여행 기간</th>
-								<th>이동수단</th>
-								<th>예상 경비</th>
-								<th>견적 경비</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:forEach var="c" items="${clientList}">
-								<tr class="clientRow" id =${c.seq }>
-									<td>${c.userName }</td>
-									<td>${c.userPhone }</td>
-									<td>${c.traveCity}</td>
-									<td>${c.period }</td>
-									<td transport="${c.transport}">${c.transport eq 'R' ? '렌트' : (c.transport eq 'C' ? '자차' : '대중교통') }</td>
-									<td>${c.expend }</td>
-									<td class="estimated"></td>
-								</tr>
-							</c:forEach>						
-						</tbody>
-					</table>
-			<tr>
-				<td style="text-align:left;" id="dateBtnTd" >
-					<button class="dateBtn">1</button>
-					|
-					<button class="dateBtn">2</button>
-				</td>
-			</tr>
-			<tr>
-				<td style="text-align:left;" >
-					<button id="addRowBtn">추가</button>
-					|
-					<button id="removeRowBtn" >삭제</button>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<form id="traveList">
-					<table  border="1" style="margin-left:5%; margin-right:5%;">
-						<thead>
-							<tr>
-								<th></th>
-								<th>시간</th>
-								<th>지역</th>
-								<th>장소명</th>
-								<th>교통편</th>
-								<th>예상이동시간</th>
-								<th>이용요금(예상지출비용)</th>
-								<th>계획상세</th>
-								<th>교통비</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr class="traveRow">
-								<td>
-									<input type="checkbox"/>
-								</td>
-								<td>
-									<input name="traveTime" data-val="오후:12:00"  type="text" value="오후 12:00 🕓" />
-								<td><span>서울</span>
-								<!-- 	<select name="traveCity" >
-										<option value="서울">서울</option>
-										<option value="제주도">제주도</option>
-									</select> -->
-									<select name="traveCounty">
-									<option>
-										강북
-									</option>
-									<option>
-										강서
-									</option>
-									<option>
-										강남
-									</option>
-									<option>
-										강동
-									</option>
-									</select>
-									
-								</td>
-								<td>
-									<input name="traveLoc" type="text" />
-								</td>
-								<td>
-									<select name="traveTrans">
-										<option value="W">도보</option>
-										<option value="B">버스</option>
-										<option value="S">지하철</option>
-										<option value="T">택시</option>
-										<option value="R">렌트</option>
-									</select>
-								</td>
-								<td>
-									<input name="" type="text" />
-								</td>
-								<td>
-									<input name="" type="text" />
-								</td>
-								<td>
-									<input name="" type="text" />
-								</td>
-								<td><span></span>원</td>
-							</tr>												
-						</tbody>
-						<tbody>
-							<tr class="traveRow">
-								<td>
-									<input type="checkbox"/>
-								</td>
-								<td>
-									<input name="traveTime" data-val="오후:12:00"  type="text" value="오후 12:00 🕓"/>
-								<td><span>서울2</span>
-								<!-- 	<select name="traveCity" >
-										<option value="서울">서울</option>
-										<option value="제주도">제주도</option>
-									</select> -->
-									<select name="traveCounty">
-									<option>
-										강북
-									</option>
-									<option>
-										강북
-									</option>
-									<option>
-										강북
-									</option>
-									<option>
-										강북
-									</option>
-									</select>
-									
-								</td>
-								<td>
-									<input name="traveLoc" type="text" />
-								</td>
-								<td>
-									<select name="traveTrans">
-										<option value="W">도보</option>
-										<option value="B">버스</option>
-										<option value="S">지하철</option>
-										<option value="T">택시</option>
-										<option value="R">렌트</option>
-									</select>
-								</td>
-								<td>
-									<input name="" type="text" />
-								</td>
-								<td>
-									<input name="" type="text" />
-								</td>
-								<td>
-									<input name="" type="text" />
-								</td>
-								<td><span></span>원</td>
-							</tr>												
-						</tbody>
-					</table>
-					</form>
-		</tbody>
-	</table>
+</head>
+<body> 
+<table align="center" >
+<tr>
+<td align="center">
+<input  name="traveTime" type="text" data-val="오후:12:00" value="오후 12:00 🕓"/>
+<input  name="traveTime" type="text" data-val="오후:12:00" value="오후 12:00 🕓"/>
+</td>
+</tr>
+</table>
 </body>
 </html>

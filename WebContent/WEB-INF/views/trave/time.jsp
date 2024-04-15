@@ -48,7 +48,9 @@ $j(()=>{
 			}
 			const H = h <10 ? '0'+h : h
 			const M = time.m <10 ? '0'+time.m : time.m
-			time.el.value =time.ap+' '+H+':'+M+' 🕓'
+			const textVal = time.ap+' '+H+':'+M+' 🕓'
+			time.el.value = textVal
+			time.textVal = textVal
 			time.el.dataset.val=time.ap+':'+H+':'+M
 		}
 		focus(){
@@ -146,18 +148,16 @@ $j(()=>{
 		}
 		updown(isUp){
 			const time = this.time
-			let add = isUp? 1 : -1
 			let m = time.m
 			if(g_isShiftDown){
-				add = 10-m%
-				m = isUp? 
+				m+= isUp? 10-m%10 : (m%10 === 0 ? -10 : -m%10)
 			}else{
-				m+=add
+				m+=isUp? 1 : -1
 			}
 			time.m=m
 			if(m >= 60 ||m<0){
 				const isUp = m === 60
-				time.m= isUp? 0 : 59
+				time.m= isUp? 0 : (g_isShiftDown? 50 : 59)
 				time.states[this.prev()].updown(isUp)
 			}
 			return this.stateIndex
@@ -168,12 +168,14 @@ $j(()=>{
 	class Time{
 		constructor(el){
 			this.el = el
-			const v = el.dataset.val.split(':')
+			const v = $j(el).data('val').split(':')
+			this.textVal = el.value
 			this.ap = v[0]
 			this.h = parseInt(v[1])
 			this.m = parseInt(v[2])
 			this.states = [new AmpmState(this,0,0,2),new HourState(this,1,3,5),new MinState(this,2,6,8)]
-			this.stateIndex= 0
+			this.stateIndex= g_stateIndex 
+			g_stateIndex = 0
 			this.state= this.states[this.stateIndex]
 		}
 		setState(stateIndex){
@@ -183,6 +185,7 @@ $j(()=>{
 			if(nextStateIndex=== undefined){
 				return
 			}
+			this.stateIndex= nextStateIndex
 			this.state=this.states[nextStateIndex]
 			this.state.formatVal()
 			this.state.focus()
@@ -203,7 +206,6 @@ $j(()=>{
 		keydown(val){
 			const states = this.states
 			const state = this.state
-			console.log(state)
 			const execute = this.execute
 			const intVal = parseInt(val)
 			if(!isNaN(intVal)){
@@ -247,6 +249,7 @@ $j(()=>{
 		}
 	}
 	let g_time=null
+	let g_stateIndex = 0
 	
 	$j(document).on(
 		{	
@@ -263,7 +266,7 @@ $j(()=>{
 				e.preventDefault()
 			}
 			,'keydown': e => {
-			var allowed = ['Shift','F5']
+			var allowed = ['Shift','F5','Ctrl','c','v','F12']
 			!allowed.includes(e.key) && e.preventDefault()
 			g_time.keydown(e.key)	
 			}
@@ -277,9 +280,35 @@ $j(()=>{
 					g_time=null
 				}
 			}
+			,'paste': e=>{
+				const pastedText = e.originalEvent.clipboardData.getData('text');
+				const reg = /^(오전|오후) (12|(0?[1-9])|1[0-1]):[0-5][0-9].*$/
+				if(reg.test(pastedText)){
+					const val = pastedText.split(' ')
+					g_time.ap = val[0]
+					hm = val[1].split(':')
+					g_time.h = parseInt(hm[0])
+					g_time.m = parseInt(hm[1])
+					g_time.execute(2)
+				}
+				e.preventDefault()
+			}, 
+			'input':e=>{
+				if(e.target.value !== g_time.textVal){
+					g_stateIndex = g_time.stateIndex
+					e.target.value = g_time.textVal
+					console.log(g_stateIndex)
+					alert('방향키, 숫자, 백스페이스 및 마우스 휠과 탭키로 조정해주세요.\n(쉬프트 클릭시 10분 단위 조정)')
+				}
+			}
 		},'input[name="traveTime"]'
 	)
-	
+	document.addEventListener('wheel',function(e){
+	if(g_time !== null){
+		e.preventDefault()
+		g_time.keydown(e.deltaY<0 ? 'ArrowUp' : 'ArrowDown')
+		return
+	}},{passive: false })
 	
 })
 
@@ -289,7 +318,8 @@ $j(()=>{
 <table align="center" >
 <tr>
 <td align="center">
-<input id="el" name="traveTime" type="text" data-val="오후:12:00" value="오후 12:00 🕓"/>
+<input  name="traveTime" type="text" data-val="오후:12:00" value="오후 12:00 🕓"/>
+<input  name="traveTime" type="text" data-val="오후:12:00" value="오후 12:00 🕓"/>
 </td>
 </tr>
 </table>
