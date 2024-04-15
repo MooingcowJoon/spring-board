@@ -45,6 +45,7 @@ $j(()=>{
 		formatVal(){
 			const time=this.time
 			const isAm = time.ap==='오전'
+			time.el.dataset.val=time.ap+':'+time.h+':'+time.m
 			let h = time.h
 			if(h===12 || h===0){
 				h= isAm ? 0 : 12
@@ -54,7 +55,6 @@ $j(()=>{
 			const textVal = time.ap+' '+H+':'+M+' 🕓'
 			time.el.value = textVal
 			time.textVal = textVal
-			time.el.dataset.val=time.ap+':'+H+':'+M
 		}
 		focus(){
 			this.time.el.setSelectionRange(0,0)
@@ -110,8 +110,11 @@ $j(()=>{
 				if(h>12){
 					time.h = 0
 					nextIndex = cur
-				}else if(h<=12){
+				}else if(h<12){
 					time.h= h
+				}else if (h===12){
+					time.h= 0
+					time.ap = isAm ? '오후' : '오전'
 				}
 			}
 			this.cursorIndex=nextCursor
@@ -128,11 +131,12 @@ $j(()=>{
 				time.h = h>= 12? 0 : 11
 				time.states[this.prev()].updown(isUp)
 			}
+			console.log(time.h)
 			return this.stateIndex
 		}
 		erase(){
 			this.cursorIndex=0
-			this.time.h = this.time.ap === '오전' ? 0 : 12
+			this.time.h = 0
 			return this.stateIndex
 		}
 	}
@@ -344,7 +348,7 @@ $j(()=>{
 		clone.find('input').val('')
 		clone.find('input[type="checkbox"]').prop('checked',false)
 		clone.find('input:eq(1)').val("오후 12:00 🕓")
-								.attr('data-val','오후:12:00')
+								.attr('data-val','오후:0:0')
 	} 
 	
 	var initPage = ()=>selectRow($j('.clientRow:first'))
@@ -448,7 +452,7 @@ $j(()=>{
 									<input type="checkbox"/>
 								</td>
 								<td>
-									<input name="traveTime" data-val="오후:12:00"  type="text" value="오후 12:00 🕓" />
+									<input name="traveTime" data-val="오후:0:0"  type="text" value="오후 12:00 🕓" />
 								<td><span>서울</span>
 								<!-- 	<select name="traveCity" >
 										<option value="서울">서울</option>
@@ -500,7 +504,7 @@ $j(()=>{
 									<input type="checkbox"/>
 								</td>
 								<td>
-									<input name="traveTime" data-val="오후:12:00"  type="text" value="오후 12:00 🕓"/>
+									<input name="traveTime" data-val="오후:0:0"  type="text" value="오후 12:00 🕓"/>
 								<td><span>서울2</span>
 								<!-- 	<select name="traveCity" >
 										<option value="서울">서울</option>
