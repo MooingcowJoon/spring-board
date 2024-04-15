@@ -63,7 +63,7 @@ $j(()=>{
 		}
 		next = ()=>this.stateIndex+1
 		prev = ()=>this.stateIndex-1
-		
+		erase(){}
 	}
 	
 	// *Concrete State* : 각 구체 상태들의 모든 기능을 구현하는 클래스 
@@ -130,6 +130,11 @@ $j(()=>{
 			}
 			return this.stateIndex
 		}
+		erase(){
+			this.cursorIndex=0
+			this.time.h = this.time.ap === '오전' ? 0 : 12
+			return this.stateIndex
+		}
 	}
 	class MinState extends State{
 		type(val){
@@ -162,6 +167,14 @@ $j(()=>{
 				time.m= isUp? 0 : (g_isShiftDown? 50 : 59)
 				time.states[this.prev()].updown(isUp)
 			}
+			return this.stateIndex
+		}
+		erase(){
+			this.cursorIndex=0
+			if(this.time.m === 0){
+				return this.prev()
+			}
+			this.time.m = 0
 			return this.stateIndex
 		}
 	}
@@ -219,7 +232,6 @@ $j(()=>{
 						execute(state.updown(false))
 						break
 					default:
-						console.log('디폴트')
 						execute(state.type(intVal))
 				}
 				return
@@ -246,6 +258,9 @@ $j(()=>{
 					break
 				case 'ArrowLeft':
 					state.prev()>=0 && execute(state.prev())
+					break
+				case 'Backspace':
+					execute(state.erase())
 					break
 				}
 		}
