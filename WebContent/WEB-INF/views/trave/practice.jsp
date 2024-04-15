@@ -48,7 +48,9 @@ $j(()=>{
 			}
 			const H = h <10 ? '0'+h : h
 			const M = time.m <10 ? '0'+time.m : time.m
-			time.el.value =time.ap+' '+H+':'+M+' 🕓'
+			const textVal = time.ap+' '+H+':'+M+' 🕓'
+			time.el.value = textVal
+			time.textVal = textVal
 			time.el.dataset.val=time.ap+':'+H+':'+M
 		}
 		focus(){
@@ -146,18 +148,16 @@ $j(()=>{
 		}
 		updown(isUp){
 			const time = this.time
-			let add = isUp? 1 : -1
 			let m = time.m
 			if(g_isShiftDown){
-				add = 10-m%
-				m = isUp? 
+				m+= isUp? 10-m%10 : (m%10 === 0 ? -10 : -m%10)
 			}else{
-				m+=add
+				m+=isUp? 1 : -1
 			}
 			time.m=m
 			if(m >= 60 ||m<0){
 				const isUp = m === 60
-				time.m= isUp? 0 : 59
+				time.m= isUp? 0 : (g_isShiftDown? 50 : 59)
 				time.states[this.prev()].updown(isUp)
 			}
 			return this.stateIndex
@@ -169,6 +169,7 @@ $j(()=>{
 		constructor(el){
 			this.el = el
 			const v = el.dataset.val.split(':')
+			this.textVal = el.value
 			this.ap = v[0]
 			this.h = parseInt(v[1])
 			this.m = parseInt(v[2])
@@ -203,7 +204,6 @@ $j(()=>{
 		keydown(val){
 			const states = this.states
 			const state = this.state
-			console.log(state)
 			const execute = this.execute
 			const intVal = parseInt(val)
 			if(!isNaN(intVal)){
@@ -263,7 +263,7 @@ $j(()=>{
 				e.preventDefault()
 			}
 			,'keydown': e => {
-			var allowed = ['Shift','F5']
+			var allowed = ['Shift','F5','Ctrl','c','v']
 			!allowed.includes(e.key) && e.preventDefault()
 			g_time.keydown(e.key)	
 			}
@@ -277,9 +277,33 @@ $j(()=>{
 					g_time=null
 				}
 			}
+			,'paste': e=>{
+				const pastedText = e.originalEvent.clipboardData.getData('text');
+				const reg = /^(오전|오후) (12|(0?[1-9])|1[0-1]):[0-5][0-9].*$/
+				if(reg.test(pastedText)){
+					const val = pastedText.split(' ')
+					g_time.ap = val[0]
+					hm = val[1].split(':')
+					g_time.h = parseInt(hm[0])
+					g_time.m = parseInt(hm[1])
+					g_time.execute(2)
+				}
+				e.preventDefault()
+			}, 
+			'input':e=>{
+				if(e.target.value !== g_time.textVal){
+					e.target.value = g_time.textVal
+					g_time.state.focus()
+				}
+			}
 		},'input[name="traveTime"]'
 	)
-	
+	document.addEventListener('wheel',function(e){
+	if(g_time !== null){
+		e.preventDefault()
+		g_time.keydown(e.deltaY<0 ? 'ArrowUp' : 'ArrowDown')
+		return
+	}},{passive: false })
 	
 })
 
@@ -289,7 +313,8 @@ $j(()=>{
 <table align="center" >
 <tr>
 <td align="center">
-<input id="el" name="traveTime" type="text" data-val="오후:12:00" value="오후 12:00 🕓"/>
+<input  name="traveTime" type="text" data-val="오후:12:00" value="오후 12:00 🕓"/>
+<input  name="traveTime" type="text" data-val="오후:12:00" value="오후 12:00 🕓"/>
 </td>
 </tr>
 </table>
