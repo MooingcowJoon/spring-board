@@ -105,7 +105,6 @@ $j(()=>{
 				}
 			}else if(this.cursorIndex === 1){
 				const h = time.h * 10 + val
-				console.log('h = '+h)
 				const isAm = time.ap==='오전'
 				if(h>12){
 					time.h = 0
@@ -131,7 +130,6 @@ $j(()=>{
 				time.h = h>= 12? 0 : 11
 				time.states[this.prev()].updown(isUp)
 			}
-			console.log(time.h)
 			return this.stateIndex
 		}
 		erase(){
@@ -227,6 +225,7 @@ $j(()=>{
 			const state = this.state
 			const execute = this.execute
 			const intVal = parseInt(val)
+			console.log(state)
 			if(!isNaN(intVal)){
 				switch(intVal){
 					case 100:
@@ -241,9 +240,6 @@ $j(()=>{
 				return
 			}
 			switch(val){
-				case 'Shift':
-					g_isShiftDown=true
-					break
 				case 'ArrowUp':
 					execute(state.updown(true))
 					break
@@ -252,7 +248,15 @@ $j(()=>{
 					break
 				case 'Tab':
 					const tabIndex = g_isShiftDown? state.prev() : state.next()
-					if(tabIndex <0 || tabIndex >=states.length){
+					console.log(g_isShiftDown + " "+ tabIndex)
+					if(tabIndex <0 ){
+						$j(this.el).blur()
+						$j(this.el).parent().prev().find('input:first').focus()
+						return
+					}
+					if(tabIndex>=states.length){
+						$j(this.el).blur()
+						$j(this.el).parent().next().find('[name]:first').focus()
 						return
 					}
 					execute(tabIndex)
@@ -287,7 +291,7 @@ $j(()=>{
 				e.preventDefault()
 			}
 			,'keydown': e => {
-			var allowed = ['Shift','F5','Ctrl','c','v','F12']
+			const allowed = ['F5','Ctrl','c','v','F12']
 			!allowed.includes(e.key) && e.preventDefault()
 			g_time.keydown(e.key)	
 			}
@@ -307,7 +311,7 @@ $j(()=>{
 					const val = pastedText.split(' ')
 					g_time.ap = val[0]
 					hm = val[1].split(':')
-					g_time.h = parseInt(hm[0])
+					g_time.h = parseInt(hm[0]%12)
 					g_time.m = parseInt(hm[1])
 					g_time.execute(2)
 				}
@@ -317,19 +321,31 @@ $j(()=>{
 				if(e.target.value !== g_time.textVal){
 					g_stateIndex = g_time.stateIndex
 					e.target.value = g_time.textVal
-					console.log(g_stateIndex)
 					alert('방향키, 숫자, 백스페이스 및 마우스 휠과 탭키로 조정해주세요.\n(쉬프트 클릭시 10분 단위 조정)')
 				}
 			}
 		},'input[name="traveTime"]'
 	)
-	document.addEventListener('wheel',function(e){
+	document.addEventListener('wheel',e=>{
 	if(g_time !== null){
 		e.preventDefault()
 		g_time.keydown(e.deltaY<0 ? 'ArrowUp' : 'ArrowDown')
 		return
 	}},{passive: false })
-	
+	$j(document).on({
+		'keydown':e=>{
+			if(e.key==='Shift'){
+				g_isShiftDown=true
+				return
+			}
+		}
+		,'keyup':e=>{
+		if(e.key==='Shift'){
+			g_isShiftDown=false
+			return
+			}
+		}
+	})
 	
 	
 	
@@ -344,7 +360,9 @@ $j(()=>{
 	$j('#addRowBtn').click(e=>cloneRow(g_selectedDate.index()))
 
 	var cloneRow = (index,trave)=>{
-		var clone = $j('.traveRow:first').clone().appendTo($j('#traveList tbody').eq(index))
+		var clone = $j('.traveRow:first').clone()
+					.removeClass('checked')
+					.appendTo($j('#traveList tbody').eq(index))
 		clone.find('input').val('')
 		clone.find('input[type="checkbox"]').prop('checked',false)
 		clone.find('input:eq(1)').val("오후 12:00 🕓")
