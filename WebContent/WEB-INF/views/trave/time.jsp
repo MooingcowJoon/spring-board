@@ -168,13 +168,14 @@ $j(()=>{
 	class Time{
 		constructor(el){
 			this.el = el
-			const v = el.dataset.val.split(':')
+			const v = $j(el).data('val').split(':')
 			this.textVal = el.value
 			this.ap = v[0]
 			this.h = parseInt(v[1])
 			this.m = parseInt(v[2])
 			this.states = [new AmpmState(this,0,0,2),new HourState(this,1,3,5),new MinState(this,2,6,8)]
-			this.stateIndex= 0
+			this.stateIndex= g_stateIndex 
+			g_stateIndex = 0
 			this.state= this.states[this.stateIndex]
 		}
 		setState(stateIndex){
@@ -184,6 +185,7 @@ $j(()=>{
 			if(nextStateIndex=== undefined){
 				return
 			}
+			this.stateIndex= nextStateIndex
 			this.state=this.states[nextStateIndex]
 			this.state.formatVal()
 			this.state.focus()
@@ -247,6 +249,7 @@ $j(()=>{
 		}
 	}
 	let g_time=null
+	let g_stateIndex = 0
 	
 	$j(document).on(
 		{	
@@ -263,7 +266,7 @@ $j(()=>{
 				e.preventDefault()
 			}
 			,'keydown': e => {
-			var allowed = ['Shift','F5','Ctrl','c','v']
+			var allowed = ['Shift','F5','Ctrl','c','v','F12']
 			!allowed.includes(e.key) && e.preventDefault()
 			g_time.keydown(e.key)	
 			}
@@ -292,8 +295,10 @@ $j(()=>{
 			}, 
 			'input':e=>{
 				if(e.target.value !== g_time.textVal){
+					g_stateIndex = g_time.stateIndex
 					e.target.value = g_time.textVal
-					g_time.state.focus()
+					console.log(g_stateIndex)
+					alert('방향키, 숫자, 백스페이스 및 마우스 휠과 탭키로 조정해주세요.\n(쉬프트 클릭시 10분 단위 조정)')
 				}
 			}
 		},'input[name="traveTime"]'
