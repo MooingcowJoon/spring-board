@@ -1,5 +1,6 @@
 package com.spring.trave.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientVo {

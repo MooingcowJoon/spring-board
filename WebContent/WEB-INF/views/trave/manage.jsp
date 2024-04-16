@@ -13,13 +13,13 @@ th{text-align:center;}
 
 tr.clientRow:hover,
 tr.clientRow.selected,
-button.dateBtn:hover,
-button.dateBtn.selected,
+button.dayBtn:hover,
+button.dayBtn.selected,
 tr.traveRow.checked{
 background-color:skyblue;
 }
 
-button.dateBtn,
+button.dayBtn,
 table#clientTable{
 cursor:pointer;
 }
@@ -32,18 +32,17 @@ cursor:pointer;
 $j(()=>{
 	let g_client
 	let g_day
-	var g_selectedDate
 	const g_traveDayClone = $j('#traveList tbody:first').clone().empty()
 	const g_traveRowClone = $j('.traveRow:first').clone()
 	$j('#traveList tbody').remove()
 	
 	
-	const removeRow = (dayIndex)=>{
+	const removeRow = ()=>{
 		const totalRows = g_day.children()
 		const checkedRows = totalRows.filter((i,el)=>el.classList.contains('checked'))
 		const t = totalRows.length
 		const c = checkedRows.length
-		const dayText = dayIndex+1
+		const dayText = g_day.index()
 		if(c===0){
 			alert('['+dayText+'일차] 일정 중 선택된 일정이 없습니다.')
 		}else if(c<t){
@@ -60,7 +59,7 @@ $j(()=>{
 	$j('#traveList').on('click','input[type="checkbox"]',e=>$j(e.target).closest('tr').toggleClass('checked'))
 	
 	$j('#addRowBtn').click(e=>g_day.append(generateTraveRow()))
-	$j('#removeRowBtn').click(e=>removeRow(g_selectedDate.index()))
+	$j('#removeRowBtn').click(e=>removeRow())
 	
 	const generateTraveRow = trave=>{
 		const clone = g_traveRowClone.clone()
@@ -74,19 +73,16 @@ $j(()=>{
 	
 	var initPage = ()=>selectRow($j('.clientRow:first'))
 	$j('.clientRow').click(e=>selectRow($j(e.target).parent()))
-	$j('#dateBtnTd').on('click','button',e=>selectDate($j(e.target)))
+	$j('#dayBtnContainer').on('click','button',e=>daySelect($j(e.target).index()+1))
 	var selectRow = $row => {
 		g_client && g_client.toggleClass('selected')
 		const seq = (g_client= $row.toggleClass('selected')).data('seq')
 		fetchClient(seq)
-		selectDay($j('.dateBtn:first'))
 	}
-	var selectDay = $btn => {
-		if($btn.hasClass('selected')){
-			return
-		}
-		const dayIndex = $btn.addClass('selected').siblings().removeClass('selected').index()
-		g_day = $j('#traveList tbody').hide().eq(dayIndex).show()
+	var daySelect = dayNum => {
+		const idx = dayNum - 1
+		$j('.dayBtn').removeClass('selected').eq(idx).addClass('selected')
+		g_day = $j('#traveList tbody').hide().eq(idx).show()
 	}
 	
 	var fetchClient = function(seq){
@@ -94,35 +90,35 @@ $j(()=>{
 		.then(res=>res.json())
 		.then(json=>{
 			console.log(json.result)
-			generateTable(json.data)
+			generateTable(JSON.parse(json.data))
+			daySelect(1)
 		})
 		.catch(error=>console.error('Error :',error))
 	}
 	
 	/* c= ClientVo json*/
-	var generateTable= function(c){
-		const traveDays = c.traveDays
-		const dayBtns = $j('#dateBtnTd').empty()
-		let dayBtnHtml = `<button class="dateBtn">${curDay}</button>`
-		for(let i=1; i<dayBtn.length; i++){
-			dayBtnHtml+= '|'+btnHtml
+	const generateTable= c=>{
+		const traveDays = c['traveDays']
+		const dayBtns = $j('#dayBtnContainer').empty()
+		const dayBtnHtml = dayNo =>`<button class="dayBtn">`+dayNo+`</button>`
+		let html = dayBtnHtml(1)
+		for(let i=2; i<traveDays.length+1; i++){
+			html+= ' | '+dayBtnHtml(i)
 		}
-		dayBtns.append(dayBtnHtml)
+		html=html.slice(0,-1)
+		dayBtns.append(html)
 		
-		const form = $j('#traveList')
-		form.find('tbody').remove()
+		const formTable = $j('#traveList').children(':first')
+		formTable.find('tbody').remove()
 		for (let i = 0; i<traveDays.length; i++){
-			const day = g_traveRowClone.clone().appendTo(form)
+			const day = g_traveDayClone.clone().appendTo(formTable)
 			const list = traveDays[i]
 			for (let j=0; j<list.length; j++){
+				day.append(generateTraveRow(list[j]))
+			}
+			if(day.children().length===0){
 				day.append(generateTraveRow())
 			}
-			let html = `<button class="dateBtn">${i}</button>`
-			if(i<traveList.length){
-				html+='|'
-			}
-			$j('#dateBtnTd').append(html)
-			
 		}
 	}
 	initPage()
@@ -161,10 +157,7 @@ $j(()=>{
 						</tbody>
 					</table>
 			<tr>
-				<td style="text-align:left;" id="dateBtnTd" >
-					<button class="dateBtn">1</button>
-					|
-					<button class="dateBtn">2</button>
+				<td style="text-align:left;" id="dayBtnContainer" >
 				</td>
 			</tr>
 			<tr>

@@ -41,7 +41,9 @@ public class TraveRestController {
 			ClientVo c = traveService.getClientBySeq(seq);
 			map.put("result", "success");
 			map.put("data", CommonUtil.toJson(c));
+			System.out.println(map.get("data"));
 		}catch(Exception e) {
+			e.printStackTrace();
 			map.put("result", "error");
 			map.put("code", "serverError");
 			map.put("msg", "서버 장애가 발생하였습니다.");
