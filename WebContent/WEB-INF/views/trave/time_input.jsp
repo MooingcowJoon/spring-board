@@ -1,30 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@include file="/WEB-INF/views/trave/validation.jsp"%>       
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<style>
-td{
-text-align:center;
-}
-th{text-align:center;}
-
-tr.clientRow:hover,
-tr.clientRow.selected,
-button.dateBtn:hover,
-button.dateBtn.selected{
-background-color:skyblue;
-}
-
-button.dateBtn,
-table#clientTable{
-cursor:pointer;
-}
-
-</style>
-<title>여행 일정 관리</title>
 <script>
 
 $j(()=>{
@@ -42,6 +17,7 @@ $j(()=>{
 		formatVal(){
 			const time=this.time
 			const isAm = time.ap==='오전'
+			time.el.dataset.val=time.ap+':'+time.h+':'+time.m
 			let h = time.h
 			if(h===12 || h===0){
 				h= isAm ? 0 : 12
@@ -51,7 +27,6 @@ $j(()=>{
 			const textVal = time.ap+' '+H+':'+M+' 🕓'
 			time.el.value = textVal
 			time.textVal = textVal
-			time.el.dataset.val=time.ap+':'+H+':'+M
 		}
 		focus(){
 			this.time.el.setSelectionRange(0,0)
@@ -60,7 +35,7 @@ $j(()=>{
 		}
 		next = ()=>this.stateIndex+1
 		prev = ()=>this.stateIndex-1
-		
+		erase(){}
 	}
 	
 	// *Concrete State* : 각 구체 상태들의 모든 기능을 구현하는 클래스 
@@ -94,7 +69,6 @@ $j(()=>{
 			const time = this.time
 			let nextIndex = next
 			let nextCursor = 0
-			console.log(this.cursorIndex)
 			if(this.cursorIndex === 0){
 				time.h = val
 				if(val<2) {
@@ -103,17 +77,18 @@ $j(()=>{
 				}
 			}else if(this.cursorIndex === 1){
 				const h = time.h * 10 + val
-				console.log('h = '+h)
 				const isAm = time.ap==='오전'
 				if(h>12){
 					time.h = 0
 					nextIndex = cur
-				}else if(h<=12){
+				}else if(h<12){
 					time.h= h
+				}else if (h===12){
+					time.h= 0
+					time.ap = isAm ? '오후' : '오전'
 				}
 			}
 			this.cursorIndex=nextCursor
-			console.log(nextCursor+" => "+this.cursorIndex)
 			return nextIndex 
 		}
 		updown(isUp){
@@ -126,6 +101,11 @@ $j(()=>{
 				time.h = h>= 12? 0 : 11
 				time.states[this.prev()].updown(isUp)
 			}
+			return this.stateIndex
+		}
+		erase(){
+			this.cursorIndex=0
+			this.time.h = 0
 			return this.stateIndex
 		}
 	}
@@ -160,6 +140,14 @@ $j(()=>{
 				time.m= isUp? 0 : (g_isShiftDown? 50 : 59)
 				time.states[this.prev()].updown(isUp)
 			}
+			return this.stateIndex
+		}
+		erase(){
+			this.cursorIndex=0
+			if(this.time.m === 0){
+				return this.prev()
+			}
+			this.time.m = 0
 			return this.stateIndex
 		}
 	}
@@ -217,15 +205,11 @@ $j(()=>{
 						execute(state.updown(false))
 						break
 					default:
-						console.log('디폴트')
 						execute(state.type(intVal))
 				}
 				return
 			}
 			switch(val){
-				case 'Shift':
-					g_isShiftDown=true
-					break
 				case 'ArrowUp':
 					execute(state.updown(true))
 					break
@@ -234,7 +218,14 @@ $j(()=>{
 					break
 				case 'Tab':
 					const tabIndex = g_isShiftDown? state.prev() : state.next()
-					if(tabIndex <0 || tabIndex >=states.length){
+					if(tabIndex <0 ){
+						$j(this.el).blur()
+						$j(this.el).parent().prev().find('input:first').focus()
+						return
+					}
+					if(tabIndex>=states.length){
+						$j(this.el).blur()
+						$j(this.el).parent().next().find('[name]:first').focus()
 						return
 					}
 					execute(tabIndex)
@@ -245,12 +236,14 @@ $j(()=>{
 				case 'ArrowLeft':
 					state.prev()>=0 && execute(state.prev())
 					break
+				case 'Backspace':
+					execute(state.erase())
+					break
 				}
 		}
 	}
 	let g_time=null
 	let g_stateIndex = 0
-	
 	$j(document).on(
 		{	
 			'mousedown':e=>g_time=new Time(e.target)
@@ -266,7 +259,7 @@ $j(()=>{
 				e.preventDefault()
 			}
 			,'keydown': e => {
-			var allowed = ['Shift','F5','Ctrl','c','v']
+			const allowed = ['F5','Ctrl','c','v','F12']
 			!allowed.includes(e.key) && e.preventDefault()
 			g_time.keydown(e.key)	
 			}
@@ -276,7 +269,6 @@ $j(()=>{
 			}
 			,'blur':e=>{
 				if(g_time&& e.target === g_time.el){
-					$j(e.target).attr('r',0)
 					g_time=null
 				}
 			}
@@ -287,7 +279,7 @@ $j(()=>{
 					const val = pastedText.split(' ')
 					g_time.ap = val[0]
 					hm = val[1].split(':')
-					g_time.h = parseInt(hm[0])
+					g_time.h = parseInt(hm[0]%12)
 					g_time.m = parseInt(hm[1])
 					g_time.execute(2)
 				}
@@ -297,31 +289,32 @@ $j(()=>{
 				if(e.target.value !== g_time.textVal){
 					g_stateIndex = g_time.stateIndex
 					e.target.value = g_time.textVal
-					console.log(g_stateIndex)
-					alert('방향키, 숫자, 백스페이스 및 마우스 휠과 탭키로 조정해주세요.\n(쉬프트 클릭시 10분 단위 조정)')
+					alert('방향키, 숫자, 백스페이스 및 마우스 휠과 탭키로 조정해주세요.\n(쉬프트키 입력시 10분 단위 조정)')
 				}
 			}
 		},'input[name="traveTime"]'
 	)
-	document.addEventListener('wheel',function(e){
+	document.addEventListener('wheel',e=>{
 	if(g_time !== null){
 		e.preventDefault()
 		g_time.keydown(e.deltaY<0 ? 'ArrowUp' : 'ArrowDown')
 		return
 	}},{passive: false })
+	$j(document).on({
+		'keydown':e=>{
+			if(e.key==='Shift'){
+				g_isShiftDown=true
+				return
+			}
+		}
+		,'keyup':e=>{
+		if(e.key==='Shift'){
+			g_isShiftDown=false
+			return
+			}
+		}
+	})
 	
 })
 
 </script>
-</head>
-<body> 
-<table align="center" >
-<tr>
-<td align="center">
-<input  name="traveTime" type="text" data-val="오후:12:00" value="오후 12:00 🕓"/>
-<input  name="traveTime" type="text" data-val="오후:12:00" value="오후 12:00 🕓"/>
-</td>
-</tr>
-</table>
-</body>
-</html>

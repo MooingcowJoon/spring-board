@@ -1,5 +1,6 @@
 package com.spring.trave.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.spring.trave.dao.TraveDao;
 import com.spring.trave.service.TraveService;
 import com.spring.trave.vo.ClientVo;
+import com.spring.trave.vo.TraveVo;
 
 @Service
 public class TraveServiceImpl implements TraveService{
@@ -27,7 +29,18 @@ public class TraveServiceImpl implements TraveService{
 	
 	@Override
 	public ClientVo getClientBySeq(String seq) {
-		return traveDao.selectClientBySeq(seq);
+		ClientVo c = traveDao.selectClientBySeq(seq);
+		List<TraveVo> traveList = c.getTraveList();
+		List<List<TraveVo>> traveDays = new ArrayList<>();
+		for(int i=0; i<Integer.parseInt(c.getPeriod()); i++){
+			traveDays.add(new ArrayList<TraveVo>());
+		}
+		for(TraveVo trave : traveList) {
+			int day = Integer.parseInt(trave.getTraveDay());
+			traveDays.get(day).add(trave);
+		}
+		c.setTraveDays(traveDays);
+		return c;
 	}
 	
 	@Override
