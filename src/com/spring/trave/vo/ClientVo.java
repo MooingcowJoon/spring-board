@@ -12,7 +12,16 @@ public class ClientVo {
 	private String expend;
 	private String transport;
 	private List<TraveVo> traveList;
+	private List<List<TraveVo>> traveDays;
 	
+	public List<List<TraveVo>> getTraveDays() {
+		return traveDays;
+	}
+
+	public void setTraveDays(List<List<TraveVo>> traveDays) {
+		this.traveDays = traveDays;
+	}
+
 	public ClientVo() {}
 
 	public String getSeq() {
