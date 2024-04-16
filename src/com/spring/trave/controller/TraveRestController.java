@@ -40,8 +40,8 @@ public class TraveRestController {
 		try {
 			ClientVo c = traveService.getClientBySeq(seq);
 			map.put("result", "success");
-			map.put("data", CommonUtil.toJson(c));
-			System.out.println(map.get("data"));
+			map.put("client", CommonUtil.toJson(c));
+			map.put("traveCities", CommonUtil.toJson(traveService.getTraveCities()));
 		}catch(Exception e) {
 			e.printStackTrace();
 			map.put("result", "error");

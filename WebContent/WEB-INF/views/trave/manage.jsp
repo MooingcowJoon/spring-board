@@ -35,7 +35,7 @@ $j(()=>{
 	const g_traveDayClone = $j('#traveList tbody:first').clone().empty()
 	const g_traveRowClone = $j('.traveRow:first').clone()
 	$j('#traveList tbody').remove()
-	
+	let g_traveCities = null
 	
 	const removeRow = ()=>{
 		const totalRows = g_day.children()
@@ -61,15 +61,7 @@ $j(()=>{
 	$j('#addRowBtn').click(e=>g_day.append(generateTraveRow()))
 	$j('#removeRowBtn').click(e=>removeRow())
 	
-	const generateTraveRow = trave=>{
-		const clone = g_traveRowClone.clone()
-		if(trave){
-			for(let key in trave){
-				clone.find('[name='+key+']:first').val(trave[key])
-			}
-		}						
-		return clone
-	} 
+
 	
 	var initPage = ()=>selectRow($j('.clientRow:first'))
 	$j('.clientRow').click(e=>selectRow($j(e.target).parent()))
@@ -90,7 +82,8 @@ $j(()=>{
 		.then(res=>res.json())
 		.then(json=>{
 			console.log(json.result)
-			generateTable(JSON.parse(json.data))
+			g_traveCities = JSON.parse(json.traveCities)
+			generateTable(JSON.parse(json.client))
 			daySelect(1)
 		})
 		.catch(error=>console.error('Error :',error))
@@ -107,20 +100,65 @@ $j(()=>{
 		}
 		html=html.slice(0,-1)
 		dayBtns.append(html)
-		
 		const formTable = $j('#traveList').children(':first')
+		formTable.find('[name="traveCity"]').attr('traveCity',c.traveCity).text('('+c.traveCity+')')
 		formTable.find('tbody').remove()
 		for (let i = 0; i<traveDays.length; i++){
-			const day = g_traveDayClone.clone().appendTo(formTable)
+			g_day = g_traveDayClone.clone()
+						.attr({
+						'traveTrans':c.transport
+						,'traveCity':c.traveCity
+						})
+						.appendTo(formTable)
 			const list = traveDays[i]
 			for (let j=0; j<list.length; j++){
-				day.append(generateTraveRow(list[j]))
+				g_day.append(generateTraveRow(list[j]))
 			}
-			if(day.children().length===0){
-				day.append(generateTraveRow())
+			if(g_day.children().length===0){
+				g_day.append(generateTraveRow())
 			}
 		}
 	}
+	const generateTraveRow = trave=>{
+		const clone = g_traveRowClone.clone()
+		const city = g_day.attr('traveCity')
+		const countySelect = clone.find('[name="traveCounty"]')
+		g_traveCities[city].forEach(county=>{
+				countySelect.append($j('<option>', {
+					        value: county,
+					        text: county
+					    }));
+				})
+		let transports
+		switch (g_day.attr('traveTrans')){
+			case 'R':
+				transports = [['R','렌트']]
+				break;
+			case 'C':
+				transports = [['C','자차']]
+				break;
+			case 'B':
+				transports = [
+					['W','도보'],
+					['B','버스'],
+					['S','지하철'],
+					['T','택시']
+					]
+		}
+		const traveTransSelect = clone.find('[name="traveTrans"]')
+		transports.forEach(t=>{
+			traveTransSelect.append($j('<option>', {
+		        value: t[0],
+		        text: t[1]
+		    }));
+		})
+		if(trave){
+		clone.find('input[name]').each(function(){
+ 			$j(this).val(trave[this.name])
+		})
+		}
+		return clone
+	} 
 	initPage()
 	
 })
@@ -175,12 +213,12 @@ $j(()=>{
 							<tr>
 								<th></th>
 								<th>시간</th>
-								<th>지역</th>
+								<th>지역<br><span name="traveCity" value=""></span></th>
 								<th>장소명</th>
 								<th>교통편</th>
 								<th>예상이동시간</th>
 								<th>예상이용시간</th>
-								<th>이용요금(예상지출비용)</th>
+								<th>이용요금<br>(예상지출비용)</th>
 								<th>계획상세</th>
 								<th>교통비</th>
 							</tr>
@@ -192,24 +230,8 @@ $j(()=>{
 								</td>
 								<td>
 									<input name="traveTime" data-val="오후:0:0"  type="text" value="오후 12:00 🕓" />
-								<td><span>서울</span>
-								<!-- 	<select name="traveCity" >
-										<option value="서울">서울</option>
-										<option value="제주도">제주도</option>
-									</select> -->
+								<td>
 									<select name="traveCounty">
-	<!-- 								<option>
-										강북
-									</option>
-									<option>
-										강서
-									</option>
-									<option>
-										강남
-									</option>
-									<option>
-										강동
-									</option> -->
 									</select>
 									
 								</td>

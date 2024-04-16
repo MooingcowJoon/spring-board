@@ -100,10 +100,9 @@ $j().ready(() => {
 							</td >
 							<td>
 								<select name="traveCity">
-									<option value="서울">서울</option>
-									<option value="경기도">경기도</option>
-									<option value="부산">부산</option>
-									<option value="제주도">제주도</option>
+									<c:forEach var="strCity" items="${traveCities }">
+									<option value="${strCity}">${strCity }</option>
+									</c:forEach>
 								</select>
 							</td>
 						</tr>

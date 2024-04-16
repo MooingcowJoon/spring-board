@@ -55,6 +55,7 @@ public class TraveController {
 										,@RequestParam String userPhone) throws Exception{
 		model.addAttribute("userName", userName);
 		model.addAttribute("userPhone", userPhone);
+		model.addAttribute("traveCities",traveService.getTraveCities().keySet());
 		return "trave/inquiry";
 	}
 	@RequestMapping(value = "/trave/login.do", method = RequestMethod.GET)
