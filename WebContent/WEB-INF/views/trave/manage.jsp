@@ -27,7 +27,8 @@ cursor:pointer;
 </style>
 <title>여행 일정 관리</title>
 </head>
-<%@include file="time_input.jsp"%>   
+<%@include file="/res/js/trave/manage/time_input.jsp"%>   
+
 <script>
 $j(()=>{
 	let g_client
@@ -63,19 +64,19 @@ $j(()=>{
 	
 
 	
-	var initPage = ()=>selectRow($j('.clientRow:first'))
+	const initPage = ()=>selectRow($j('.clientRow:first'))
 	$j('.clientRow').click(e=>selectRow($j(e.target).parent()))
 	$j('#dayBtnContainer').on('click','button',e=>daySelect($j(e.target).index()+1))
-	var selectRow = $row => {
+	const selectRow = $row => {
 		g_client && g_client.toggleClass('selected')
 		const seq = (g_client= $row.toggleClass('selected')).data('seq')
 		fetchClient(seq)
 	}
-	var daySelect = dayNum => {
+	const daySelect = dayNum => {
 		const idx = dayNum - 1
 		$j('.dayBtn').removeClass('selected').eq(idx).addClass('selected')
 		g_day = $j('#traveList tbody').hide().eq(idx).show()
-	}
+	} 
 	
 	var fetchClient = function(seq){
 		fetch("/api/trave/manage/fetchClient.do?seq="+seq)
@@ -101,7 +102,7 @@ $j(()=>{
 		html=html.slice(0,-1)
 		dayBtns.append(html)
 		const formTable = $j('#traveList').children(':first')
-		formTable.find('[name="traveCity"]').attr('traveCity',c.traveCity).text('('+c.traveCity+')')
+		formTable.find('[name="traveCity"]').text(c.traveCity)
 		formTable.find('tbody').remove()
 		for (let i = 0; i<traveDays.length; i++){
 			g_day = g_traveDayClone.clone()
@@ -163,6 +164,7 @@ $j(()=>{
 	
 })
 </script>
+<%@include file="/res/js/trave/manage/validation.jsp"%>   
 <body>
 	<table align="center" >
 		<tbody>
@@ -213,7 +215,7 @@ $j(()=>{
 							<tr>
 								<th></th>
 								<th>시간</th>
-								<th>지역<br><span name="traveCity" value=""></span></th>
+								<th>지역<br>(<span name="traveCity"></span>)</th>
 								<th>장소명</th>
 								<th>교통편</th>
 								<th>예상이동시간</th>
