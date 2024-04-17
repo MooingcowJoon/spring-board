@@ -60,10 +60,14 @@ $j(()=>{
 	const nullCheck = row=>{
 		const inputs = $j(row).find('input[type="text"]:not(:first)')
 		let result = {code: 0, el:null}
+		let nullIndex
 		for(let i =0; i<inputs.length; i++){
 			if(inputs[i].value.trim()===''){
+				if(!nullIndex){
+					nullIndex=i
+				}
 				if(result.code ===1){
-					return {code:-i,el:inputs[i]}
+					return {code:-i,el:inputs[nullIndex]}
 				}
 			}else{
 				result.code=1
