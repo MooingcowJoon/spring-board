@@ -30,7 +30,23 @@ public class TraveRestController {
 	@Autowired
 	TraveService traveService;
 	
-	
+	@RequestMapping(value= "/api/trave/manage/submit.do",method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,String> submitManage(Locale locale,@RequestBody ClientVo clientVo) throws Exception{
+		Map<String,String> map = new HashMap<>();
+		try {
+		logger.info(clientVo.toString());
+			map.put("code", "redirect");
+			traveService.updateClientTraveList(clientVo);
+			map.put("redirectUrl","/trave/view.do?seq="+clientVo.getSeq());
+			map.put("result", "success");
+		}catch(Exception e) {
+			map.put("result", "error");
+			map.put("code", "serverError");
+			map.put("msg", "서버 장애가 발생하였습니다.");
+		}
+		return map;
+	}
 	
 	
 	@RequestMapping(value= "/api/trave/manage/fetchClient.do",method = RequestMethod.GET)

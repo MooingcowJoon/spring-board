@@ -88,11 +88,54 @@
 	        		#{trave.traveCounty} AS TRAVE_COUNTY,
 	        		#{trave.traveLoc} AS TRAVE_LOC,
 	        		#{trave.traveTrans} AS TRAVE_TRANS,
-	        		#{trave.traveTime} AS TRANS_TIME,
+	        		#{trave.transTime} AS TRANS_TIME,
 	        		#{trave.useTime} AS USE_TIME,
 	        		#{trave.useExpend} AS USE_EXPEND,
 	        		#{trave.traveDetail} AS TRAVE_DETAIL,
 	        		#{trave.request} AS REQUEST,
+        		FROM 
+        			DUAL</foreach>
+	END;
+	</insert>
+	<insert id="updateClientTraveList" parameterType="com.spring.trave.vo.ClientVo">	
+	BEGIN
+ 	    DELETE 
+	    	FROM
+	    		TRAVE_INFO
+    		WHERE
+    			SEQ = #{seq};
+		INSERT ALL INTO
+		TRAVE_INFO
+				(
+				TRAVE_SEQ,
+				SEQ,
+				TRAVE_DAY,
+				TRAVE_TIME,
+				TRAVE_CITY,
+				TRAVE_COUNTY,
+				TRAVE_LOC,
+				TRAVE_TRANS,
+				TRANS_TIME,
+				USE_TIME,
+				USE_EXPEND,
+				TRAVE_DETAIL,
+				REQUEST
+				)
+  				<foreach collection="traveList" item="trave" separator="UNION ALL" open="" close=";">
+        		SELECT 
+	        		#{trave.traveSeq} AS TRAVE_SEQ,
+	        		#{seq} AS SEQ,
+	        		#{trave.traveDay} AS TRAVE_DAY,
+	        		#{trave.traveTime} AS TRAVE_TIME,
+	        		#{trave.traveCity} AS TRAVE_CITY,
+	        		#{trave.traveCounty} AS TRAVE_COUNTY,
+	        		#{trave.traveLoc} AS TRAVE_LOC,
+	        		#{trave.traveTrans} AS TRAVE_TRANS,
+	        		#{trave.transTime} AS TRANS_TIME,
+	        		#{trave.useTime} AS USE_TIME,
+	        		#{trave.useExpend} AS USE_EXPEND,
+	        		#{trave.traveDetail} AS TRAVE_DETAIL,
+	        		#{trave.request} AS REQUEST
         		FROM 
         			DUAL</foreach>
 	END;

@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.spring.trave.dao.TraveDao;
 import com.spring.trave.vo.ClientVo;
@@ -14,7 +15,10 @@ import com.spring.trave.vo.TraveVo;
 public class TraveDaoImpl implements TraveDao {
 	@Autowired
 	SqlSession sqlSession;
-	
+	@Override
+	public int updateClientTraveList(ClientVo clientVo) {
+		return sqlSession.insert("trave.updateClientTraveList",clientVo);
+	}
 	@Override
 	public int insertClient(ClientVo clientVo) {
 		return sqlSession.insert("trave.insertClient",clientVo);

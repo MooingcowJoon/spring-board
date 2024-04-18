@@ -15,7 +15,6 @@ public class TraveVo {
 	private String useExpend;
 	private String traveDetail;
 	private String request;
-	
 	public TraveVo(){}
 	public String getTraveSeq() {
 		return traveSeq;

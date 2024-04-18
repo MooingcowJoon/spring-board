@@ -37,7 +37,7 @@ $j(()=>{
 	const g_traveRowClone = $j('.traveRow:first').clone()
 	$j('#traveList tbody').remove()
 	let g_traveCities = null
-	
+		
 	const removeRow = ()=>{
 		const totalRows = g_day.children()
 		const checkedRows = totalRows.filter((i,el)=>el.classList.contains('checked'))
@@ -82,9 +82,9 @@ $j(()=>{
 		fetch("/api/trave/manage/fetchClient.do?seq="+seq)
 		.then(res=>res.json())
 		.then(json=>{
-			console.log(json.result)
 			g_traveCities = JSON.parse(json.traveCities)
 			generateTable(JSON.parse(json.client))
+			console.log(JSON.parse(json.client))
 			daySelect(1)
 		})
 		.catch(error=>console.error('Error :',error))
@@ -104,6 +104,7 @@ $j(()=>{
 		const formTable = $j('#traveList').children(':first')
 		formTable.find('[name="traveCity"]').text(c.traveCity)
 		formTable.find('tbody').remove()
+		console.log(traveDays)
 		for (let i = 0; i<traveDays.length; i++){
 			g_day = g_traveDayClone.clone()
 						.attr({
@@ -121,7 +122,7 @@ $j(()=>{
 		}
 	}
 	const generateTraveRow = trave=>{
-		const clone = g_traveRowClone.clone()
+		const clone = g_traveRowClone.clone().attr({'day':g_day.index(),'request':'M'})
 		const city = g_day.attr('traveCity')
 		const countySelect = clone.find('[name="traveCounty"]')
 		g_traveCities[city].forEach(county=>{
@@ -154,9 +155,11 @@ $j(()=>{
 		    }));
 		})
 		if(trave){
-		clone.find('input[name]').each(function(){
- 			$j(this).val(trave[this.name])
+		clone.find('[name]').each(function(){
+			const val = trave[this.name]
+ 			$j(this).val(val).attr('oldVal',val)
 		})
+		clone.attr('request',trave['request'])
 		}
 		return clone
 	} 
@@ -231,7 +234,7 @@ $j(()=>{
 									<input type="checkbox"/>
 								</td>
 								<td>
-									<input name="traveTime" data-val="오후:0:0"  type="text" value="오후 12:00 🕓" />
+									<input name="traveTime" data-val="오전:7:0"  type="text" value="오전 07:00 🕓" />
 								<td>
 									<select name="traveCounty">
 									</select>
@@ -250,13 +253,13 @@ $j(()=>{
 									</select>
 								</td>
 								<td>
-									<input name="transTime" type="text" />
+									<input name="transTime" type="text" value="00:00"/>
 								</td>
 								<td>
-									<input name="useTime" type="text" />
+									<input name="useTime" type="text" value="00:00"/>
 								</td>
 								<td>
-									<input name="useExpend" type="text" />
+									<input name="useExpend" cursor="0" value="0" type="text" />
 								</td>
 								<td>
 									<input name="traveDetail" type="text" />

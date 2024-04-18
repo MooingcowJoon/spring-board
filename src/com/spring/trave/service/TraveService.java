@@ -6,7 +6,7 @@ import java.util.Map;
 import com.spring.trave.vo.ClientVo;
 
 public interface TraveService {
-
+	public int updateClientTraveList(ClientVo clientVo);
 	public int insertClient(ClientVo clientVo);
 	public List<ClientVo> getClientList();
 	public ClientVo getClientBySeq(String seq);

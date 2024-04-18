@@ -25,7 +25,10 @@ public class TraveServiceImpl implements TraveService{
 	@Autowired
 	TraveDao traveDao;
 	
-	
+	@Override
+	public int updateClientTraveList(ClientVo clientVo) {
+		return traveDao.updateClientTraveList(clientVo);
+	}
 	@Override
 	public int insertClient(ClientVo clientVo) {
 		return traveDao.insertClient(clientVo);
@@ -49,7 +52,7 @@ public class TraveServiceImpl implements TraveService{
 			traveDays.add(new ArrayList<TraveVo>());
 		}
 		for(TraveVo trave : traveList) {
-		int day = Integer.parseInt(trave.getTraveDay());
+		int day = Integer.parseInt(trave.getTraveDay())-1;
 		traveDays.get(day).add(trave);
 		}
 		c.setTraveDays(traveDays);
