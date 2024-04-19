@@ -15,6 +15,16 @@ public class TraveVo {
 	private String useExpend;
 	private String traveDetail;
 	private String request;
+	private String estimatedExpend;
+	
+	
+	
+	public String getEstimatedExpend() {
+		return estimatedExpend;
+	}
+	public void setEstimatedExpend(String estimatedExpend) {
+		this.estimatedExpend = estimatedExpend;
+	}
 	public TraveVo(){}
 	public String getTraveSeq() {
 		return traveSeq;

@@ -23,12 +23,25 @@ button.dayBtn,
 table#clientTable{
 cursor:pointer;
 }
+input[type="text"]{
+width:100px;
+}
+.fareTd,.fareTh {
+    white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
+}
+
+.fare {
+    display: inline; /* 한 줄에 표시 */
+}
+td.estimated.over-price{
+	   color: red; 
+    font-weight: bold; 
+}
 
 </style>
 <title>여행 일정 관리</title>
 </head>
-<%@include file="/res/js/trave/manage/time_input.jsp"%>   
-
+<%@include file="/res/js/trave/manage/time_input_10min.jsp"%>
 <script>
 $j(()=>{
 	let g_client
@@ -37,7 +50,6 @@ $j(()=>{
 	const g_traveRowClone = $j('.traveRow:first').clone()
 	$j('#traveList tbody').remove()
 	let g_traveCities = null
-		
 	const removeRow = ()=>{
 		const totalRows = g_day.children()
 		const checkedRows = totalRows.filter((i,el)=>el.classList.contains('checked'))
@@ -61,7 +73,7 @@ $j(()=>{
 	
 	$j('#addRowBtn').click(e=>g_day.append(generateTraveRow()))
 	$j('#removeRowBtn').click(e=>removeRow())
-	
+	$j('sortTraveList').click()
 
 	
 	const initPage = ()=>selectRow($j('.clientRow:first'))
@@ -84,7 +96,6 @@ $j(()=>{
 		.then(json=>{
 			g_traveCities = JSON.parse(json.traveCities)
 			generateTable(JSON.parse(json.client))
-			console.log(JSON.parse(json.client))
 			daySelect(1)
 		})
 		.catch(error=>console.error('Error :',error))
@@ -104,7 +115,6 @@ $j(()=>{
 		const formTable = $j('#traveList').children(':first')
 		formTable.find('[name="traveCity"]').text(c.traveCity)
 		formTable.find('tbody').remove()
-		console.log(traveDays)
 		for (let i = 0; i<traveDays.length; i++){
 			g_day = g_traveDayClone.clone()
 						.attr({
@@ -160,9 +170,114 @@ $j(()=>{
  			$j(this).val(val).attr('oldVal',val)
 		})
 		clone.attr('request',trave['request'])
+		calculateFare(clone)
 		}
 		return clone
-	} 
+	}
+	const calculateFare = traveRow=>{
+		const r = $j(traveRow)
+		const type = r.find('[name="traveTrans"]').val()
+		let fare
+		const fareEl= r.find('.fare')
+		let spent = r.find('[name="transTime"]').val().split(':')
+		spent = parseInt(spent[0]*60)+parseInt(spent[1])
+		if(spent===0){
+			fareEl.text('0')
+		}
+		switch(type){
+			case 'W':
+				fare=0
+				break;
+			case 'B':
+				fare=1400+Math.floor(spent/20)*200
+				break;
+			case 'S':
+				fare=1450+Math.floor(spent/20)*200
+				break;
+			case 'T':
+				const traveTime = r.find('[name="traveTime"]').val().split(' ')
+				const tmp = traveTime[1].split(':')
+				let h = parseInt(tmp[0])+(traveTime[0]==='오전' ? 0 : 12)
+				let m = parseInt(tmp[1])
+					fare = 3800
+					fare *= h >=22 && h<24 ?  1.2 :(h>=0 && h<4 ? 1.4 : 1)
+					console.log('기본요금 = '+fare)
+				while(spent>0){
+					let spentMins
+					const extra = h >=22 && h<24 ?  1.2 :(h>=0 && h<4 ? 1.4 : 1)
+					const H = h
+					if (m+spent>60){
+						h=(h+1)%24
+						spentMins = 60-m
+						m=0
+					}else{
+						spentMins = spent
+					}
+					spent-=spentMins
+					fare+=5000*Math.floor(spentMins/10)*extra
+					console.log(H+'시 구간 이동시간 = '+spentMins+'분,\n할증 = '+Math.round((extra-1)*100)+'%\n구간요금합계='+5000*Math.floor(spentMins/10)*extra)
+				}
+				break;
+			case 'C':
+				fare= Math.floor(spent/10)*500
+				break;
+			case 'R':
+				fare= Math.floor(spent/10)*500
+				break;
+		}
+		fareEl.text(fare)
+	}
+	$j(document).on(
+			{	
+				'mousedown':e=>g_time=new Time(e.target)
+				,'focus':e=>{
+					if(g_time===null){
+						g_time=new Time(e.target)
+						g_time.state.focus()
+					}
+					return
+				}
+				,'click':e => {
+					g_time.click(e)
+					e.preventDefault()
+				}
+				,'keydown': e => {
+				const allowed = ['F5','Ctrl','c','v','F12']
+				!allowed.includes(e.key) && e.preventDefault()
+				g_isShiftDown = e.shiftKey? true : false
+				g_time.keydown(e.key)	
+				}
+				,'doubleclick':e=>e.preventDefault()
+				,'keyup':e=>{
+					if(e.key==='Shift'){
+						g_isShiftDown =false
+					}
+				}
+				,'blur':e=>{
+					if(g_time&& e.target === g_time.el){
+						g_time=null
+					}
+				}
+				,'paste': e=>{
+					const pastedText = e.originalEvent.clipboardData.getData('text');
+					const reg = /^(12|(0?[1-9])|1[0-1]):[0-5][0-9].*$/
+					if(reg.test(pastedText)){
+						const val = pastedText.split(':')
+						g_time.h = parseInt(hm[0]%12)
+						g_time.m = parseInt(hm[1])
+						g_time.execute(2)
+					}
+					e.preventDefault()
+				}, 
+				'input':e=>{
+					if(e.target.value !== g_time.textVal){
+						g_stateIndex = g_time.stateIndex
+						e.target.value = g_time.textVal
+						alert('방향키, 숫자, 백스페이스 및 마우스 휠과 탭키로 조정해주세요.\n(쉬프트키 입력시 10분 단위 조정)')
+					}
+				}
+			},'[name="transTime"],[name="useTime"]'
+		)
 	initPage()
 	
 })
@@ -193,7 +308,7 @@ $j(()=>{
 									<td>${c.traveCity}</td>
 									<td>${c.period }</td>
 									<td transport="${c.transport}">${c.transport eq 'R' ? '렌트' : (c.transport eq 'C' ? '자차' : '대중교통') }</td>
-									<td>${c.expend }</td>
+									<td class="expend">${c.expend }</td>
 									<td class="estimated"></td>
 								</tr>
 							</c:forEach>						
@@ -208,6 +323,8 @@ $j(()=>{
 					<button id="addRowBtn">추가</button>
 					|
 					<button id="removeRowBtn" >삭제</button>
+					|
+					<button id="sortTraveList" >시간순 정렬</button>
 				</td>
 			</tr>
 			<tr>
@@ -225,7 +342,7 @@ $j(()=>{
 								<th>예상이용시간</th>
 								<th>이용요금<br>(예상지출비용)</th>
 								<th>계획상세</th>
-								<th>교통비</th>
+								<th class="fareTh">교통비</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -234,7 +351,7 @@ $j(()=>{
 									<input type="checkbox"/>
 								</td>
 								<td>
-									<input name="traveTime" data-val="오전:7:0"  type="text" value="오전 07:00 🕓" />
+									<input name="traveTime" type="text" value="오전 07:00 🕓" />
 								<td>
 									<select name="traveCounty">
 									</select>
@@ -264,7 +381,7 @@ $j(()=>{
 								<td>
 									<input name="traveDetail" type="text" />
 								</td>
-								<td><span></span>원</td>
+								<td class="fareTd"><span class="fare">0</span>원</td>
 							</tr>												
 						</tbody>
 

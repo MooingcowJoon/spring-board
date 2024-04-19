@@ -132,7 +132,7 @@
 		$j(document).on('blur',selector,e=>e.target.value=e.target.value.replace(/\B(?=(\d{3})+(?!\d))/g, ','))
 		$j(document).on('focus mousedown',selector,e=>e.target.value=e.target.value.replaceAll(',',''))
 	}
-	
+	const getPriceFormat = price=> (price+'').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 </script>
 <body >
 </body>
