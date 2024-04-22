@@ -1,8 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <script>
-
-$j(()=>{
 	const daySelect_2 = dayNum => {
 		const idx = dayNum - 1
 		$j('.dayBtn').removeClass('selected').eq(idx).addClass('selected')
@@ -55,12 +53,12 @@ $j(()=>{
 		},'[name='+name+']')
 	}
 	
-	InputEventHandler('useExpend')
+	
 	
 	const sortTrave = traveList=>{
 		const dayNum = $j('#traveList').find('tbody').length
 		const days = []
-		
+		traveList.removeClass('invalid')
 		traveList.each(function(){
 			const n= $j(this).attr('day')-1
 			if(!days[n]){
@@ -92,7 +90,7 @@ $j(()=>{
 			 	h += parseInt(t[0])
 			 	m  = parseInt(t[1])
 			}
-			return h*12+m
+			return h*60+m
 		}
 		for(let i =0; i<days.length; i++){
 			if(!checkTime(days[i],getTimeNum)){
@@ -103,7 +101,7 @@ $j(()=>{
 		
 	}
 	
-	const checkTime = (traves,getTimeNum) =>{
+	const checkTime = (traves,getTimeNum,sortRows=false) =>{
 		traves.sort((t1,t2)=> getTimeNum(t1)- getTimeNum(t2))
 		
 		for(let i=0; i<traves.length; i++){
@@ -143,9 +141,14 @@ $j(()=>{
 			const next = traves[i+1]
 			const nextStart = getTimeNum(next)
 			if(curEnd >= nextStart){
+				$j(cur).addClass('invalid')
+				$j(next).addClass('invalid')
 				errAlert(trans>use ? 'transTime' : 'useTime','일정이 중복됩니다. 시간대를 조정해주세요.')
 				return false
 			}
+		}
+		if(sortRows){
+			
 		}
 		return true
 	}
@@ -202,10 +205,9 @@ $j(()=>{
 		}
 		fareEl.text(fare)
 	}
-	$j(document).on('change','[name="traveTrans"]',e=>calculateFare($j(e.target).closest('tr')))
-	$j(document).on('blur','.traveRow [name]',e=>calculateFare($j(e.target).closest('tr')))
 	
-	$j('#submitBtn').click(e=>submit())
+	
+	
 	const submit = ()=>{
 		const rows = $j('.traveRow')
 		const data = $j([])
@@ -319,6 +321,5 @@ $j(()=>{
 		}
 		return result
 	}
-})
 
 </script>

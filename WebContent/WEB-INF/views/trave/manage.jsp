@@ -18,6 +18,10 @@ button.dayBtn.selected,
 tr.traveRow.checked{
 background-color:skyblue;
 }
+tr.traveRow.invalid{
+background-color:red;
+}
+
 
 button.dayBtn,
 table#clientTable{
@@ -41,7 +45,8 @@ td.estimated.over-price{
 </style>
 <title>여행 일정 관리</title>
 </head>
-<%@include file="/res/js/trave/manage/time_input_10min.jsp"%>
+<%@include file="/res/js/trave/manage/time_input_10min_js.jsp"%>
+<%@include file="/res/js/trave/manage/validation_js.jsp"%>   
 <script>
 $j(()=>{
 	let g_client
@@ -74,7 +79,11 @@ $j(()=>{
 	$j('#addRowBtn').click(e=>g_day.append(generateTraveRow()))
 	$j('#removeRowBtn').click(e=>removeRow())
 	$j('sortTraveList').click()
-
+	InputEventHandler('useExpend')
+	$j(document).on('change','[name="traveTrans"]',e=>calculateFare($j(e.target).closest('tr')))
+	$j(document).on('blur','.traveRow [name]',e=>calculateFare($j(e.target).closest('tr')))
+	$j('#submitBtn').click(e=>submit())
+	
 	
 	const initPage = ()=>selectRow($j('.clientRow:first'))
 	$j('.clientRow').click(e=>selectRow($j(e.target).parent()))
@@ -282,7 +291,7 @@ $j(()=>{
 	
 })
 </script>
-<%@include file="/res/js/trave/manage/validation.jsp"%>   
+
 <body>
 	<table align="center" >
 		<tbody>
