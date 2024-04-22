@@ -8,6 +8,7 @@
 		<result property="traveCity" column="TRAVE_CITY"></result>
 		<result property="period" column="PERIOD"></result>
 		<result property="expend" column="EXPEND"></result>
+		<result property="estExpend" column="EST_EXPEND"></result>
 		<result property="transport" column="TRANSPORT"></result>
 		<collection property="traveList" resultMap="traveMap"></collection>
 	</resultMap>
@@ -35,11 +36,11 @@
 		INSERT 
 			INTO 
 		CLIENT_INFO
-			(SEQ, USER_NAME, USER_PHONE, TRAVE_CITY, PERIOD, EXPEND, TRANSPORT)
+			(SEQ, USER_NAME, USER_PHONE, TRAVE_CITY, PERIOD, EXPEND, TRANSPORT,EST_EXPEND)
 		VALUES
 			(
 			#{seq},
-			 #{userName}, #{userPhone}, #{traveCity}, #{period}, #{expend}, #{transport}
+			 #{userName}, #{userPhone}, #{traveCity}, #{period}, #{expend}, #{transport},'0'
 			 )
 	</insert>
 	<insert id="insertOrUpdateClient" parameterType="com.spring.trave.vo.ClientVo">	
@@ -51,9 +52,9 @@
 	    		)    					
   		WHEN	NOT MATCHED THEN
   				INSERT
-  					(SEQ, USER_NAME, USER_PHONE, TRAVE_CITY, PERIOD, EXPEND, TRANSPORT)
+  					(SEQ, USER_NAME, USER_PHONE, TRAVE_CITY, PERIOD, EXPEND, TRANSPORT,EST_EXPEND)
  				VALUES
- 					(#{seq}, #{userName}, #{userPhone}, #{traveCity}, #{period}, #{expend}, #{transport});
+ 					(#{seq}, #{userName}, #{userPhone}, #{traveCity}, #{period}, #{expend}, #{transport},#{estExpend});
 	    
  	    DELETE 
 	    	FROM
@@ -99,6 +100,12 @@
 	</insert>
 	<insert id="updateClientTraveList" parameterType="com.spring.trave.vo.ClientVo">	
 	BEGIN
+		UPDATE
+			CLIENT_INFO
+		SET 
+			EST_EXPEND = #{estExpend}
+		WHERE
+			SEQ = #{seq};
  	    DELETE 
 	    	FROM
 	    		TRAVE_INFO
@@ -149,7 +156,8 @@
         TRAVE_CITY,
         PERIOD,
         EXPEND,
-        TRANSPORT
+        TRANSPORT,
+        EST_EXPEND
     FROM
         CLIENT_INFO
 	</select>
@@ -163,6 +171,7 @@
         C.PERIOD,
         C.EXPEND,
         C.TRANSPORT,
+        C.EST_EXPEND,
         T.TRAVE_SEQ,
 		T.SEQ,
 		T.TRAVE_DAY,

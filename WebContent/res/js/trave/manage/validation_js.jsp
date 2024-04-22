@@ -55,7 +55,7 @@
 	
 	
 	
-	const sortTrave = traveList=>{
+	const sortTrave = (traveList,sort=false)=>{
 		const dayNum = $j('#traveList').find('tbody').length
 		const days = []
 		traveList.removeClass('invalid')
@@ -67,41 +67,45 @@
 			days[n].push($j(this))
 		}
 		)
-		const getTimeNum = (traveRow,name="traveTime")=>{
-			let t
-		 	let h = 0
-		 	let m = 0
-		 	
-			if(name==='traveTime'){
-			 	t = $j(traveRow).find('[name='+name+']').val().split(' ')
-		 		const isPm= t[0]==='오후'
-		 		t=t[1].split(':')
-		 		h=parseInt(t[0])
-		 		m=parseInt(t[1])
-		 		if(isPm){
-			 		h=12+h%12 
-			 	}else{
-			 		h= h<4 ? h+24 : h
-			 	}
-		 				
-			}else{
-				t=$j(traveRow).find('[name='+name+']').val()
-				t =t.split(':')
-			 	h += parseInt(t[0])
-			 	m  = parseInt(t[1])
-			}
-			return h*60+m
-		}
+		const data = $j([])
 		for(let i =0; i<days.length; i++){
 			if(!checkTime(days[i],getTimeNum)){
 				return false
+			}else if(sort){
+				const tbody = $j('#traveList').find('tbody').eq(i)
+				tbody.empty().append(days[i])
 			}
+			data.push(...days[i])
 		}
-		return true
+		return data
 		
 	}
-	
-	const checkTime = (traves,getTimeNum,sortRows=false) =>{
+	const getTimeNum = (traveRow,name="traveTime")=>{
+		let t
+	 	let h = 0
+	 	let m = 0
+	 	
+		if(name==='traveTime'){
+		 	t = $j(traveRow).find('[name='+name+']').val().split(' ')
+	 		const isPm= t[0]==='오후'
+	 		t=t[1].split(':')
+	 		h=parseInt(t[0])
+	 		m=parseInt(t[1])
+	 		if(isPm){
+		 		h=12+h%12 
+		 	}else{
+		 		h= h<4 ? h+24 : h
+		 	}
+	 				
+		}else{
+			t=$j(traveRow).find('[name='+name+']').val()
+			t =t.split(':')
+		 	h += parseInt(t[0])
+		 	m  = parseInt(t[1])
+		}
+		return h*60+m
+	}
+	const checkTime = (traves,sortRows=false) =>{
 		traves.sort((t1,t2)=> getTimeNum(t1)- getTimeNum(t2))
 		
 		for(let i=0; i<traves.length; i++){
@@ -147,9 +151,7 @@
 				return false
 			}
 		}
-		if(sortRows){
-			
-		}
+
 		return true
 	}
 	const calculateFare = traveRow=>{
@@ -207,10 +209,13 @@
 	}
 	
 	
-	
-	const submit = ()=>{
+	const sortTraveRows = ()=>{
+		const filledRows = getFilledRows()
+		sortTrave(filledRows,sort=true)
+	}
+	const getFilledRows = () =>{
 		const rows = $j('.traveRow')
-		const data = $j([])
+		const filledRows = $j([])
 		for(let i = 0; i<rows.length; i++){
 			const result = nullCheck(rows[i])
 			if(result.code<0){
@@ -220,11 +225,19 @@
 				return
 			}
 			if(result.code===1){
-				data.push(rows[i])
+				filledRows.push(rows[i])
 			}
 		}
+		return filledRows
+	}
+	const submit = ()=>{
+		let data = getFilledRows()
 		const traveCity = $j('[name="traveCity"]:first').text()
 		const traveList = []
+		data= sortTrave(data)
+		if(!data){
+			return
+		}
 		for(let i =0; i<data.length; i++){
 			const el = $j(data[i])
 			const o = {}
@@ -232,7 +245,7 @@
 			
 			const dayNum = el.attr('day')
 			o.traveCity = traveCity
-			o.traveSeq = dayNum+el.index()
+			o.traveSeq = i
 			o.traveDay = dayNum
 			const inputs = el.find('[name]')
 			for(let j=0; j<inputs.length; j++){
@@ -251,20 +264,27 @@
 			o.request='C'
 			traveList.push(o)
 		}
-	
+		
 		if(traveList.length===0){
 			alert('하나 이상의 유효한 일정을 입력하셔야합니다.')
 			return
 		}
-		if(!sortTrave(data)){
-			return
-		}
 		
+		const clientRow = $j('.clientRow.selected:first')
+		let total = 0
+		data.each((i,el)=>{
+			total+= parseInt($j(el).find('[name="useExpend"]').val().replaceAll(',',''))
+					+parseInt($j(el).find('.fare').text())
+		})
+		console.log(total)
+		clientRow.find('.estExpend').text(getPriceFormat(total))
+		isExpendOverPrice(clientRow)
 		const clientVo = {
-				seq:$j('.clientRow.selected:first').data('seq')
+				seq : clientRow.data('seq')
+				,estExpend : clientRow.find('.estExpend').text()
 				,traveList:traveList
 		}
-		console.log(JSON.stringify(clientVo))
+		console.log(clientVo)
 		$j.ajax({
 			type			: "POST",
 			url				: 	"/api/trave/manage/submit.do",
@@ -273,23 +293,6 @@
 			success			:	function(res){
 				if(res.result === 'success'){
 					alert('일정이 저장되었습니다.')
-					let total=0
-					data.each((i,el)=>{
-						total+= parseInt($j(el).find('[name="useExpend"]').val().replaceAll(',',''))
-								+parseInt($j(el).find('.fare').text())
-					})
-					const c = $j('.clientRow.selected:first')
-					const est = c.find('.estimated')
-					est.text(getPriceFormat(total))
-					const expend = parseInt(c.find('.expend').text().replaceAll(',',''))
-					console.log(expend)
-					const isOverPrice = total > expend
-					
-					if(isOverPrice){
-						est.addClass('over-price')
-					}else{
-						est.removeClass('over-price')
-					}
 					return
 				}
 				if(res.result === 'error'){
@@ -302,13 +305,37 @@
 		})
 	}
 	
-	
+	const isExpendOverPrice = clientRow =>{
+		let c = $j(clientRow)
+		const est = c.find('.estExpend')
+		
+		const expend = parseInt(c.find('.expend').text().replaceAll(',',''))
+		const estExpend =parseInt(est.text().replaceAll(',',''))
+		const isOverPrice = estExpend > expend
+		
+		if(isOverPrice){
+			est.addClass('over-price')
+		}else{
+			est.removeClass('over-price')
+		}
+	}
 	const nullCheck = row=>{
-		const inputs = $j(row).find('input[type="text"]:not([name$="Time"],[name="useExpend"])')
+		const inputs = $j(row).find('input[type="text"]:not([name="traveTime"])')
 		let result = {code: 0, el:null}
 		let nullIndex
+		
 		for(let i =0; i<inputs.length; i++){
-			if(inputs[i].value.trim()===''){
+			const e = inputs[i]
+			let flag=false
+			if((e.name==='transTime' || e.name==='useTime') && e.value ==='00:00'){
+				flag=true				
+			}
+			
+			if(e.name==='useExpend' && e.value==='0'){
+				flag=true
+			}
+			
+			if(flag || inputs[i].value.trim()===''){
 				if(!nullIndex){
 					nullIndex=i
 				}

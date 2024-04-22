@@ -11,10 +11,20 @@ public class ClientVo {
 	private String traveCity;
 	private String period;
 	private String expend;
+	private String estExpend;
 	private String transport;
+	
 	private List<TraveVo> traveList;
 	private List<List<TraveVo>> traveDays;
 	
+	
+	public String getEstExpend() {
+		return estExpend;
+	}
+
+	public void setEstExpend(String estExpend) {
+		this.estExpend = estExpend;
+	}
 	public List<List<TraveVo>> getTraveDays() {
 		return traveDays;
 	}

@@ -174,7 +174,11 @@
 					this.ap = v[0]
 					t=  v[1].split(':')
 					this.h = parseInt(t[0])
-					this.m = parseInt(t[1])
+					const isAm= this.ap==='오전'
+					if(this.h === 12 && !isAm){
+						this.h = 0 
+					} 
+ 					this.m = parseInt(t[1])
 					this.states = [new AmpmState(this,0,0,2),new HourState(this,1,3,5),new MinState(this,2,6,8)]
 					break;
 				default:

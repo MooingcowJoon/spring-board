@@ -37,7 +37,7 @@ width:100px;
 .fare {
     display: inline; /* 한 줄에 표시 */
 }
-td.estimated.over-price{
+td.estExpend.over-price{
 	   color: red; 
     font-weight: bold; 
 }
@@ -54,7 +54,9 @@ $j(()=>{
 	const g_traveDayClone = $j('#traveList tbody:first').clone().empty()
 	const g_traveRowClone = $j('.traveRow:first').clone()
 	$j('#traveList tbody').remove()
+	let g_traveRow = null
 	let g_traveCities = null
+	
 	const removeRow = ()=>{
 		const totalRows = g_day.children()
 		const checkedRows = totalRows.filter((i,el)=>el.classList.contains('checked'))
@@ -73,10 +75,45 @@ $j(()=>{
 		}
 		
 	}
-	
+	$j(document).on('focus','.traveRow',e=>{
+		g_traveRow = $j(e.target).closest('.traveRow')
+	})
 	$j('#traveList').on('click','input[type="checkbox"]',e=>$j(e.target).closest('tr').toggleClass('checked'))
 	
-	$j('#addRowBtn').click(e=>g_day.append(generateTraveRow()))
+	$j('#addRowBtn').click(e=>{
+		const totalRows = g_day.children()
+		console.log(g_traveRow)
+		const checkedRows = totalRows.filter((i,el)=>el.classList.contains('checked'))
+		const clone = generateTraveRow()
+		const row = g_traveRow? $j(g_traveRow) : (checkedRows.length===0 ? totalRows.last() : checkedRows.last())
+		
+		const time = (row,names) => {
+			let t =0 
+			names.forEach(name=>{
+				t+=getTimeNum(row,name)
+			})
+			return t
+		}
+		let t = time(row,['traveTime','transTime','useTime'])+10
+		if(t>=24*60+4*60){
+			alert('더 이상 스케쥴을 추가하실 수 없습니다.')
+			return
+		}
+		let h = Math.floor(t/60)
+		h = h===0? '00' : h
+		
+		let m = t%60 === 0? '00' : t%60
+		const AP = h >=7 && h<24 ? '오후' : '오전'
+		let H = h%12
+		if(h===0 && AP==='오후'){
+			H=12
+		}
+		if(H <10){
+			H='0'+H
+		}
+		clone.find('[name=traveTime]').val(AP+' '+H+':'+m+' 🕓')
+		row.after(clone)
+	})
 	$j('#removeRowBtn').click(e=>removeRow())
 	$j('sortTraveList').click()
 	InputEventHandler('useExpend')
@@ -84,16 +121,24 @@ $j(()=>{
 	$j(document).on('blur','.traveRow [name]',e=>calculateFare($j(e.target).closest('tr')))
 	$j('#submitBtn').click(e=>submit())
 	
+	$j('#sortTraveRows').click(sortTraveRows)
 	
-	const initPage = ()=>selectRow($j('.clientRow:first'))
+	const initPage = ()=>{
+		const cRows = $j('.clientRow')
+		cRows.each((i,e)=>isExpendOverPrice(e))
+		selectRow(cRows.first())
+	}
 	$j('.clientRow').click(e=>selectRow($j(e.target).parent()))
 	$j('#dayBtnContainer').on('click','button',e=>daySelect($j(e.target).index()+1))
+	
 	const selectRow = $row => {
 		g_client && g_client.toggleClass('selected')
 		const seq = (g_client= $row.toggleClass('selected')).data('seq')
 		fetchClient(seq)
 	}
+	
 	const daySelect = dayNum => {
+		g_traveRow=null
 		const idx = dayNum - 1
 		$j('.dayBtn').removeClass('selected').eq(idx).addClass('selected')
 		g_day = $j('#traveList tbody').hide().eq(idx).show()
@@ -318,7 +363,7 @@ $j(()=>{
 									<td>${c.period }</td>
 									<td transport="${c.transport}">${c.transport eq 'R' ? '렌트' : (c.transport eq 'C' ? '자차' : '대중교통') }</td>
 									<td class="expend">${c.expend }</td>
-									<td class="estimated"></td>
+									<td class="estExpend">${c.estExpend }</td>
 								</tr>
 							</c:forEach>						
 						</tbody>
@@ -333,7 +378,7 @@ $j(()=>{
 					|
 					<button id="removeRowBtn" >삭제</button>
 					|
-					<button id="sortTraveList" >시간순 정렬</button>
+					<button id="sortTraveRows" >시간순 정렬</button>
 				</td>
 			</tr>
 			<tr>
