@@ -10,6 +10,7 @@
 		<result property="expend" column="EXPEND"></result>
 		<result property="estExpend" column="EST_EXPEND"></result>
 		<result property="transport" column="TRANSPORT"></result>
+		<result property="rentExpend" column="RENT_EXPEND"></result>
 		<collection property="traveList" resultMap="traveMap"></collection>
 	</resultMap>
 	<resultMap type="com.spring.trave.vo.TraveVo" id="traveMap">
@@ -26,6 +27,7 @@
 		<result property="useExpend" column="USE_EXPEND"></result>
 		<result property="traveDetail" column="TRAVE_DETAIL"></result>
 		<result property="request" column="REQUEST"></result>
+		<result property="traveFare" column="TRAVE_FARE"></result>
 	</resultMap>
 	
 	
@@ -36,67 +38,13 @@
 		INSERT 
 			INTO 
 		CLIENT_INFO
-			(SEQ, USER_NAME, USER_PHONE, TRAVE_CITY, PERIOD, EXPEND, TRANSPORT,EST_EXPEND)
+			(SEQ, USER_NAME, USER_PHONE, TRAVE_CITY, PERIOD, EXPEND, TRANSPORT, EST_EXPEND, RENT_EXPEND)
 		VALUES
 			(
 			#{seq},
-			 #{userName}, #{userPhone}, #{traveCity}, #{period}, #{expend}, #{transport},'0'
+			 #{userName}, #{userPhone}, #{traveCity}, #{period}, #{expend}, #{transport},'0',
+			 TO_CHAR(TO_NUMBER(#{rentExpend}), 'FM999,999,999')
 			 )
-	</insert>
-	<insert id="insertOrUpdateClient" parameterType="com.spring.trave.vo.ClientVo">	
-	BEGIN
-	    MERGE INTO
-    			CLIENT_INFO C
-	    	USING DUAL ON(
-	    			C.SEQ = #{seq}	
-	    		)    					
-  		WHEN	NOT MATCHED THEN
-  				INSERT
-  					(SEQ, USER_NAME, USER_PHONE, TRAVE_CITY, PERIOD, EXPEND, TRANSPORT,EST_EXPEND)
- 				VALUES
- 					(#{seq}, #{userName}, #{userPhone}, #{traveCity}, #{period}, #{expend}, #{transport},#{estExpend});
-	    
- 	    DELETE 
-	    	FROM
-	    		TRAVE_INFO
-    		WHERE
-    			SEQ = #{seq};
-   		
-		INSERT ALL INTO
-		TRAVE_INFO
-				(
-				TRAVE_SEQ,
-				SEQ,
-				TRAVE_DAY,
-				TRAVE_TIME,
-				TRAVE_CITY,
-				TRAVE_COUNTY,
-				TRAVE_LOC,
-				TRAVE_TRANS,
-				TRANS_TIME,
-				USE_TIME,
-				USE_EXPEND,
-				TRAVE_DETAIL,
-				REQUEST
-				)
-  				<foreach collection="traveList" item="trave" separator="UNION ALL" open="" close=";">
-        		SELECT 
-	        		#{trave.traveSeq} AS TRAVE_SEQ,
-	        		#{seq} AS SEQ,
-	        		#{trave.traveDay} AS TRAVE_DAY,
-	        		#{trave.traveTime} AS TRAVE_TIME,
-	        		#{trave.traveCity} AS TRAVE_CITY,
-	        		#{trave.traveCounty} AS TRAVE_COUNTY,
-	        		#{trave.traveLoc} AS TRAVE_LOC,
-	        		#{trave.traveTrans} AS TRAVE_TRANS,
-	        		#{trave.transTime} AS TRANS_TIME,
-	        		#{trave.useTime} AS USE_TIME,
-	        		#{trave.useExpend} AS USE_EXPEND,
-	        		#{trave.traveDetail} AS TRAVE_DETAIL,
-	        		#{trave.request} AS REQUEST,
-        		FROM 
-        			DUAL</foreach>
-	END;
 	</insert>
 	<insert id="updateClientTraveList" parameterType="com.spring.trave.vo.ClientVo">	
 	BEGIN
@@ -126,7 +74,8 @@
 				USE_TIME,
 				USE_EXPEND,
 				TRAVE_DETAIL,
-				REQUEST
+				REQUEST,
+				TRAVE_FARE
 				)
   				<foreach collection="traveList" item="trave" separator="UNION ALL" open="" close=";">
         		SELECT 
@@ -142,7 +91,8 @@
 	        		#{trave.useTime} AS USE_TIME,
 	        		#{trave.useExpend} AS USE_EXPEND,
 	        		#{trave.traveDetail} AS TRAVE_DETAIL,
-	        		#{trave.request} AS REQUEST
+	        		#{trave.request} AS REQUEST,
+	        		#{trave.traveFare} AS TRAVE_FARE
         		FROM 
         			DUAL</foreach>
 	END;
@@ -157,13 +107,28 @@
         PERIOD,
         EXPEND,
         TRANSPORT,
-        EST_EXPEND
+        EST_EXPEND,
+        RENT_EXPEND
     FROM
         CLIENT_INFO
+    ORDER BY
+    	SEQ DESC
 	</select>
-	<select id="selectClientBySeq" parameterType="String" resultMap="clientMap">
- 
-    SELECT
+	<update id="modifyRequest" parameterType="com.spring.trave.dto.ModifyRequestDto" >
+		UPDATE
+			TRAVE_INFO
+		SET
+			REQUEST = 'M'
+		WHERE
+			SEQ = #{seq}
+		AND
+			TRAVE_SEQ IN 
+		<foreach collection="traveSeqList" item="traveSeq" open="(" separator=", " close=")">
+			#{traveSeq}
+		</foreach>
+	</update>
+	<select id="selectClient" resultMap="clientMap">
+	SELECT
         C.SEQ,
         C.USER_NAME,
         C.USER_PHONE,
@@ -172,6 +137,7 @@
         C.EXPEND,
         C.TRANSPORT,
         C.EST_EXPEND,
+        C.RENT_EXPEND,
         T.TRAVE_SEQ,
 		T.SEQ,
 		T.TRAVE_DAY,
@@ -184,13 +150,58 @@
 		T.USE_TIME,
 		T.USE_EXPEND,
 		T.TRAVE_DETAIL,
-		T.REQUEST
+		T.REQUEST,
+		T.TRAVE_FARE
+    FROM
+        CLIENT_INFO C
+    LEFT JOIN
+        TRAVE_INFO T ON C.SEQ = T.SEQ
+    WHERE 
+	  <choose>
+	    <when test="seq != null">
+	      C.SEQ = #{seq}
+	    </when>
+	    <when test="userName != null and userPhone != null">
+	      C.USER_NAME = #{userName}
+	      AND C.USER_PHONE = #{userPhone}
+	    </when>
+	  </choose>
+	ORDER BY 
+		T.TRAVE_SEQ ASC
+	</select>
+	<select id="selectClientBySeq" parameterType="String" resultMap="clientMap">
+    SELECT
+        C.SEQ,
+        C.USER_NAME,
+        C.USER_PHONE,
+        C.TRAVE_CITY,
+        C.PERIOD,
+        C.EXPEND,
+        C.TRANSPORT,
+        C.EST_EXPEND,
+        C.RENT_EXPEND,
+        T.TRAVE_SEQ,
+		T.SEQ,
+		T.TRAVE_DAY,
+		T.TRAVE_TIME,
+		T.TRAVE_CITY,
+		T.TRAVE_COUNTY,
+		T.TRAVE_LOC,
+		T.TRAVE_TRANS,
+		T.TRANS_TIME,
+		T.USE_TIME,
+		T.USE_EXPEND,
+		T.TRAVE_DETAIL,
+		T.REQUEST,
+		T.TRAVE_FARE
     FROM
         CLIENT_INFO C
     LEFT JOIN
         TRAVE_INFO T ON C.SEQ = T.SEQ        
     WHERE
     	C.SEQ = #{param}
+ 	ORDER BY 
+		T.TRAVE_SEQ ASC
 	</select>
 	
 </mapper>

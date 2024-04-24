@@ -21,8 +21,16 @@ background-color:skyblue;
 tr.traveRow.invalid{
 background-color:red;
 }
+tr.traveRow td.modify.request{
+background-color:lightGray;
+color:red;
+font-weight:bold;
+}
 
 
+button:hover{
+cursor:pointer;
+}
 button.dayBtn,
 table#clientTable{
 cursor:pointer;
@@ -73,7 +81,6 @@ $j(()=>{
 			checkedRows.remove()
 			alert('['+dayText+'일차] 일정이 초기화 되었습니다.')
 		}
-		
 	}
 	$j(document).on('focus','.traveRow',e=>{
 		g_traveRow = $j(e.target).closest('.traveRow')
@@ -103,7 +110,7 @@ $j(()=>{
 		h = h===0? '00' : h
 		
 		let m = t%60 === 0? '00' : t%60
-		const AP = h >=7 && h<24 ? '오후' : '오전'
+		const AP = h >=12 && h<24 ? '오후' : '오전'
 		let H = h%12
 		if(h===0 && AP==='오후'){
 			H=12
@@ -122,6 +129,25 @@ $j(()=>{
 	$j('#submitBtn').click(e=>submit())
 	
 	$j('#sortTraveRows').click(sortTraveRows)
+	
+	const getRentFee = row =>{
+		if($j(row).find('[transport]').attr('transport') === 'R'){
+			const d = parseInt($j(row).data('period'))
+			let perDay
+			if(d>=7){
+				perDay = 70000
+			}else if(d>= 5){
+				perDay = 80000
+			}else if(d>=3){
+				perDay = 90000
+			}else{
+				perDay = 100000
+			}
+			return perDay*d
+		}
+		return 0
+	}
+	
 	
 	const initPage = ()=>{
 		const cRows = $j('.clientRow')
@@ -186,7 +212,7 @@ $j(()=>{
 		}
 	}
 	const generateTraveRow = trave=>{
-		const clone = g_traveRowClone.clone().attr({'day':g_day.index(),'request':'M'})
+		const clone = g_traveRowClone.clone().attr('day',g_day.index())
 		const city = g_day.attr('traveCity')
 		const countySelect = clone.find('[name="traveCounty"]')
 		g_traveCities[city].forEach(county=>{
@@ -221,10 +247,13 @@ $j(()=>{
 		if(trave){
 		clone.find('[name]').each(function(){
 			const val = trave[this.name]
- 			$j(this).val(val).attr('oldVal',val)
-		})
+ 			$j(this).val(val).attr('oldVal',val)})
+ 			
 		clone.attr('request',trave['request'])
-		calculateFare(clone)
+		clone.find('.fare').text(getPriceFormat(trave.traveFare))
+		if(trave['request']==='M'){
+			clone.find('.modify').text('Y').addClass('request')
+		}
 		}
 		return clone
 	}
@@ -333,13 +362,14 @@ $j(()=>{
 			},'[name="transTime"],[name="useTime"]'
 		)
 	initPage()
-	
+	$j('#toMain').click(e=>location.href='/trave/login.do')
 })
 </script>
 
 <body>
 	<table align="center" >
 		<tbody>
+	
 			<tr>
 				<td align="center">
 					<table align="center" id ="clientTable" border="1">
@@ -352,11 +382,12 @@ $j(()=>{
 								<th>이동수단</th>
 								<th>예상 경비</th>
 								<th>견적 경비</th>
+								<th>확인페이지로</th>
 							</tr>
 						</thead>
 						<tbody>
 							<c:forEach var="c" items="${clientList}">
-								<tr class="clientRow" data-seq ="${c.seq }">
+								<tr class="clientRow" data-seq ="${c.seq }" data-rent="${c.rentExpend}">
 									<td>${c.userName }</td>
 									<td>${c.userPhone }</td>
 									<td>${c.traveCity}</td>
@@ -364,10 +395,16 @@ $j(()=>{
 									<td transport="${c.transport}">${c.transport eq 'R' ? '렌트' : (c.transport eq 'C' ? '자차' : '대중교통') }</td>
 									<td class="expend">${c.expend }</td>
 									<td class="estExpend">${c.estExpend }</td>
+									<td><a href="/trave/inquiry.do?userName=${c.userName }&userPhone=${c.userPhone }">이동</a></td>
 								</tr>
 							</c:forEach>						
 						</tbody>
 					</table>
+			<tr>
+				<td align="left">
+					<button id="toMain" >로그인 페이지로</button>
+				</td>
+			</tr>		
 			<tr>
 				<td style="text-align:left;" id="dayBtnContainer" >
 				</td>
@@ -378,7 +415,7 @@ $j(()=>{
 					|
 					<button id="removeRowBtn" >삭제</button>
 					|
-					<button id="sortTraveRows" >시간순 정렬</button>
+					<button id="sortTraveRows" >전체 일정 시간순 정렬</button>
 				</td>
 			</tr>
 			<tr>
@@ -388,6 +425,7 @@ $j(()=>{
 						<thead>
 							<tr>
 								<th></th>
+								<th style="white-space: nowrap;">수정요청</th>
 								<th>시간</th>
 								<th>지역<br>(<span name="traveCity"></span>)</th>
 								<th>장소명</th>
@@ -403,6 +441,9 @@ $j(()=>{
 							<tr class="traveRow">
 								<td>
 									<input type="checkbox"/>
+								</td>
+								<td class="modify">
+									N
 								</td>
 								<td>
 									<input name="traveTime" type="text" value="오전 07:00 🕓" />

@@ -58,6 +58,7 @@
 	const sortTrave = (traveList,sort=false)=>{
 		const dayNum = $j('#traveList').find('tbody').length
 		const days = []
+		traveList=$j(traveList)
 		traveList.removeClass('invalid')
 		traveList.each(function(){
 			const n= $j(this).attr('day')-1
@@ -137,6 +138,7 @@
 			
 			if(curEnd >= dayEnd){
 				errAlert('traveTime','일정 종료시간은 오전 4시 이전이어야 합니다.')
+				$j(cur).addClass('invalid')
 				return false
 			}
 			if(i===traves.length-1){
@@ -163,6 +165,7 @@
 		spent = parseInt(spent[0]*60)+parseInt(spent[1])
 		if(spent===0){
 			fareEl.text('0')
+			return
 		}
 		switch(type){
 			case 'W':
@@ -219,7 +222,26 @@
 		for(let i = 0; i<rows.length; i++){
 			const result = nullCheck(rows[i])
 			if(result.code<0){
-				alert('필수 입력값입니다.')
+				const name = result.el.name
+				let msg=''
+				switch(name){
+					case 'traveLoc':
+						msg='장소명을 입력해주세요.'
+						break;
+					case 'transTime':
+						msg='예상이동시간으로 0분을 입력하실 수 없습니다.'
+						break;
+					case 'useTime':
+						msg='예상이용시간으로 0분을 입력하실 수 없습니다.'
+						break;
+					case 'useExpend':
+						msg='이용요금으로 0원을 입력하실 수 없습니다.'
+						break;
+					case 'traveDetail':
+						msg='계획상세를 입력해주세요.'
+						break;
+				}
+				alert(msg)
 				daySelect_2($j(rows[i]).closest('tbody').index())
 				result.el.focus()
 				return
@@ -232,12 +254,17 @@
 	}
 	const submit = ()=>{
 		let data = getFilledRows()
+		if(!data){
+			return
+		}
 		const traveCity = $j('[name="traveCity"]:first').text()
 		const traveList = []
 		data= sortTrave(data)
 		if(!data){
 			return
 		}
+		const clientRow = $j('.clientRow.selected:first')
+		const cSeq = clientRow.data('seq')
 		for(let i =0; i<data.length; i++){
 			const el = $j(data[i])
 			const o = {}
@@ -245,45 +272,53 @@
 			
 			const dayNum = el.attr('day')
 			o.traveCity = traveCity
-			o.traveSeq = i
+			o.traveSeq = cSeq+'-'+i
 			o.traveDay = dayNum
 			const inputs = el.find('[name]')
+			let isModified = request === 'M' ? false : true
+			let modi_input
 			for(let j=0; j<inputs.length; j++){
 				let val = inputs[j].value.trim()
-				if(request ==='M' && val===$j(inputs[j]).attr('oldVal')){
-					alert('수정해야됨')
-					daySelect_2(dayNum)
-					inputs[j].focus()
-					return
+				if(request ==='M'){
+					if(val === $j(inputs[j]).attr('oldVal') && !modi_input){
+						modi_input=inputs[j] 
+					}else if (val !== $j(inputs[j]).attr('oldVal')){
+						isModified = true
+					}
 				}
 				if(el.name==='useExpend'){
 					val=val.replaceAll(',')
 				}
 				o[inputs[j].name]=val
 			}
+			if(!isModified){
+				alert('수정 요청된 일정을 수정해주세요.')
+				daySelect_2(dayNum)
+				modi_input.focus()
+				return
+			}
+			o.traveFare = el.find('.fare').text()
 			o.request='C'
 			traveList.push(o)
 		}
-		
 		if(traveList.length===0){
 			alert('하나 이상의 유효한 일정을 입력하셔야합니다.')
 			return
 		}
 		
-		const clientRow = $j('.clientRow.selected:first')
+		
 		let total = 0
 		data.each((i,el)=>{
 			total+= parseInt($j(el).find('[name="useExpend"]').val().replaceAll(',',''))
-					+parseInt($j(el).find('.fare').text())
+					+parseInt($j(el).find('.fare').text().replaceAll(',',''))
 		})
-		console.log(total)
 		clientRow.find('.estExpend').text(getPriceFormat(total))
-		isExpendOverPrice(clientRow)
 		const clientVo = {
 				seq : clientRow.data('seq')
 				,estExpend : clientRow.find('.estExpend').text()
 				,traveList:traveList
 		}
+		isExpendOverPrice(clientRow)
 		console.log(clientVo)
 		$j.ajax({
 			type			: "POST",
@@ -307,11 +342,15 @@
 	
 	const isExpendOverPrice = clientRow =>{
 		let c = $j(clientRow)
+		console.log(c)
 		const est = c.find('.estExpend')
 		
 		const expend = parseInt(c.find('.expend').text().replaceAll(',',''))
-		const estExpend =parseInt(est.text().replaceAll(',',''))
+		const rent = parseInt((c.data('rent')+'').replaceAll(',',''))
+		
+		const estExpend =parseInt(est.text().replaceAll(',',''))+rent
 		const isOverPrice = estExpend > expend
+		est.text(getPriceFormat(estExpend))
 		
 		if(isOverPrice){
 			est.addClass('over-price')
@@ -328,7 +367,8 @@
 			const e = inputs[i]
 			let flag=false
 			if((e.name==='transTime' || e.name==='useTime') && e.value ==='00:00'){
-				flag=true				
+				flag=true
+				
 			}
 			
 			if(e.name==='useExpend' && e.value==='0'){

@@ -24,10 +24,12 @@ $j(() => {
 		if(!data){
 			return
 		}
+		
 		var queryParam = $j.param(data)
 		location.href="/trave/inquiry.do?"+queryParam
 	}
 	$j('#submitBtn').on('click',submit)
+	$j('#toManage').click(e=>location.href="/trave/manage.do")
 	
 })
 
@@ -59,6 +61,7 @@ $j(() => {
 							<tr>
 								<td align="center" colspan="2">
 									<input id="submitBtn" type="button"  value="로그인"/>
+									<input id="toManage" type="button"  value="관리자페이지로(테스트)"/>
 								</td>
 							</tr>
 						</table>

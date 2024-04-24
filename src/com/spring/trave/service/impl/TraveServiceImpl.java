@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.spring.common.CommonUtil;
 import com.spring.trave.dao.TraveDao;
+import com.spring.trave.dto.ModifyRequestDto;
 import com.spring.trave.service.TraveService;
 import com.spring.trave.vo.ClientVo;
 import com.spring.trave.vo.TraveVo;
@@ -26,11 +27,56 @@ public class TraveServiceImpl implements TraveService{
 	TraveDao traveDao;
 	
 	@Override
+	public int modifyRequest(ModifyRequestDto dto) {
+		return traveDao.modifyRequest(dto);
+	}
+	
+	@Override
+	public ClientVo getClient(ClientVo clientVo) {
+		ClientVo c = traveDao.selectClient(clientVo);
+		if(c==null) {
+			return null;
+		}
+		List<TraveVo> traveList = c.getTraveList();
+		if(traveList.get(0).getTraveSeq()==null) {
+			traveList.clear();
+		}
+		List<List<TraveVo>> traveDays = new ArrayList<>();
+		
+		for(int i=0; i<Integer.parseInt(c.getPeriod()); i++){
+			traveDays.add(new ArrayList<TraveVo>());
+		}
+		for(TraveVo trave : traveList) {
+		int day = Integer.parseInt(trave.getTraveDay())-1;
+		traveDays.get(day).add(trave);
+		}
+		c.setTraveDays(traveDays);
+		return c;
+	}
+	
+	@Override
 	public int updateClientTraveList(ClientVo clientVo) {
 		return traveDao.updateClientTraveList(clientVo);
 	}
 	@Override
 	public int insertClient(ClientVo clientVo) {
+		String trans = clientVo.getTransport();
+		if(!"R".equals(trans)) {
+			clientVo.setRentExpend("0");
+			return traveDao.insertClient(clientVo);
+		}
+		int period = Integer.parseInt(clientVo.getPeriod());
+		int perDay;
+		if(period >= 7 ) {
+			perDay=70000;
+		}else if(period >= 5) {
+			perDay=80000;
+		}else if(period>=3) {
+			perDay=90000;
+		}else {
+			perDay=100000;
+		}
+		clientVo.setRentExpend(perDay*period+"");
 		return traveDao.insertClient(clientVo);
 	}
 	
@@ -59,10 +105,7 @@ public class TraveServiceImpl implements TraveService{
 		return c;
 	}
 	
-	@Override
-	public int insertOrUpdateTrave(ClientVo clientVo) {
-		return traveDao.insertOrUpdateTrave(clientVo);
-	}
+
 	@Override
 	public Map<String, List<String>> getTraveCities() {
         // 여행지와 지역구를 저장할 Map 생성

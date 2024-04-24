@@ -1,6 +1,7 @@
 package com.spring.trave.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.spring.board.HomeController;
 import com.spring.board.service.CommonCodeService;
 import com.spring.common.CommonUtil;
+import com.spring.trave.dto.ModifyRequestDto;
 import com.spring.trave.service.TraveService;
 import com.spring.trave.vo.ClientVo;
 
@@ -30,12 +32,28 @@ public class TraveRestController {
 	@Autowired
 	TraveService traveService;
 	
+	@RequestMapping(value= "/api/trave/view/modifyRequest.do",method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,String> modifyRequest(Locale locale,@RequestBody ModifyRequestDto req) throws Exception{
+		Map<String,String> map = new HashMap<>();
+		try {
+			traveService.modifyRequest(req);
+			map.put("code", "redirect");
+			map.put("result", "success");
+		}catch(Exception e) {
+			map.put("result", "error");
+			map.put("code", "serverError");
+			map.put("msg", "서버 장애가 발생하였습니다.");
+		}
+		return map;
+	}
+	
+	
 	@RequestMapping(value= "/api/trave/manage/submit.do",method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,String> submitManage(Locale locale,@RequestBody ClientVo clientVo) throws Exception{
 		Map<String,String> map = new HashMap<>();
 		try {
-		logger.info(clientVo.toString());
 			map.put("code", "redirect");
 			traveService.updateClientTraveList(clientVo);
 			map.put("redirectUrl","/trave/view.do?seq="+clientVo.getSeq());
@@ -71,10 +89,9 @@ public class TraveRestController {
 	public Map<String,String> submitInquiry(Locale locale,@RequestBody ClientVo clientVo) throws Exception{
 		Map<String,String> map = new HashMap<>();
 		try {
-		logger.info(clientVo.toString());
 			map.put("code", "redirect");
 			traveService.insertClient(clientVo);
-			map.put("redirectUrl","/trave/view.do?seq="+clientVo.getSeq());
+			map.put("redirectUrl","/trave/inquiry.do?userName="+clientVo.getUserName()+"&userPhone="+clientVo.getUserPhone());
 			map.put("result", "success");
 		}catch(Exception e) {
 			map.put("result", "error");

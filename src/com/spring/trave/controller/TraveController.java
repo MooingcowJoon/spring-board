@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.spring.board.HomeController;
 import com.spring.board.service.CommonCodeService;
+import com.spring.common.CommonUtil;
 import com.spring.trave.service.TraveService;
 import com.spring.trave.vo.ClientVo;
 
@@ -45,7 +46,13 @@ public class TraveController {
 	@RequestMapping(value = "/trave/view.do", method = RequestMethod.GET)
 	public String view(Locale locale,Model model
 			,@RequestParam String seq) throws Exception{
-		model.addAttribute("c",traveService.getClientBySeq(seq));
+		ClientVo c = traveService.getClientBySeq(seq);
+		int est = Integer.parseInt(c.getEstExpend().replaceAll(",",""));
+		int rent = Integer.parseInt(c.getRentExpend().replaceAll(",",""));
+		
+		c.setEstExpend(String.format("%,d",est+rent));
+		model.addAttribute("c",c);
+		
 		return "trave/view";
 	}
 	
@@ -53,10 +60,20 @@ public class TraveController {
 	public String inquiry(Locale locale,Model model
 										,@RequestParam String userName
 										,@RequestParam String userPhone) throws Exception{
-		model.addAttribute("userName", userName);
-		model.addAttribute("userPhone", userPhone);
-		model.addAttribute("traveCities",traveService.getTraveCities().keySet());
-		return "trave/inquiry";
+		ClientVo paramVo = traveService.getClient(new ClientVo(userName,userPhone));
+		if(paramVo==null) {
+			model.addAttribute("userName", userName);
+			model.addAttribute("traveCities",traveService.getTraveCities().keySet());
+			model.addAttribute("userPhone", userPhone);
+			return "trave/inquiry";
+		}
+		int est = Integer.parseInt(paramVo.getEstExpend().replaceAll(",",""));
+		int rent = Integer.parseInt(paramVo.getRentExpend().replaceAll(",",""));
+		
+		paramVo.setEstExpend(String.format("%,d",est+rent));
+		model.addAttribute("c",paramVo);
+		System.out.println(CommonUtil.toJson(paramVo.getTraveDays()));
+		return "trave/view";
 	}
 	@RequestMapping(value = "/trave/login.do", method = RequestMethod.GET)
 	public String login(Locale locale) throws Exception{

@@ -19,8 +19,14 @@ $j().ready(() => {
 		if(!formData){
 			return
 		}
+		if(formData.period<=0){
+			alert('여행 기간은 최소 1일 이상 입력하셔야합니다.')
+			$j('[name="period"]').focus()
+			return
+		}
 		formData.userName 	= idFind('userName').innerText
 		formData.userPhone	= idFind('userPhone').innerText
+		
 		console.log(formData)
 		$j.ajax({
 			type			: "POST",

@@ -11,9 +11,20 @@ public class ClientVo {
 	private String traveCity;
 	private String period;
 	private String expend;
+	private String rentExpend;
 	private String estExpend;
 	private String transport;
 	
+	
+	
+	public String getRentExpend() {
+		return rentExpend;
+	}
+
+	public void setRentExpend(String rentExpend) {
+		this.rentExpend = rentExpend;
+	}
+
 	private List<TraveVo> traveList;
 	private List<List<TraveVo>> traveDays;
 	
@@ -34,6 +45,10 @@ public class ClientVo {
 	}
 
 	public ClientVo() {}
+	public ClientVo(String userName, String userPhone) {
+		this.userName=userName;
+		this.userPhone=userPhone;
+	}
 
 	public String getSeq() {
 		return seq;
