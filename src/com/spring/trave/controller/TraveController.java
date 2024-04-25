@@ -37,10 +37,14 @@ public class TraveController {
 		return "trave/time";
 	}
 	@RequestMapping(value = "/trave/manage.do", method = RequestMethod.GET)
-	public String manage(Locale locale,Model model) throws Exception{
+	public String manage(Locale locale,Model model
+			,@RequestParam(required = false ,defaultValue ="1")  String paramSeq
+			,@RequestParam(required = false ,defaultValue ="1") String paramDayNum) throws Exception{
 		List<ClientVo> clientList = traveService.getClientList();
 		
 		model.addAttribute("clientList",clientList);
+		model.addAttribute("paramSeq",paramSeq);
+		model.addAttribute("paramDayNum",paramDayNum);
 		return "trave/manage";
 	}
 	@RequestMapping(value = "/trave/view.do", method = RequestMethod.GET)
@@ -59,7 +63,8 @@ public class TraveController {
 	@RequestMapping(value = "/trave/inquiry.do", method = RequestMethod.GET)
 	public String inquiry(Locale locale,Model model
 										,@RequestParam String userName
-										,@RequestParam String userPhone) throws Exception{
+										,@RequestParam String userPhone
+										) throws Exception{
 		ClientVo paramVo = traveService.getClient(new ClientVo(userName,userPhone));
 		if(paramVo==null) {
 			model.addAttribute("userName", userName);

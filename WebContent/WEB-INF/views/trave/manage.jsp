@@ -45,7 +45,8 @@ width:100px;
 .fare {
     display: inline; /* 한 줄에 표시 */
 }
-td.estExpend.over-price{
+td.estExpend.over-price,
+td.isRequested.requested{
 	   color: red; 
     font-weight: bold; 
 }
@@ -64,7 +65,7 @@ $j(()=>{
 	$j('#traveList tbody').remove()
 	let g_traveRow = null
 	let g_traveCities = null
-	
+
 	const removeRow = ()=>{
 		const totalRows = g_day.children()
 		const checkedRows = totalRows.filter((i,el)=>el.classList.contains('checked'))
@@ -87,6 +88,7 @@ $j(()=>{
 	})
 	$j('#traveList').on('click','input[type="checkbox"]',e=>$j(e.target).closest('tr').toggleClass('checked'))
 	
+	$j('#traveList').on('dragstart','input[name]',e=>e.preventDefault())
 	$j('#addRowBtn').click(e=>{
 		const totalRows = g_day.children()
 		console.log(g_traveRow)
@@ -101,7 +103,7 @@ $j(()=>{
 			})
 			return t
 		}
-		let t = time(row,['traveTime','transTime','useTime'])+10
+		let t = time(row,['traveTime','transTime','useTime'])
 		if(t>=24*60+4*60){
 			alert('더 이상 스케쥴을 추가하실 수 없습니다.')
 			return
@@ -151,16 +153,20 @@ $j(()=>{
 	
 	const initPage = ()=>{
 		const cRows = $j('.clientRow')
+		const paramSeq = parseInt($j('#paramSeq').val())
 		cRows.each((i,e)=>isExpendOverPrice(e))
-		selectRow(cRows.first())
+		const paramDayNum = parseInt($j('#paramDayNum').val())
+		const row = cRows.filter((i,e)=>parseInt($j(e).data('seq'))===paramSeq).first()
+				
+		selectRow(row,paramDayNum)
 	}
 	$j('.clientRow').click(e=>selectRow($j(e.target).parent()))
 	$j('#dayBtnContainer').on('click','button',e=>daySelect($j(e.target).index()+1))
 	
-	const selectRow = $row => {
+	const selectRow = ($row,dayNum=1) => {
 		g_client && g_client.toggleClass('selected')
 		const seq = (g_client= $row.toggleClass('selected')).data('seq')
-		fetchClient(seq)
+		fetchClient(seq,dayNum)
 	}
 	
 	const daySelect = dayNum => {
@@ -170,13 +176,14 @@ $j(()=>{
 		g_day = $j('#traveList tbody').hide().eq(idx).show()
 	} 
 	
-	var fetchClient = function(seq){
+	var fetchClient = function(seq,dayNum=1){
 		fetch("/api/trave/manage/fetchClient.do?seq="+seq)
 		.then(res=>res.json())
 		.then(json=>{
 			g_traveCities = JSON.parse(json.traveCities)
 			generateTable(JSON.parse(json.client))
-			daySelect(1)
+			
+			daySelect(dayNum)
 		})
 		.catch(error=>console.error('Error :',error))
 	}
@@ -369,9 +376,10 @@ $j(()=>{
 <body>
 	<table align="center" >
 		<tbody>
-	
 			<tr>
 				<td align="center">
+				<input type="hidden" id="paramSeq" value="${paramSeq }"/>
+				<input type="hidden" id="paramDayNum" value="${paramDayNum }"/>
 					<table align="center" id ="clientTable" border="1">
 						<thead>
 							<tr>
@@ -382,6 +390,7 @@ $j(()=>{
 								<th>이동수단</th>
 								<th>예상 경비</th>
 								<th>견적 경비</th>
+								<th>수정요청여부</th>
 								<th>확인페이지로</th>
 							</tr>
 						</thead>
@@ -395,6 +404,7 @@ $j(()=>{
 									<td transport="${c.transport}">${c.transport eq 'R' ? '렌트' : (c.transport eq 'C' ? '자차' : '대중교통') }</td>
 									<td class="expend">${c.expend }</td>
 									<td class="estExpend">${c.estExpend }</td>
+									<td class="isRequested ${c.isRequested == 'Y' ? 'requested' : '' }">${c.isRequested }</td>
 									<td><a href="/trave/inquiry.do?userName=${c.userName }&userPhone=${c.userPhone }">이동</a></td>
 								</tr>
 							</c:forEach>						

@@ -13,12 +13,12 @@ tbody.traveDay tr td{
 text-align:center;
 white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
 }
-button:hover,
+button:not(:disabled):hover,
 button.selected,
 tr.traveRow.checked{
 background-color:skyblue;
 }
-button:hover{
+button:not(:disabled):hover{
 cursor:pointer;
 }
 #traveTable{
@@ -169,7 +169,14 @@ $j(()=>{
 			</tr>
 			<tr>
 				<td>
-					<button id="modifyRequestBtn">수정요청</button>
+					<c:choose>
+						<c:when test="${c.isRequested eq 'N' }">
+							 <button id="modifyRequestBtn">수정요청</button>
+						</c:when>
+		<%-- 				<c:otherwise>
+							 <button disabled>수정요청완료</button>
+						</c:otherwise> --%>
+					</c:choose>
 				</td>
 			</tr>
 			<tr>
@@ -178,6 +185,7 @@ $j(()=>{
 						<thead>
 							<tr>
 								<th></th>
+								<th>수정요청여부</th>
 								<th>시간</th>
 								<th>지역<br><span>(${c.traveCity })</span></th>
 								<th>장소명</th>
@@ -199,7 +207,10 @@ $j(()=>{
 								<c:forEach var="trave" items="${day}">
 									<tr class="traveRow">
 										<td>
-											<input type="checkbox" ${trave.request eq 'M' ? 'disabled' : ''}/>
+											<input type="checkbox" ${c.isRequested eq 'Y' ? 'disabled' : ''}/>
+										</td>
+										<td>
+											${trave.request eq 'M' ? 'Y' : 'N'}
 										</td>
 										<td>
 											${trave.traveTime }

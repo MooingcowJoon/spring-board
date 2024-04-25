@@ -115,30 +115,25 @@
 			const use = getTimeNum(cur,'useTime')
 			
 			const dayNum = cur.parent().index()
+	
 			const errAlert = (name, msg)=>{
 				alert('['+dayNum+'일차]\n'+msg)
 				daySelect_2(dayNum)
 				cur.find('[name='+name+']').focus()
 			}
-			
 			if(trans===0){
 				errAlert('transTime','이동시간을 입력해주세요')
 				return false
 			}
-			if(use===0){
-				errAlert('useTime','이용시간을 입력해주세요')
-				return false
-			}
-			
 			const dayStart = 60*7
 			const dayEnd = 60*(24+4)
 			
 			const curStart = getTimeNum(cur)
 			const curEnd = curStart+trans+use
 			
-			if(curEnd >= dayEnd){
+			if(curEnd > dayEnd){
 				errAlert('traveTime','일정 종료시간은 오전 4시 이전이어야 합니다.')
-				$j(cur).addClass('invalid')
+// 				$j(cur).addClass('invalid')
 				return false
 			}
 			if(i===traves.length-1){
@@ -146,10 +141,13 @@
 			}
 			const next = traves[i+1]
 			const nextStart = getTimeNum(next)
-			if(curEnd >= nextStart){
-				$j(cur).addClass('invalid')
-				$j(next).addClass('invalid')
-				errAlert(trans>use ? 'transTime' : 'useTime','일정이 중복됩니다. 시간대를 조정해주세요.')
+
+			if(curEnd > nextStart){
+// 				$j(cur).addClass('invalid')
+// 				$j(next).addClass('invalid')
+				alert('일정이 중복됩니다. 시간대를 조정해주세요.')
+				daySelect_2(dayNum)
+				$j(next).find('[name="traveTime"]').focus()
 				return false
 			}
 		}
@@ -327,7 +325,9 @@
 			contentType		:	"application/json",
 			success			:	function(res){
 				if(res.result === 'success'){
-					alert('일정이 저장되었습니다.')
+					const dayNum = $j('.dayBtn.selected').text()
+					alert('일정이 저장되었습니다.\n페이지를 새로고침합니다.')
+					location.href="/trave/manage.do?paramSeq="+clientVo.seq+"&paramDayNum="+dayNum
 					return
 				}
 				if(res.result === 'error'){
@@ -342,7 +342,6 @@
 	
 	const isExpendOverPrice = clientRow =>{
 		let c = $j(clientRow)
-		console.log(c)
 		const est = c.find('.estExpend')
 		
 		const expend = parseInt(c.find('.expend').text().replaceAll(',',''))
@@ -359,24 +358,20 @@
 		}
 	}
 	const nullCheck = row=>{
-		const inputs = $j(row).find('input[type="text"]:not([name="traveTime"])')
+		const inputs = $j(row).find('input[type="text"]:not([name="traveTime"],[name="useTime"],[name="useExpend"])')
 		let result = {code: 0, el:null}
-		let nullIndex
+		let nullIndex =-1
 		
 		for(let i =0; i<inputs.length; i++){
 			const e = inputs[i]
 			let flag=false
-			if((e.name==='transTime' || e.name==='useTime') && e.value ==='00:00'){
+			if(e.name==='transTime' && e.value ==='00:00'){
 				flag=true
 				
 			}
 			
-			if(e.name==='useExpend' && e.value==='0'){
-				flag=true
-			}
-			
 			if(flag || inputs[i].value.trim()===''){
-				if(!nullIndex){
+				if(nullIndex<0){
 					nullIndex=i
 				}
 				if(result.code ===1){
@@ -385,6 +380,9 @@
 			}else{
 				result.code=1
 			}
+		}
+		if(nullIndex >-1 && result.code ===1){
+			return {code:-1,el:inputs[nullIndex]}
 		}
 		return result
 	}

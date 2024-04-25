@@ -14,9 +14,17 @@ public class ClientVo {
 	private String rentExpend;
 	private String estExpend;
 	private String transport;
+	private String isRequested;
 	
 	
-	
+	public String getIsRequested() {
+		return isRequested;
+	}
+
+	public void setIsRequested(String isRequested) {
+		this.isRequested = isRequested;
+	}
+
 	public String getRentExpend() {
 		return rentExpend;
 	}

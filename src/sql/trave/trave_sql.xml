@@ -11,6 +11,7 @@
 		<result property="estExpend" column="EST_EXPEND"></result>
 		<result property="transport" column="TRANSPORT"></result>
 		<result property="rentExpend" column="RENT_EXPEND"></result>
+		<result property="isRequested" column="IS_REQUESTED"></result>
 		<collection property="traveList" resultMap="traveMap"></collection>
 	</resultMap>
 	<resultMap type="com.spring.trave.vo.TraveVo" id="traveMap">
@@ -38,12 +39,12 @@
 		INSERT 
 			INTO 
 		CLIENT_INFO
-			(SEQ, USER_NAME, USER_PHONE, TRAVE_CITY, PERIOD, EXPEND, TRANSPORT, EST_EXPEND, RENT_EXPEND)
+			(SEQ, USER_NAME, USER_PHONE, TRAVE_CITY, PERIOD, EXPEND, TRANSPORT, EST_EXPEND, RENT_EXPEND,IS_REQUESTED)
 		VALUES
 			(
 			#{seq},
 			 #{userName}, #{userPhone}, #{traveCity}, #{period}, #{expend}, #{transport},'0',
-			 TO_CHAR(TO_NUMBER(#{rentExpend}), 'FM999,999,999')
+			 TO_CHAR(TO_NUMBER(#{rentExpend}), 'FM999,999,999'),'N'
 			 )
 	</insert>
 	<insert id="updateClientTraveList" parameterType="com.spring.trave.vo.ClientVo">	
@@ -51,7 +52,8 @@
 		UPDATE
 			CLIENT_INFO
 		SET 
-			EST_EXPEND = #{estExpend}
+			EST_EXPEND = #{estExpend},
+			IS_REQUESTED = 'N'
 		WHERE
 			SEQ = #{seq};
  	    DELETE 
@@ -108,13 +110,21 @@
         EXPEND,
         TRANSPORT,
         EST_EXPEND,
-        RENT_EXPEND
+        RENT_EXPEND,
+        IS_REQUESTED
     FROM
         CLIENT_INFO
     ORDER BY
-    	SEQ DESC
+    	TO_NUMBER(SEQ) DESC
 	</select>
 	<update id="modifyRequest" parameterType="com.spring.trave.dto.ModifyRequestDto" >
+	BEGIN
+		UPDATE
+			CLIENT_INFO
+		SET
+			IS_REQUESTED = 'Y'
+		WHERE
+			SEQ = #{seq};
 		UPDATE
 			TRAVE_INFO
 		SET
@@ -123,9 +133,10 @@
 			SEQ = #{seq}
 		AND
 			TRAVE_SEQ IN 
-		<foreach collection="traveSeqList" item="traveSeq" open="(" separator=", " close=")">
+		<foreach collection="traveSeqList" item="traveSeq" open="(" separator=", " close=");">
 			#{traveSeq}
 		</foreach>
+	END;
 	</update>
 	<select id="selectClient" resultMap="clientMap">
 	SELECT
@@ -138,6 +149,7 @@
         C.TRANSPORT,
         C.EST_EXPEND,
         C.RENT_EXPEND,
+        C.IS_REQUESTED,
         T.TRAVE_SEQ,
 		T.SEQ,
 		T.TRAVE_DAY,
@@ -180,6 +192,7 @@
         C.TRANSPORT,
         C.EST_EXPEND,
         C.RENT_EXPEND,
+        C.IS_REQUESTED,
         T.TRAVE_SEQ,
 		T.SEQ,
 		T.TRAVE_DAY,
