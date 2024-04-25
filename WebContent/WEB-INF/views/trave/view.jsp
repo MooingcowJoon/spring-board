@@ -24,7 +24,9 @@ cursor:pointer;
 #traveTable{
 	table-layout: fixed; 
 }
-
+th{
+	white-space: nowrap;
+}
 td#estExpend.over-price{
 color:red;
 font-weight:bold;
@@ -158,6 +160,13 @@ $j(()=>{
 					<button id="logoutBtn" >로그아웃</button>
 				</td>
 			</tr>
+				<c:choose>
+					<c:when test="${empty c.traveList }">
+					<tr>
+						<td text-align="center"><h4>일정이 신청되었습니다.<br> 이후 등록된 일정 확인 후 일정 변경을 요청하실 수 있습니다.</h4></td>
+					</tr>
+					</c:when>
+					<c:otherwise>
 			<tr>
 				<td>
 					<button class="dayBtn selected" value="1" class="selected">1</button>
@@ -187,7 +196,7 @@ $j(()=>{
 								<th></th>
 								<th>수정요청여부</th>
 								<th>시간</th>
-								<th>지역<br><span>(${c.traveCity })</span></th>
+								<th>지역</th>
 								<th>장소명</th>
 								<th>교통편</th>
 								<th>예상이동시간</th>
@@ -201,7 +210,7 @@ $j(()=>{
 							<tbody class="traveDay" style="display:${status.index == 0 ? '' : 'none'};">
 								<c:if test="${empty day }">
 									<tr>
-									<td colspan="10">일정이 없습니다.</td>
+									<td colspan="11">일정이 없습니다.</td>
 									</tr>
 								</c:if>
 								<c:forEach var="trave" items="${day}">
@@ -215,6 +224,7 @@ $j(()=>{
 										<td>
 											${trave.traveTime }
 										<td>
+											${trave.traveCity }
 											${trave.traveCounty }
 										</td>
 										<td>
@@ -258,6 +268,12 @@ $j(()=>{
 							</tbody>
 						</c:forEach>
 					</table>
+					</td>
+					</tr>
+					
+					
+					</c:otherwise>
+				</c:choose>
 		</tbody>
 	</table>
 	</div>

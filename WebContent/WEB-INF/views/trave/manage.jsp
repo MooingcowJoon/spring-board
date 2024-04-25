@@ -89,21 +89,65 @@ $j(()=>{
 	$j('#traveList').on('click','input[type="checkbox"]',e=>$j(e.target).closest('tr').toggleClass('checked'))
 	
 	$j('#traveList').on('dragstart','input[name]',e=>e.preventDefault())
+	
+	const getEndTime = el =>{
+		return getTimeNum(el,'traveTime')+getTimeNum(el,'transTime')+getTimeNum(el,'useTime')
+	}
+	
+	const findInterval = dayNum => {
+		const traves = $j('#traveList').find('tbody').eq(dayNum-1).find('.traveRow')
+		traves.sort((t1,t2)=>{
+			 getTimeNum(t1)- getTimeNum(t2)
+		})
+		let prevStart=0
+		for(let i=0; i<traves.length-1; i++){
+			const cur = traves[i]
+			const curStart = getTimeNum(cur,'traveTime')
+			const curTrans = getTimeNum(cur,'transTime')
+			const curUse = getTimeNum(cur,'useTime')
+
+			const next = traves[i+1]
+			
+			const curEnd = curStart+curTrans+curUse
+			const nextStart = getTimeNum(next,'traveTime')
+// 			const nextTrans = getTimeNum(next,'transTime')
+// 			const nextUse = getTimeNum(next,'useTime')
+// 			const nextEnd = nextStart+nextTrans+nextUse
+			
+			
+			if(nextStart-curEnd >=60){
+				return {el:cur,t:curEnd+60}
+			}
+			prevStart=curStart
+		}
+		const last = traves[traves.length-1]
+		const lastStart = getTimeNum(last,'traveTime')
+		const lastTrans = getTimeNum(last,'transTime')
+		const lastUse = getTimeNum(last,'useTime')
+		
+		const lastEnd = lastStart+lastTrans+lastUse+60
+		const dayEnd = 60*(24+4)
+		
+		if(lastEnd <= dayEnd){
+			return {el:last,t:lastEnd}
+		}
+		return null
+	}
+	
 	$j('#addRowBtn').click(e=>{
 		const totalRows = g_day.children()
-		console.log(g_traveRow)
 		const checkedRows = totalRows.filter((i,el)=>el.classList.contains('checked'))
 		const clone = generateTraveRow()
-		const row = g_traveRow? $j(g_traveRow) : (checkedRows.length===0 ? totalRows.last() : checkedRows.last())
+// 		const row = g_traveRow? $j(g_traveRow) : (checkedRows.length===0 ? totalRows.last() : checkedRows.last())
+		const dayNum = parseInt($j('.dayBtn.selected').text())
+		const interval = findInterval(dayNum)
 		
-		const time = (row,names) => {
-			let t =0 
-			names.forEach(name=>{
-				t+=getTimeNum(row,name)
-			})
-			return t
+		if(interval===null){
+			alert('스케쥴을 추가하시려면 최소 한시간의 여유시간이 필요합니다.')
+			return
 		}
-		let t = time(row,['traveTime','transTime','useTime'])
+		let row = $j(interval.el)
+		let t= interval.t-60		
 		if(t>=24*60+4*60){
 			alert('더 이상 스케쥴을 추가하실 수 없습니다.')
 			return
@@ -114,13 +158,15 @@ $j(()=>{
 		let m = t%60 === 0? '00' : t%60
 		const AP = h >=12 && h<24 ? '오후' : '오전'
 		let H = h%12
-		if(h===0 && AP==='오후'){
+		if(H===0 && AP==='오후'){
 			H=12
 		}
 		if(H <10){
 			H='0'+H
 		}
 		clone.find('[name=traveTime]').val(AP+' '+H+':'+m+' 🕓')
+		clone.find('[name="useTime"]').val('00:30')
+		clone.find('[name="transTime"]').val('00:30')
 		row.after(clone)
 	})
 	$j('#removeRowBtn').click(e=>removeRow())
@@ -157,7 +203,6 @@ $j(()=>{
 		cRows.each((i,e)=>isExpendOverPrice(e))
 		const paramDayNum = parseInt($j('#paramDayNum').val())
 		const row = cRows.filter((i,e)=>parseInt($j(e).data('seq'))===paramSeq).first()
-				
 		selectRow(row,paramDayNum)
 	}
 	$j('.clientRow').click(e=>selectRow($j(e.target).parent()))
@@ -200,7 +245,6 @@ $j(()=>{
 		html=html.slice(0,-1)
 		dayBtns.append(html)
 		const formTable = $j('#traveList').children(':first')
-		formTable.find('[name="traveCity"]').text(c.traveCity)
 		formTable.find('tbody').remove()
 		for (let i = 0; i<traveDays.length; i++){
 			g_day = g_traveDayClone.clone()
@@ -222,6 +266,11 @@ $j(()=>{
 		const clone = g_traveRowClone.clone().attr('day',g_day.index())
 		const city = g_day.attr('traveCity')
 		const countySelect = clone.find('[name="traveCounty"]')
+		const traveCity = g_client.data('traveCity')
+		clone.find('[name="traveCity"]').append($j('<option>',{
+			value:traveCity,
+			text:traveCity
+		}))
 		g_traveCities[city].forEach(county=>{
 				countySelect.append($j('<option>', {
 					        value: county,
@@ -396,7 +445,7 @@ $j(()=>{
 						</thead>
 						<tbody>
 							<c:forEach var="c" items="${clientList}">
-								<tr class="clientRow" data-seq ="${c.seq }" data-rent="${c.rentExpend}">
+								<tr class="clientRow" data-seq ="${c.seq }" data-rent="${c.rentExpend}" data-trave-city="${c.traveCity }">
 									<td>${c.userName }</td>
 									<td>${c.userPhone }</td>
 									<td>${c.traveCity}</td>
@@ -437,7 +486,7 @@ $j(()=>{
 								<th></th>
 								<th style="white-space: nowrap;">수정요청</th>
 								<th>시간</th>
-								<th>지역<br>(<span name="traveCity"></span>)</th>
+								<th>지역</th>
 								<th>장소명</th>
 								<th>교통편</th>
 								<th>예상이동시간</th>
@@ -457,10 +506,11 @@ $j(()=>{
 								</td>
 								<td>
 									<input name="traveTime" type="text" value="오전 07:00 🕓" />
-								<td>
+								<td style="white-space: nowrap; text-align:center;">
+									<select name="traveCity">
+									</select>
 									<select name="traveCounty">
 									</select>
-									
 								</td>
 								<td>
 									<input name="traveLoc" type="text" />

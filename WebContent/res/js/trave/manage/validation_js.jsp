@@ -358,19 +358,14 @@
 		}
 	}
 	const nullCheck = row=>{
-		const inputs = $j(row).find('input[type="text"]:not([name="traveTime"],[name="useTime"],[name="useExpend"])')
+		const inputs = $j(row).find('input[type="text"]:not([name="traveTime"],[name="transTime"],[name="useTime"],[name="useExpend"])')
 		let result = {code: 0, el:null}
 		let nullIndex =-1
 		
 		for(let i =0; i<inputs.length; i++){
 			const e = inputs[i]
-			let flag=false
-			if(e.name==='transTime' && e.value ==='00:00'){
-				flag=true
-				
-			}
 			
-			if(flag || inputs[i].value.trim()===''){
+			if(inputs[i].value.trim()===''){
 				if(nullIndex<0){
 					nullIndex=i
 				}
@@ -383,6 +378,10 @@
 		}
 		if(nullIndex >-1 && result.code ===1){
 			return {code:-1,el:inputs[nullIndex]}
+		}
+		const trans = $j(row).find('[name="transTime"]')
+		if(result.code>0 && trans.val()==='00:00'){
+			return {code:-1,el:trans.get(0)}
 		}
 		return result
 	}

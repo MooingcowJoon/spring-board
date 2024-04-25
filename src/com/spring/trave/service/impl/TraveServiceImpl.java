@@ -113,27 +113,27 @@ public class TraveServiceImpl implements TraveService{
 
         // 서울의 지역구 목록
         String[] seoulDistricts = {"종로구", "강남구", "송파구", "서대문구", "영등포구", "마포구"};
-        travelCities.put("서울", Arrays.asList(seoulDistricts));
+        travelCities.put("서울시", Arrays.asList(seoulDistricts));
 
         // 제주의 지역구 목록
         String[] jejuDistricts = {"제주시", "서귀포시", "한림읍", "애월읍", "성산읍", "조천읍"};
-        travelCities.put("제주", Arrays.asList(jejuDistricts));
+        travelCities.put("제주도", Arrays.asList(jejuDistricts));
 
         // 경주의 지역구 목록
         String[] gyeongjuDistricts = {"중구", "서구", "남구", "북구", "동구"};
-        travelCities.put("경주", Arrays.asList(gyeongjuDistricts));
+        travelCities.put("경주시", Arrays.asList(gyeongjuDistricts));
 
         // 부산의 지역구 목록
         String[] busanDistricts = {"해운대구", "수영구", "부산진구", "동래구", "서구", "사하구"};
-        travelCities.put("부산", Arrays.asList(busanDistricts));
+        travelCities.put("부산시", Arrays.asList(busanDistricts));
 
         // 강원의 지역구 목록
         String[] gangwonDistricts = {"춘천시", "원주시", "강릉시", "속초시", "동해시", "태백시"};
-        travelCities.put("강원", Arrays.asList(gangwonDistricts));
+        travelCities.put("강원시", Arrays.asList(gangwonDistricts));
 
         // 전주를 전라도에 추가
         String[] jeonjuDistricts = {"완산구", "덕진구"};
-        travelCities.put("전주", Arrays.asList(jeonjuDistricts));
+        travelCities.put("전주시", Arrays.asList(jeonjuDistricts));
 
 		return travelCities;
 	}
