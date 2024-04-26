@@ -214,6 +214,7 @@ $j(()=>{
 		fetchClient(seq,dayNum)
 	}
 	
+	
 	const daySelect = dayNum => {
 		g_traveRow=null
 		const idx = dayNum - 1
@@ -262,21 +263,68 @@ $j(()=>{
 			}
 		}
 	}
+	const appendCounties = (el,traveCity) =>{
+		el=$j(el).empty()
+		let x =[]
+		switch(traveCity){
+		case '제주도':
+			x=["제주시", "서귀포시", "한림읍", "애월읍", "성산읍", "조천읍"]
+			break;
+		case '서울시':
+			x=["종로구", "강남구", "송파구", "서대문구", "영등포구", "마포구"]
+			break;
+		case '경주시':
+			x=["중구", "서구", "남구", "북구", "동구"]
+			break;
+		case '부산시':
+			x=["해운대구", "수영구", "부산진구", "동래구", "서구", "사하구"]
+			break;
+		case '강원시':
+			x=["춘천시", "원주시", "강릉시", "속초시", "동해시", "태백시"]
+			break;
+		case '전주시':
+			x=["완산구", "덕진구"]
+			break;
+	}
+	x.forEach(city=>{
+		el.append($j('<option>',{
+			value:city,
+			text:city
+		}))
+	})
+		
+	}
+	$j('#traveList').on('change','select[name="traveCity"]',e=>{
+		const el = $j(e.target)
+		const v = el.val()
+		if(v==='제주도'){
+			return
+		}
+		const county = el.next().empty()
+		appendCounties(county,v)
+	})
+	
 	const generateTraveRow = trave=>{
 		const clone = g_traveRowClone.clone().attr('day',g_day.index())
 		const city = g_day.attr('traveCity')
 		const countySelect = clone.find('[name="traveCounty"]')
-		const traveCity = g_client.data('traveCity')
-		clone.find('[name="traveCity"]').append($j('<option>',{
-			value:traveCity,
-			text:traveCity
-		}))
-		g_traveCities[city].forEach(county=>{
-				countySelect.append($j('<option>', {
-					        value: county,
-					        text: county
-					    }));
-				})
+		let traveCity = g_client.data('traveCity')
+		
+		let cities
+		if(traveCity==='제주도'){
+			cities=['제주도']
+		}else{
+			cities=['서울시','경주시','강원시','부산시','전주시']
+		}
+		const citySelect = clone.find('[name="traveCity"]')
+		cities.forEach(city=>{
+			citySelect.append($j('<option>',{
+				value:city,
+				text:city
+			}))
+		})
+		
+
 		let transports
 		switch (g_day.attr('traveTrans')){
 			case 'R':
@@ -310,7 +358,9 @@ $j(()=>{
 		if(trave['request']==='M'){
 			clone.find('.modify').text('Y').addClass('request')
 		}
+		traveCity = trave.traveCity
 		}
+		appendCounties(clone.find('[name="traveCounty"]:first'),traveCity)
 		return clone
 	}
 	const calculateFare = traveRow=>{

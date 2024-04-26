@@ -6,6 +6,37 @@
 		$j('.dayBtn').removeClass('selected').eq(idx).addClass('selected')
 		g_day = $j('#traveList tbody').hide().eq(idx).show()
 	} 
+	const appendCounties = (el,traveCity) =>{
+		el=$j(el).empty()
+		let x =[]
+		switch(traveCity){
+		case '제주시':
+			x=["제주시", "서귀포시", "한림읍", "애월읍", "성산읍", "조천읍"]
+			break;
+		case '서울시':
+			x=["종로구", "강남구", "송파구", "서대문구", "영등포구", "마포구"]
+			break;
+		case '경주시':
+			x=["중구", "서구", "남구", "북구", "동구"]
+			break;
+		case '부산시':
+			x=["해운대구", "수영구", "부산진구", "동래구", "서구", "사하구"]
+			break;
+		case '강원시':
+			x=["춘천시", "원주시", "강릉시", "속초시", "동해시", "태백시"]
+			break;
+		case '전주시':
+			x=["완산구", "덕진구"]
+			break;
+	}
+	x.forEach(city=>{
+		el.append($j('<option>',{
+			value:city,
+			text:city
+		}))
+	})
+		
+	}
 	const InputEventHandler = name =>{
 		$j(document).on({
 			'focus':e=>{
