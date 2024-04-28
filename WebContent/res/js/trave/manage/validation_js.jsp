@@ -29,6 +29,8 @@
 			x=["완산구", "덕진구"]
 			break;
 	}
+		
+		
 	x.forEach(city=>{
 		el.append($j('<option>',{
 			value:city,
