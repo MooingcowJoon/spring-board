@@ -190,7 +190,8 @@ $j(()=>{
 			</tr>
 			<tr>
 				<td style="width:800px; text-align:center;">
-					<table border="1" style="margin-left:5%; margin-right:5%;">
+					<table border="1" style="margin-left:5%; margin-right:5%;
+					table-layout: fixed; ">
 						<thead>
 							<tr>
 								<th></th>

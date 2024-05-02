@@ -176,7 +176,7 @@
 	    </when>
 	  </choose>
 	ORDER BY 
-		TO_NUMBER(T.TRAVE_SEQ) ASC
+		T.TRAVE_SEQ ASC
 	</select>
 	
 	<select id="selectClientBySeq" parameterType="String" resultMap="clientMap">

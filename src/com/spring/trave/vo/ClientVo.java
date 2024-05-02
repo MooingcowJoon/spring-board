@@ -15,6 +15,8 @@ public class ClientVo {
 	private String estExpend;
 	private String transport;
 	private String isRequested;
+	private List<TraveVo> traveList;
+	private List<List<TraveVo>> traveDays;
 	
 	
 	public String getIsRequested() {
@@ -32,10 +34,6 @@ public class ClientVo {
 	public void setRentExpend(String rentExpend) {
 		this.rentExpend = rentExpend;
 	}
-
-	private List<TraveVo> traveList;
-	private List<List<TraveVo>> traveDays;
-	
 	
 	public String getEstExpend() {
 		return estExpend;
